@@ -53,3 +53,12 @@ export type VerifyOtpRequest = {
   phone_number: string;
   otp: number;
 };
+
+export type ForgetPasswordRequest = {
+  phone_number: string;
+};
+
+export type ResetPasswordRequest = {
+  phone_number: string;
+  password: string;
+};

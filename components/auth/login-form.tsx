@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, Lock, Phone } from "lucide-react";
 import { ApiError } from "@/lib/api/client";
@@ -16,9 +15,13 @@ import { AuthIconInput } from "@/components/auth/auth-icon-input";
 
 type LoginFormProps = {
   onSwitchToRegister: () => void;
+  onSwitchToForgot: () => void;
 };
 
-export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
+export function LoginForm({
+  onSwitchToRegister,
+  onSwitchToForgot,
+}: LoginFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = getSafeRedirectPath(searchParams.get("redirect"));
@@ -117,9 +120,13 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
       </Button>
 
       <p className="text-center text-sm">
-        <Link href="/forgot-password" className="text-primary hover:underline">
+        <button
+          type="button"
+          className="text-primary hover:underline"
+          onClick={onSwitchToForgot}
+        >
           Forgot Password?
-        </Link>
+        </button>
       </p>
 
       <div className="border-t border-line pt-4 text-center text-sm text-muted-foreground">

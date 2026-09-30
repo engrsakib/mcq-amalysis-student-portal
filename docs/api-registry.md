@@ -227,9 +227,42 @@ Set a new password after forgot-password OTP was verified in the UI.
 | `phone_number` | string | yes      |
 | `password`     | string | yes      | 6–15 chars |
 
-**Success (200):** Password updated; user should log in again.
+**Example body:**
 
-**Errors:** 404 user not found.
+```json
+{
+  "phone_number": "01700000000",
+  "password": "newpass123"
+}
+```
+
+**Success (200):**
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Your password has been reset successfully. Please login to your account",
+  "data": null
+}
+```
+
+**400 example:**
+
+```json
+{
+  "statusCode": 400,
+  "success": false,
+  "message": "Validation Error",
+  "errorMessages": [
+    { "path": "phone_number", "message": "Phone number must be provided" }
+  ]
+}
+```
+
+**Errors:** 400 validation, 404 user not found.
+
+**Note:** `PATCH /user/change-password` (logged-in, `old_password` + `new_password`) is not used on the login card; add later under account settings.
 
 ---
 

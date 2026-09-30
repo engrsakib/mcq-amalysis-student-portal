@@ -1,8 +1,10 @@
-import { apiPost } from "@/lib/api/client";
+import { apiPatch, apiPost } from "@/lib/api/client";
 import type {
   AuthUser,
+  ForgetPasswordRequest,
   LoginRequest,
   RegisterRequest,
+  ResetPasswordRequest,
   VerifyOtpRequest,
 } from "@/lib/api/types";
 
@@ -20,4 +22,16 @@ export function verifyUserAccount(payload: VerifyOtpRequest) {
 
 export function resendVerificationOtp(phone_number: string) {
   return apiPost<null>("/user/resend-otp", { phone_number });
+}
+
+export function requestUserForgetPassword(payload: ForgetPasswordRequest) {
+  return apiPost<unknown>("/forget-password/user", payload);
+}
+
+export function verifyForgetPasswordOtp(payload: VerifyOtpRequest) {
+  return apiPost<null>("/otp/validate/verify", payload);
+}
+
+export function resetUserPassword(payload: ResetPasswordRequest) {
+  return apiPatch<null>("/user/reset-password", payload);
 }
