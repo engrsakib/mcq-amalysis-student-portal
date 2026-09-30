@@ -18,7 +18,7 @@ export function AuthCard() {
     <div
       className={cn(
         "w-full overflow-visible rounded-2xl border border-border/60 bg-card py-6 shadow-lg",
-        mode === "login" ? "min-h-[420px]" : "min-h-[560px]"
+        mode === "login" ? "min-h-[420px]" : "min-h-[500px]"
       )}
     >
       <div className="px-6 pb-2 text-center">

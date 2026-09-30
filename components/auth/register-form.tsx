@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Lock, Mail, Phone, User } from "lucide-react";
+import { Eye, EyeOff, Lock, Phone, User } from "lucide-react";
 import { ApiError } from "@/lib/api/client";
 import { registerUser } from "@/lib/api/auth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -17,7 +17,6 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
   const router = useRouter();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -48,7 +47,6 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
         phone_number: phone,
         password,
         role: "customer",
-        ...(email.trim() ? { email: email.trim() } : {}),
       });
       router.push(`/verify?phone=${encodeURIComponent(phone)}`);
     } catch (err) {
@@ -85,14 +83,6 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
         value={phone}
         onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
         required
-      />
-      <AuthIconInput
-        icon={<Mail className="size-4" />}
-        type="email"
-        autoComplete="email"
-        placeholder="Email (optional)"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
       />
       <AuthIconInput
         icon={<Lock className="size-4" />}
