@@ -17,15 +17,41 @@ Source of truth: Express server mounted at `/api/v1` ([server/src/routes/index.t
 
 Errors use the same shape with `success: false` and an appropriate HTTP status.
 
+**Validation error example (400):**
+
+```json
+{
+  "statusCode": 400,
+  "success": false,
+  "message": "Validation Error",
+  "errorMessages": [
+    { "path": "phone_number", "message": "Phone number must be provided" }
+  ]
+}
+```
+
+**Conflict example (409):**
+
+```json
+{
+  "statusCode": 409,
+  "success": false,
+  "message": "Duplicate field value",
+  "errorMessages": [
+    { "path": "phone_number", "message": "phone_number already exists" }
+  ]
+}
+```
+
 ---
 
 ## Authentication headers
 
-| Header | When | Value |
-| --- | --- | --- |
-| `Authorization` | Protected routes | Raw access token JWT (no `Bearer` prefix required by server) |
-| `x-refresh-token` | Optional refresh flows | Refresh token JWT |
-| `Content-Type` | POST/PATCH bodies | `application/json` |
+| Header            | When                   | Value                                                        |
+| ----------------- | ---------------------- | ------------------------------------------------------------ |
+| `Authorization`   | Protected routes       | Raw access token JWT (no `Bearer` prefix required by server) |
+| `x-refresh-token` | Optional refresh flows | Refresh token JWT                                            |
+| `Content-Type`    | POST/PATCH bodies      | `application/json`                                           |
 
 ---
 
@@ -35,16 +61,48 @@ Errors use the same shape with `success: false` and an appropriate HTTP status.
 
 Sign in with phone and password.
 
-**Auth:** Public  
+**Auth:** Public
 
 **Body:**
 
-| Field | Type | Required |
-| --- | --- | --- |
-| `phone_number` | string | yes |
-| `password` | string | yes |
+| Field          | Type   | Required |
+| -------------- | ------ | -------- |
+| `phone_number` | string | yes      |
+| `password`     | string | yes      |
 
-**Success (200):** `data` includes user fields plus `access_token` and `refresh_token`.
+**Success (200):**
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "You've logged in successfully",
+  "data": {
+    "_id": "string",
+    "name": "Jane Student",
+    "phone_number": "01800000000",
+    "role": "student",
+    "access_token": "string",
+    "refresh_token": "string"
+  }
+}
+```
+
+**401 example:**
+
+```json
+{
+  "statusCode": 401,
+  "success": false,
+  "message": "Unauthenticated access. Please login to access resource(s)",
+  "errorMessages": [
+    {
+      "path": "",
+      "message": "Unauthenticated access. Please login to access resource(s)"
+    }
+  ]
+}
+```
 
 **Errors:** 400 validation, 401 invalid credentials or unverified account (may trigger OTP resend server-side).
 
@@ -54,19 +112,31 @@ Sign in with phone and password.
 
 Register a new user; sends SMS verification OTP.
 
-**Auth:** Public  
+**Auth:** Public
 
 **Body:**
 
-| Field | Type | Required | Notes |
-| --- | --- | --- | --- |
-| `name` | string | yes | min 3 |
-| `phone_number` | string | yes | |
-| `password` | string | yes | 6–15 chars |
-| `role` | string | yes | Student app: `"student"` — **server enum may reject until backend adds `student`** |
-| `email` | string | no | valid email or empty |
+| Field          | Type   | Required | Notes                                                                              |
+| -------------- | ------ | -------- | ---------------------------------------------------------------------------------- |
+| `name`         | string | yes      | min 3                                                                              |
+| `phone_number` | string | yes      |                                                                                    |
+| `password`     | string | yes      | 6–15 chars                                                                         |
+| `role`         | string | yes      | Student web sends `"customer"` |
+| `email`        | string | no       | valid email or empty           |
 
-**Success (201):** `data` null; message indicates SMS OTP sent.
+**Example body:**
+
+```json
+{
+  "name": "Jane Student",
+  "phone_number": "01800000000",
+  "email": "jane@example.com",
+  "password": "password123",
+  "role": "customer"
+}
+```
+
+**Success (201):** `success: true`; `data` may be null; message indicates SMS OTP sent.
 
 **Errors:** 400 validation, 409 conflict (phone already registered).
 
@@ -76,14 +146,14 @@ Register a new user; sends SMS verification OTP.
 
 Verify registration OTP and log the user in.
 
-**Auth:** Public  
+**Auth:** Public
 
 **Body:**
 
-| Field | Type | Required |
-| --- | --- | --- |
-| `phone_number` | string | yes |
-| `otp` | number | yes | 6-digit |
+| Field          | Type   | Required |
+| -------------- | ------ | -------- | ------- |
+| `phone_number` | string | yes      |
+| `otp`          | number | yes      | 6-digit |
 
 **Success (200):** `data` includes user and tokens (same as login).
 
@@ -95,13 +165,13 @@ Verify registration OTP and log the user in.
 
 Resend registration verification OTP.
 
-**Auth:** Public  
+**Auth:** Public
 
 **Body:**
 
-| Field | Type | Required |
-| --- | --- | --- |
-| `phone_number` | string | yes |
+| Field          | Type   | Required |
+| -------------- | ------ | -------- |
+| `phone_number` | string | yes      |
 
 **Success (200):** OTP resent (rate limits may apply).
 
@@ -111,13 +181,13 @@ Resend registration verification OTP.
 
 Start forgot-password flow; sends SMS verification code.
 
-**Auth:** Public  
+**Auth:** Public
 
 **Body:**
 
-| Field | Type | Required |
-| --- | --- | --- |
-| `phone_number` | string | yes |
+| Field          | Type   | Required |
+| -------------- | ------ | -------- |
+| `phone_number` | string | yes      |
 
 **Success (200):** Message confirms code sent; `data` may include rate-limit metadata.
 
@@ -127,14 +197,14 @@ Start forgot-password flow; sends SMS verification code.
 
 Verify OTP for forgot-password (standalone OTP module). Deletes OTP record on success.
 
-**Auth:** Public  
+**Auth:** Public
 
 **Body:**
 
-| Field | Type | Required |
-| --- | --- | --- |
-| `phone_number` | string | yes |
-| `otp` | number | yes |
+| Field          | Type   | Required |
+| -------------- | ------ | -------- |
+| `phone_number` | string | yes      |
+| `otp`          | number | yes      |
 
 **Success (200):** OTP valid.
 
@@ -148,14 +218,14 @@ Verify OTP for forgot-password (standalone OTP module). Deletes OTP record on su
 
 Set a new password after forgot-password OTP was verified in the UI.
 
-**Auth:** Public  
+**Auth:** Public
 
 **Body:**
 
-| Field | Type | Required |
-| --- | --- | --- |
-| `phone_number` | string | yes |
-| `password` | string | yes | 6–15 chars |
+| Field          | Type   | Required |
+| -------------- | ------ | -------- | ---------- |
+| `phone_number` | string | yes      |
+| `password`     | string | yes      | 6–15 chars |
 
 **Success (200):** Password updated; user should log in again.
 
@@ -167,13 +237,13 @@ Set a new password after forgot-password OTP was verified in the UI.
 
 Issue new access and refresh tokens.
 
-**Auth:** Public  
+**Auth:** Public
 
 **Body:**
 
-| Field | Type | Required |
-| --- | --- | --- |
-| `refresh_token` | string | yes |
+| Field           | Type   | Required |
+| --------------- | ------ | -------- |
+| `refresh_token` | string | yes      |
 
 **Success (200):** `data` with `access_token` and `refresh_token`.
 
@@ -183,7 +253,7 @@ Issue new access and refresh tokens.
 
 Current authenticated user.
 
-**Auth:** Required (`Authorization`)  
+**Auth:** Required (`Authorization`)
 
 **Success (200):** `data` user object (password omitted).
 
@@ -195,7 +265,7 @@ Current authenticated user.
 
 Log out (server-side session/cookie cleanup as implemented).
 
-**Auth:** Public (per route definition)  
+**Auth:** Public (per route definition)
 
 **Success (200):** Logged out.
 
@@ -203,13 +273,13 @@ Log out (server-side session/cookie cleanup as implemented).
 
 ## Deferred (not used in student auth v1)
 
-| Method | Path | Notes |
-| --- | --- | --- |
-| POST | `/user/auth/google` | Google sign-in |
-| POST | `/user/auth/google/register` | Complete Google registration |
-| GET | `/user/auth/google-config` | OAuth client IDs |
-| PATCH | `/user/change-password` | Logged-in password change |
-| PATCH | `/user/self` | Profile update |
+| Method | Path                         | Notes                        |
+| ------ | ---------------------------- | ---------------------------- |
+| POST   | `/user/auth/google`          | Google sign-in               |
+| POST   | `/user/auth/google/register` | Complete Google registration |
+| GET    | `/user/auth/google-config`   | OAuth client IDs             |
+| PATCH  | `/user/change-password`      | Logged-in password change    |
+| PATCH  | `/user/self`                 | Profile update               |
 
 ---
 
