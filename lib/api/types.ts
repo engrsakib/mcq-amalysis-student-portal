@@ -192,3 +192,25 @@ export type ExamSessionPayload = {
   questions: ExamQuestionPublic[];
   isPracticeSession: boolean;
 };
+
+export type PersonalGrowthTimePoint = {
+  date: string;
+  avgScore: number;
+  attempts: number;
+  avgCorrectRate: number;
+  avgTotalScore: number;
+};
+
+export type PersonalGrowthSummary = {
+  averageScore: number;
+  totalAttempts: number;
+  averageCorrectRate: number;
+  professionalGrade: number;
+};
+
+export type PersonalGrowthPayload = {
+  timeSeries: PersonalGrowthTimePoint[];
+  summary: PersonalGrowthSummary;
+};
+
+export type PersonalGrowthRange = "last30";

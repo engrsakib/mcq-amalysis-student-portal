@@ -412,6 +412,51 @@ Update the authenticated user's own profile (Settings page).
 
 ---
 
+### GET `/user/personal-growth`
+
+Daily performance time series and summary for the signed-in user.
+
+**Auth:** Required (`Authorization`)
+
+**Query:**
+
+| Param   | Type   | Default | Notes                          |
+| ------- | ------ | ------- | ------------------------------ |
+| `range` | string | —       | Dashboard uses `last30`        |
+
+**Success (200):**
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Personal growth retrieved successfully",
+  "data": {
+    "timeSeries": [
+      {
+        "date": "2026-09-18",
+        "avgScore": 0.44,
+        "attempts": 8,
+        "avgCorrectRate": 0.0388,
+        "avgTotalScore": 77.5
+      }
+    ],
+    "summary": {
+      "averageScore": 0.72,
+      "totalAttempts": 15,
+      "averageCorrectRate": 0.0573,
+      "professionalGrade": 1
+    }
+  }
+}
+```
+
+**Errors:** 401 unauthenticated.
+
+**Client:** Dashboard **Personal growth** card calls `range=last30`, sorts `timeSeries` by `date`, and charts the **last 3** days (`attempts` bars + `avgTotalScore` line). KPI row uses aggregates from those 3 days; `professionalGrade` comes from API `summary`.
+
+---
+
 ## Exams (student dashboard)
 
 ### GET `/exam/upcoming`

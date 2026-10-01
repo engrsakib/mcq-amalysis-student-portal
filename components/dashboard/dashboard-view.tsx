@@ -1,7 +1,7 @@
 "use client";
 
-import { ExamsTakenChart } from "@/components/dashboard/charts/exams-taken-chart";
 import { PageHeader } from "@/components/dashboard/page-header";
+import { PersonalGrowthCard } from "@/components/dashboard/personal-growth-card";
 import { ExamBriefingModal } from "@/components/dashboard/exam-briefing-modal";
 import { LiveExamsCard } from "@/components/dashboard/live-exams-card";
 import { PreviousExamsCard } from "@/components/dashboard/previous-exams-card";
@@ -11,9 +11,9 @@ import { ResultsTable } from "@/components/dashboard/results-table";
 import { StackedResultBars } from "@/components/dashboard/stacked-result-bars";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { UpcomingExamsCard } from "@/components/dashboard/upcoming-exams-card";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExamBriefingProvider } from "@/hooks/use-exam-briefing";
 import { LiveExamsProvider } from "@/hooks/use-live-exams";
+import { PersonalGrowthProvider } from "@/hooks/use-personal-growth";
 import { PreviousExamsProvider } from "@/hooks/use-previous-exams";
 import { SubjectiveModelTestsProvider } from "@/hooks/use-subjective-model-tests";
 import {
@@ -51,29 +51,7 @@ function DashboardContent({ data, onMenuClick }: DashboardViewProps) {
       </div>
 
       <div className="grid min-w-0 gap-4 lg:grid-cols-2">
-        <Card className="min-w-0 overflow-hidden rounded-2xl border-border/60 bg-card shadow-sm ring-0">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-base font-semibold text-ink">
-              Exams taken
-            </CardTitle>
-            <span className="rounded-lg border border-line px-2 py-1 text-xs text-muted-foreground">
-              Monthly
-            </span>
-          </CardHeader>
-          <CardContent>
-            <ExamsTakenChart data={data.examsTakenSeries} />
-            <div className="mt-3 flex flex-wrap gap-4 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1.5">
-                <span className="size-2 rounded-sm bg-primary/25" />
-                Active exams
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="size-2 rounded-full bg-primary" />
-                Exam attempts
-              </span>
-            </div>
-          </CardContent>
-        </Card>
+        <PersonalGrowthCard />
         <StackedResultBars rows={data.subjectResults} />
       </div>
 
@@ -91,17 +69,19 @@ function DashboardContent({ data, onMenuClick }: DashboardViewProps) {
 
 export function DashboardView(props: DashboardViewProps) {
   return (
-    <ExamBriefingProvider>
-      <UpcomingExamsProvider>
-        <PreviousExamsProvider>
-          <SubjectiveModelTestsProvider>
-            <LiveExamsProvider>
-              <DashboardContent {...props} />
-              <ExamBriefingModal />
-            </LiveExamsProvider>
-          </SubjectiveModelTestsProvider>
-        </PreviousExamsProvider>
-      </UpcomingExamsProvider>
-    </ExamBriefingProvider>
+    <PersonalGrowthProvider>
+      <ExamBriefingProvider>
+        <UpcomingExamsProvider>
+          <PreviousExamsProvider>
+            <SubjectiveModelTestsProvider>
+              <LiveExamsProvider>
+                <DashboardContent {...props} />
+                <ExamBriefingModal />
+              </LiveExamsProvider>
+            </SubjectiveModelTestsProvider>
+          </PreviousExamsProvider>
+        </UpcomingExamsProvider>
+      </ExamBriefingProvider>
+    </PersonalGrowthProvider>
   );
 }
