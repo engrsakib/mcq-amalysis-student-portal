@@ -1,6 +1,10 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
+import { useExamBriefing } from "@/hooks/use-exam-briefing";
 import { formatExamDateTime } from "@/lib/datetime/format-exam";
 import type { UpcomingExam, UserExam } from "@/lib/api/types";
+import type { ExamBriefingSource } from "@/lib/exam/briefing-mode";
 import { cn } from "@/lib/utils";
 
 type ExamListSlideProps =
@@ -18,8 +22,12 @@ type ExamListSlideProps =
     };
 
 export function ExamListSlide(props: ExamListSlideProps) {
+  const { openBriefing } = useExamBriefing();
   const exam = props.exam;
   const when = formatExamDateTime(exam.exam_date_time);
+  const source: ExamBriefingSource = props.mode;
+
+  const open = () => openBriefing(exam, source);
 
   if (props.mode === "live") {
     return (
@@ -28,6 +36,7 @@ export function ExamListSlide(props: ExamListSlideProps) {
         <Button
           type="button"
           title="Start exam"
+          onClick={open}
           className="mt-auto h-auto min-h-10 w-full shrink-0 bg-primary px-3 py-2.5 text-xs leading-snug whitespace-normal hover:bg-primary-hover sm:text-sm"
         >
           Start
@@ -47,6 +56,7 @@ export function ExamListSlide(props: ExamListSlideProps) {
           type="button"
           disabled={!canStart}
           title={canStart ? "Start exam" : buttonLabel}
+          onClick={canStart ? open : undefined}
           className={cn(
             "mt-auto h-auto min-h-10 w-full shrink-0 px-3 py-2.5 text-xs leading-snug whitespace-normal sm:text-sm",
             canStart
@@ -71,6 +81,7 @@ export function ExamListSlide(props: ExamListSlideProps) {
         type="button"
         variant="outline"
         title="Practice this exam"
+        onClick={open}
         className="mt-auto h-auto min-h-10 w-full shrink-0 border-primary/30 bg-card px-3 py-2.5 text-xs leading-snug whitespace-normal text-primary hover:bg-primary-soft sm:text-sm"
       >
         Practice

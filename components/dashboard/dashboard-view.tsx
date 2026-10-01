@@ -2,6 +2,7 @@
 
 import { ExamsTakenChart } from "@/components/dashboard/charts/exams-taken-chart";
 import { PageHeader } from "@/components/dashboard/page-header";
+import { ExamBriefingModal } from "@/components/dashboard/exam-briefing-modal";
 import { LiveExamsCard } from "@/components/dashboard/live-exams-card";
 import { PreviousExamsCard } from "@/components/dashboard/previous-exams-card";
 import { useProfileDisplay } from "@/components/dashboard/user-summary";
@@ -10,6 +11,7 @@ import { StackedResultBars } from "@/components/dashboard/stacked-result-bars";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { UpcomingExamsCard } from "@/components/dashboard/upcoming-exams-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ExamBriefingProvider } from "@/hooks/use-exam-briefing";
 import { LiveExamsProvider } from "@/hooks/use-live-exams";
 import { PreviousExamsProvider } from "@/hooks/use-previous-exams";
 import {
@@ -87,12 +89,15 @@ function DashboardContent({ data, onMenuClick }: DashboardViewProps) {
 
 export function DashboardView(props: DashboardViewProps) {
   return (
-    <UpcomingExamsProvider>
-      <PreviousExamsProvider>
-        <LiveExamsProvider>
-          <DashboardContent {...props} />
-        </LiveExamsProvider>
-      </PreviousExamsProvider>
-    </UpcomingExamsProvider>
+    <ExamBriefingProvider>
+      <UpcomingExamsProvider>
+        <PreviousExamsProvider>
+          <LiveExamsProvider>
+            <DashboardContent {...props} />
+            <ExamBriefingModal />
+          </LiveExamsProvider>
+        </PreviousExamsProvider>
+      </UpcomingExamsProvider>
+    </ExamBriefingProvider>
   );
 }
