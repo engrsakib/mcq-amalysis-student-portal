@@ -51,38 +51,37 @@ function DashboardContent({ data, onMenuClick }: DashboardViewProps) {
       </div>
 
       <div className="grid min-w-0 gap-4 lg:grid-cols-2">
-        <div className="flex min-w-0 flex-col gap-4">
-          <Card className="min-w-0 overflow-hidden rounded-2xl border-border/60 bg-card shadow-sm ring-0">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-base font-semibold text-ink">
-                Exams taken
-              </CardTitle>
-              <span className="rounded-lg border border-line px-2 py-1 text-xs text-muted-foreground">
-                Monthly
+        <Card className="min-w-0 overflow-hidden rounded-2xl border-border/60 bg-card shadow-sm ring-0">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-base font-semibold text-ink">
+              Exams taken
+            </CardTitle>
+            <span className="rounded-lg border border-line px-2 py-1 text-xs text-muted-foreground">
+              Monthly
+            </span>
+          </CardHeader>
+          <CardContent>
+            <ExamsTakenChart data={data.examsTakenSeries} />
+            <div className="mt-3 flex flex-wrap gap-4 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <span className="size-2 rounded-sm bg-primary/25" />
+                Active exams
               </span>
-            </CardHeader>
-            <CardContent>
-              <ExamsTakenChart data={data.examsTakenSeries} />
-              <div className="mt-3 flex flex-wrap gap-4 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1.5">
-                  <span className="size-2 rounded-sm bg-primary/25" />
-                  Active exams
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="size-2 rounded-full bg-primary" />
-                  Exam attempts
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-          <LiveExamsCard />
-          <UpcomingExamsCard />
-        </div>
-        <div className="flex min-w-0 flex-col gap-4">
-          <StackedResultBars rows={data.subjectResults} />
-          <SubjectiveModelTestsCard />
-          <PreviousExamsCard />
-        </div>
+              <span className="flex items-center gap-1.5">
+                <span className="size-2 rounded-full bg-primary" />
+                Exam attempts
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+        <StackedResultBars rows={data.subjectResults} />
+      </div>
+
+      <div className="grid min-w-0 gap-4 lg:grid-cols-2">
+        <LiveExamsCard />
+        <PreviousExamsCard />
+        <UpcomingExamsCard />
+        <SubjectiveModelTestsCard />
       </div>
 
       <ResultsTable rows={data.recentResults} />
