@@ -37,8 +37,8 @@ export function ExamSessionView({
   }, []);
 
   return (
-    <div className="mx-auto flex h-[calc(100dvh-7rem)] max-h-[calc(100dvh-7rem)] w-full min-w-0 max-w-3xl flex-col overflow-hidden lg:h-[calc(100dvh-3rem)] lg:max-h-[calc(100dvh-3rem)]">
-      <div className="min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-y-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <>
+      <div className="mx-auto w-full min-w-0 max-w-3xl pb-28">
         <header className="space-y-2 pb-4">
           <Link
             href="/"
@@ -62,7 +62,7 @@ export function ExamSessionView({
           </h1>
         </header>
 
-        <div className="space-y-4 pb-4">
+        <div className="space-y-4">
           {orderedQuestions.map((question, index) => (
             <ExamQuestionCard
               key={question.questionId}
@@ -83,6 +83,6 @@ export function ExamSessionView({
         timerEnabled={timerEnabled}
         onSubmit={handleSubmit}
       />
-    </div>
+    </>
   );
 }

@@ -21,10 +21,10 @@ export function AppShell({ children }: AppShellProps) {
   const closeMobileNav = useCallback(() => setMobileNavOpen(false), []);
 
   return (
-    <div className="flex min-h-svh w-full bg-page">
+    <div className="flex h-svh max-h-svh w-full overflow-hidden bg-page">
       <TokenRefreshGate />
       <DashboardSidebar />
-      <div className="flex min-w-0 flex-1 flex-col lg:ml-[240px]">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col lg:ml-[240px]">
         <div className="flex items-center justify-between border-b border-line bg-card px-4 py-3 lg:hidden">
           <button
             type="button"
@@ -51,7 +51,9 @@ export function AppShell({ children }: AppShellProps) {
             {initials}
           </div>
         </div>
-        <main className="flex-1 overflow-x-hidden p-4 sm:p-6">{children}</main>
+        <main className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto overscroll-y-contain touch-pan-y p-4 sm:p-6">
+          {children}
+        </main>
       </div>
       <MobileNavSheet
         open={mobileNavOpen}
