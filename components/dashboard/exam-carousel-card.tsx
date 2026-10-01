@@ -15,6 +15,7 @@ type ExamCarouselCardProps<T extends { _id: string }> = {
   error: string | null;
   exams: T[];
   emptyMessage: string;
+  emptyContent?: React.ReactNode;
   renderSlide: (exam: T) => React.ReactNode;
   autoSlideMs?: number;
 };
@@ -27,6 +28,7 @@ export function ExamCarouselCard<T extends { _id: string }>({
   error,
   exams,
   emptyMessage,
+  emptyContent,
   renderSlide,
   autoSlideMs = DEFAULT_AUTO_SLIDE_MS,
 }: ExamCarouselCardProps<T>) {
@@ -117,7 +119,7 @@ export function ExamCarouselCard<T extends { _id: string }>({
       </CardHeader>
       <CardContent className="min-w-0">
         {loading ? (
-          <div className="h-[200px] animate-pulse rounded-xl bg-primary-soft/40 sm:h-[220px]" />
+          <div className="h-[220px] animate-pulse rounded-xl bg-primary-soft/40" />
         ) : null}
         {error ? (
           <Alert variant="destructive">
@@ -125,16 +127,18 @@ export function ExamCarouselCard<T extends { _id: string }>({
           </Alert>
         ) : null}
         {!loading && !error && exams.length === 0 ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">
-            {emptyMessage}
-          </p>
+          emptyContent ?? (
+            <p className="py-8 text-center text-sm text-muted-foreground">
+              {emptyMessage}
+            </p>
+          )
         ) : null}
 
         {!loading && !error && exams.length > 0 ? (
           <div className="min-w-0">
             <div
               ref={scrollRef}
-              className="flex w-full touch-pan-x snap-x snap-mandatory overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              className="flex w-full touch-pan-x snap-x snap-mandatory overflow-x-auto scroll-smooth px-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
               onPointerDown={() => setPaused(true)}
               onPointerUp={() => setPaused(false)}
               onPointerCancel={() => setPaused(false)}
@@ -159,8 +163,10 @@ export function ExamCarouselCard<T extends { _id: string }>({
                     aria-label={`Go to slide ${i + 1}`}
                     aria-current={i === activeIndex ? "true" : undefined}
                     className={cn(
-                      "size-2 rounded-full transition-colors",
-                      i === activeIndex ? "bg-primary" : "bg-primary-soft"
+                      "rounded-full transition-colors",
+                      i === activeIndex
+                        ? "size-2.5 bg-primary"
+                        : "size-2 bg-primary-soft"
                     )}
                     onClick={() => scrollToIndex(i)}
                   />
