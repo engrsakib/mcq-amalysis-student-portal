@@ -24,7 +24,7 @@ function DashboardContent({ data, onMenuClick }: DashboardViewProps) {
     nearestExamDateLabel ?? (examsLoading ? "…" : data.examDate);
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
+    <div className="mx-auto w-full min-w-0 max-w-6xl space-y-6">
       <PageHeader
         studentName={profileLoading ? "Student" : name}
         examDate={examDate}
@@ -39,9 +39,9 @@ function DashboardContent({ data, onMenuClick }: DashboardViewProps) {
         ))}
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <div className="flex flex-col gap-4">
-          <Card className="rounded-2xl border-border/60 bg-card shadow-sm ring-0">
+      <div className="grid min-w-0 gap-4 lg:grid-cols-2">
+        <div className="flex min-w-0 flex-col gap-4">
+          <Card className="min-w-0 overflow-hidden rounded-2xl border-border/60 bg-card shadow-sm ring-0">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-base font-semibold text-ink">
                 Exams taken
