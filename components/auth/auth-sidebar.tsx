@@ -3,7 +3,7 @@ import { AuthCard } from "@/components/auth/auth-card";
 
 export function AuthSidebar() {
   return (
-    <div className="flex min-h-0 w-full flex-col items-center bg-card px-4 py-8 lg:min-h-svh lg:px-6 lg:py-8">
+    <div className="flex min-h-svh w-full flex-col items-center bg-card px-4 py-8 lg:min-h-svh lg:px-6 lg:py-8">
       <div className="mb-5 w-full max-w-md shrink-0">
         <Image
           src="/logo.png"

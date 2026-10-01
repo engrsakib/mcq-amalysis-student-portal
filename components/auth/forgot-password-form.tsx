@@ -13,6 +13,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthIconInput } from "@/components/auth/auth-icon-input";
+import {
+  digitsOnly,
+  isValidPhone,
+  PHONE_DIGIT_COUNT,
+  PHONE_LENGTH_ERROR,
+} from "@/lib/auth/phone";
 
 type ForgotStep = 1 | 2 | 3;
 
@@ -58,8 +64,8 @@ export function ForgotPasswordForm({
     e.preventDefault();
     setError(null);
     setMessage(null);
-    if (!phone) {
-      setError("Enter your phone number.");
+    if (!isValidPhone(phone)) {
+      setError(PHONE_LENGTH_ERROR);
       return;
     }
 
@@ -182,7 +188,8 @@ export function ForgotPasswordForm({
           autoComplete="tel"
           placeholder="Phone number"
           value={phone}
-          onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+          onChange={(e) => setPhone(digitsOnly(e.target.value))}
+          maxLength={PHONE_DIGIT_COUNT}
           required
         />
 

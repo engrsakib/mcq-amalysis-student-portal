@@ -8,6 +8,12 @@ import { registerUser } from "@/lib/api/auth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { AuthIconInput } from "@/components/auth/auth-icon-input";
+import {
+  digitsOnly,
+  isValidPhone,
+  PHONE_DIGIT_COUNT,
+  PHONE_LENGTH_ERROR,
+} from "@/lib/auth/phone";
 
 type RegisterFormProps = {
   onSwitchToLogin: () => void;
@@ -37,6 +43,10 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
     }
     if (name.trim().length < 3) {
       setError("Name must be at least 3 characters.");
+      return;
+    }
+    if (!isValidPhone(phone)) {
+      setError(PHONE_LENGTH_ERROR);
       return;
     }
 
@@ -81,7 +91,8 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
         inputMode="numeric"
         placeholder="Phone number"
         value={phone}
-        onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+        onChange={(e) => setPhone(digitsOnly(e.target.value))}
+        maxLength={PHONE_DIGIT_COUNT}
         required
       />
       <AuthIconInput

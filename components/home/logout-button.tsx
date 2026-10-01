@@ -3,8 +3,13 @@
 import { usePathname, useRouter } from "next/navigation";
 import { clearAuthCookies } from "@/lib/auth/cookies";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-export function LogoutButton() {
+type LogoutButtonProps = {
+  className?: string;
+};
+
+export function LogoutButton({ className }: LogoutButtonProps) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -15,7 +20,11 @@ export function LogoutButton() {
   }
 
   return (
-    <Button variant="outline" onClick={handleLogout}>
+    <Button
+      variant="outline"
+      className={cn("h-11", className)}
+      onClick={handleLogout}
+    >
       Log out
     </Button>
   );

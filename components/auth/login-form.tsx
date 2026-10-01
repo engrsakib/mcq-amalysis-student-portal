@@ -12,6 +12,12 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { AuthIconInput } from "@/components/auth/auth-icon-input";
+import {
+  digitsOnly,
+  isValidPhone,
+  PHONE_DIGIT_COUNT,
+  PHONE_LENGTH_ERROR,
+} from "@/lib/auth/phone";
 
 type LoginFormProps = {
   onSwitchToRegister: () => void;
@@ -36,6 +42,12 @@ export function LoginForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+
+    if (!isValidPhone(phone)) {
+      setError(PHONE_LENGTH_ERROR);
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -69,7 +81,8 @@ export function LoginForm({
         autoComplete="tel"
         placeholder="Phone number"
         value={phone}
-        onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+        onChange={(e) => setPhone(digitsOnly(e.target.value))}
+        maxLength={PHONE_DIGIT_COUNT}
         required
       />
 

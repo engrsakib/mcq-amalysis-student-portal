@@ -10,6 +10,12 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  digitsOnly,
+  isValidPhone,
+  PHONE_DIGIT_COUNT,
+  PHONE_LENGTH_ERROR,
+} from "@/lib/auth/phone";
 
 export function VerifyForm() {
   const router = useRouter();
@@ -30,7 +36,11 @@ export function VerifyForm() {
     setMessage(null);
 
     const otpNumber = Number(otp.replace(/\D/g, ""));
-    if (!phone || otp.replace(/\D/g, "").length !== 6) {
+    if (!isValidPhone(phone)) {
+      setError(PHONE_LENGTH_ERROR);
+      return;
+    }
+    if (otp.replace(/\D/g, "").length !== 6) {
       setError("Enter your phone number and 6-digit OTP.");
       return;
     }
@@ -56,8 +66,8 @@ export function VerifyForm() {
   }
 
   async function handleResend() {
-    if (!phone) {
-      setError("Enter your phone number first.");
+    if (!isValidPhone(phone)) {
+      setError(PHONE_LENGTH_ERROR);
       return;
     }
     setError(null);
@@ -95,7 +105,9 @@ export function VerifyForm() {
           id="verify-phone"
           className="h-11 bg-primary-soft/50"
           value={phone}
-          onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+          onChange={(e) => setPhone(digitsOnly(e.target.value))}
+          inputMode="numeric"
+          maxLength={PHONE_DIGIT_COUNT}
           required
         />
       </div>
