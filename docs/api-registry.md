@@ -475,13 +475,14 @@ Published exams for the signed-in user. Live exams (`is_started` and not complet
 | `limit`      | integer | 10      | Dashboard Previous card fetches 10, shows 5 |
 | `searchTerm` | string  | —       | Optional                                   |
 | `isLive`     | boolean | —       | When `true`, only currently live exams     |
-| `subject`    | string  | —       | Optional subject filter (e.g. `Model Test`) |
+| `subject`        | string  | —       | Optional subject filter (e.g. `Model Test`) |
+| `excludeSubject` | string  | —       | Optional; omit exams with this exact subject (e.g. `Model Test`) |
 
 **Success (200):** Same paginated envelope as `/exam/upcoming`, with extra fields per item: `isSubmitted`, `isLive`.
 
 **Errors:** 401 unauthenticated.
 
-**Client:** Dashboard “Live” card uses `limit=20`, `isLive=true` (no subject filter); carousel UX; empty copy “No live exam is currently available.”; **Start** placeholder until exam route exists. Dashboard “Previous” card omits `isLive=true`, filters out live rows client-side, keeps completed or past `exam_date_time`, sorts newest first, max **5**; **Practice** button (placeholder until practice route exists).
+**Client:** Dashboard “Live” card uses `limit=20`, `isLive=true` (no subject filter); carousel UX; empty copy “No live exam is currently available.”; **Start** placeholder until exam route exists. Dashboard “Previous” card omits `isLive=true`, filters out live rows client-side, keeps completed or past `exam_date_time`, sorts newest first, max **5**; **Practice** button (placeholder until practice route exists). Dashboard “Subjective Model Test” card uses `page=1`, `limit=100`, empty `searchTerm`, `excludeSubject=Model Test`; client filters to previous-style rows (`filterPreviousExams`), carousel max **5**; empty copy “No subjective model tests.”; **Practice** slide (same as Previous).
 
 ---
 

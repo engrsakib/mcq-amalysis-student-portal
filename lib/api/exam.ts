@@ -25,10 +25,12 @@ export type GetUserExamsParams = {
   searchTerm?: string;
   isLive?: boolean;
   subject?: string;
+  excludeSubject?: string;
 };
 
 export function getUserExams(params: GetUserExamsParams = {}) {
-  const { page = 1, limit = 10, searchTerm, isLive, subject } = params;
+  const { page = 1, limit = 10, searchTerm, isLive, subject, excludeSubject } =
+    params;
   const query = new URLSearchParams({
     page: String(page),
     limit: String(limit),
@@ -41,6 +43,9 @@ export function getUserExams(params: GetUserExamsParams = {}) {
   }
   if (subject?.trim()) {
     query.set("subject", subject.trim());
+  }
+  if (excludeSubject?.trim()) {
+    query.set("excludeSubject", excludeSubject.trim());
   }
   return apiGetAuth<UserExamsPayload>(`/exam/user?${query.toString()}`);
 }

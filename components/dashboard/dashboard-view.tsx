@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/dashboard/page-header";
 import { ExamBriefingModal } from "@/components/dashboard/exam-briefing-modal";
 import { LiveExamsCard } from "@/components/dashboard/live-exams-card";
 import { PreviousExamsCard } from "@/components/dashboard/previous-exams-card";
+import { SubjectiveModelTestsCard } from "@/components/dashboard/subjective-model-tests-card";
 import { useProfileDisplay } from "@/components/dashboard/user-summary";
 import { ResultsTable } from "@/components/dashboard/results-table";
 import { StackedResultBars } from "@/components/dashboard/stacked-result-bars";
@@ -14,6 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExamBriefingProvider } from "@/hooks/use-exam-briefing";
 import { LiveExamsProvider } from "@/hooks/use-live-exams";
 import { PreviousExamsProvider } from "@/hooks/use-previous-exams";
+import { SubjectiveModelTestsProvider } from "@/hooks/use-subjective-model-tests";
 import {
   UpcomingExamsProvider,
   useUpcomingExams,
@@ -78,6 +80,7 @@ function DashboardContent({ data, onMenuClick }: DashboardViewProps) {
         </div>
         <div className="flex min-w-0 flex-col gap-4">
           <StackedResultBars rows={data.subjectResults} />
+          <SubjectiveModelTestsCard />
           <PreviousExamsCard />
         </div>
       </div>
@@ -92,10 +95,12 @@ export function DashboardView(props: DashboardViewProps) {
     <ExamBriefingProvider>
       <UpcomingExamsProvider>
         <PreviousExamsProvider>
-          <LiveExamsProvider>
-            <DashboardContent {...props} />
-            <ExamBriefingModal />
-          </LiveExamsProvider>
+          <SubjectiveModelTestsProvider>
+            <LiveExamsProvider>
+              <DashboardContent {...props} />
+              <ExamBriefingModal />
+            </LiveExamsProvider>
+          </SubjectiveModelTestsProvider>
         </PreviousExamsProvider>
       </UpcomingExamsProvider>
     </ExamBriefingProvider>
