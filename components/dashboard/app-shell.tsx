@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { MobileNavSheet } from "@/components/dashboard/mobile-nav-sheet";
+import { TokenRefreshGate } from "@/components/auth/token-refresh-gate";
 import { dashboardNavGroups } from "@/lib/dashboard/nav";
 
 type AppShellProps = {
@@ -27,6 +28,7 @@ export function AppShell({
 
   return (
     <div className="flex min-h-svh w-full bg-page">
+      <TokenRefreshGate />
       <DashboardSidebar
         studentName={studentName}
         studentEmail={studentEmail}

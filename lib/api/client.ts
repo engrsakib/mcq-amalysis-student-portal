@@ -17,12 +17,12 @@ export class ApiError extends Error {
   }
 }
 
-function joinUrl(base: string, path: string): string {
+export function joinUrl(base: string, path: string): string {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
   return `${base}${normalizedPath}`;
 }
 
-async function parseApiResponse<T>(res: Response): Promise<T> {
+export async function parseApiResponse<T>(res: Response): Promise<T> {
   let json: ApiResponse<T>;
   try {
     json = (await res.json()) as ApiResponse<T>;

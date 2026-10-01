@@ -38,7 +38,7 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:9001/api/v1
 - Every response matches server envelope: `{ success, message, statusCode, data }`.
 - On `success === false`, throw an error carrying `message` for UI `Alert`.
 - **Authorization:** send the raw JWT in the `Authorization` header (server does not strip a `Bearer` prefix).
-- **Refresh:** send refresh token in `x-refresh-token` when implementing token refresh.
+- **Refresh:** `POST /user/refresh-token` with `{ refresh_token }` when the access JWT is expired or a protected call returns 401. Persist the new token pair in cookies. Use `apiGetAuth` / `apiPostAuth` / `apiPatchAuth` for authenticated calls.
 - Store tokens in httpOnly cookies or secure client storage in a dedicated auth module—decide in the auth implementation task; document the choice in code comments there.
 
 ## Folder structure (auth)

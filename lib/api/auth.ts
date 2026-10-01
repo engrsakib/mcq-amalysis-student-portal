@@ -3,8 +3,10 @@ import type {
   AuthUser,
   ForgetPasswordRequest,
   LoginRequest,
+  RefreshTokenRequest,
   RegisterRequest,
   ResetPasswordRequest,
+  TokenPair,
   VerifyOtpRequest,
 } from "@/lib/api/types";
 
@@ -34,4 +36,8 @@ export function verifyForgetPasswordOtp(payload: VerifyOtpRequest) {
 
 export function resetUserPassword(payload: ResetPasswordRequest) {
   return apiPatch<null>("/user/reset-password", payload);
+}
+
+export function refreshUserTokens(payload: RefreshTokenRequest) {
+  return apiPost<TokenPair>("/user/refresh-token", payload);
 }

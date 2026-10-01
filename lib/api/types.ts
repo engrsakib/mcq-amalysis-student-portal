@@ -62,3 +62,12 @@ export type ResetPasswordRequest = {
   phone_number: string;
   password: string;
 };
+
+export type RefreshTokenRequest = {
+  refresh_token: string;
+};
+
+export type TokenPair = {
+  access_token: string;
+  refresh_token: string;
+};

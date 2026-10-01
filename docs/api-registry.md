@@ -268,7 +268,7 @@ Set a new password after forgot-password OTP was verified in the UI.
 
 ### POST `/user/refresh-token`
 
-Issue new access and refresh tokens.
+Issues new access and refresh tokens from a valid refresh token. Used when the access JWT `exp` has passed (or a protected call returns 401). Body is `{ refresh_token }` (not `x-refresh-token`).
 
 **Auth:** Public
 
@@ -278,7 +278,58 @@ Issue new access and refresh tokens.
 | --------------- | ------ | -------- |
 | `refresh_token` | string | yes      |
 
-**Success (200):** `data` with `access_token` and `refresh_token`.
+**Example body:**
+
+```json
+{
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+**Success (200):**
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Token refreshed",
+  "data": {
+    "access_token": "string",
+    "refresh_token": "string"
+  }
+}
+```
+
+**400 example:**
+
+```json
+{
+  "statusCode": 400,
+  "success": false,
+  "message": "Validation Error",
+  "errorMessages": [
+    { "path": "refresh_token", "message": "Refresh token must be provided" }
+  ]
+}
+```
+
+**401 example:**
+
+```json
+{
+  "statusCode": 401,
+  "success": false,
+  "message": "Unauthenticated access. Please login to access resource(s)",
+  "errorMessages": [
+    {
+      "path": "",
+      "message": "Unauthenticated access. Please login to access resource(s)"
+    }
+  ]
+}
+```
+
+**Client behavior:** Decode the access JWT `exp`. If expired (or a `*Auth` request returns 401), call this endpoint, replace both cookies, and retry once. On 400/401, clear cookies and send the user to `/login`.
 
 ---
 

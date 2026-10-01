@@ -9,8 +9,11 @@ function isPublicPath(pathname: string): boolean {
   );
 }
 
-function hasAccessToken(request: NextRequest): boolean {
-  return Boolean(request.cookies.get("access_token")?.value);
+function hasSession(request: NextRequest): boolean {
+  return Boolean(
+    request.cookies.get("access_token")?.value ||
+      request.cookies.get("refresh_token")?.value
+  );
 }
 
 export function middleware(request: NextRequest) {
@@ -24,7 +27,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const authenticated = hasAccessToken(request);
+  const authenticated = hasSession(request);
 
   if (pathname === "/login" && authenticated) {
     const redirect = request.nextUrl.searchParams.get("redirect");
