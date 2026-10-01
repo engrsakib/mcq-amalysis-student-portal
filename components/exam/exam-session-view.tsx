@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { ExamQuestionCard } from "@/components/exam/exam-question-card";
@@ -16,8 +16,12 @@ export function ExamSessionView({
   questions,
   isPracticeSession,
 }: ExamSessionViewProps) {
-  const [orderedQuestions] = useState(() => shuffleExamQuestions(questions));
+  const [orderedQuestions, setOrderedQuestions] = useState(questions);
   const [answers, setAnswers] = useState<Record<number, number>>({});
+
+  useEffect(() => {
+    setOrderedQuestions(shuffleExamQuestions(questions));
+  }, [questions]);
 
   const timerEnabled = !isPracticeSession;
 
@@ -33,42 +37,44 @@ export function ExamSessionView({
   }, []);
 
   return (
-    <div className="mx-auto flex min-h-[calc(100dvh-7rem)] w-full min-w-0 max-w-3xl flex-col lg:min-h-[calc(100dvh-3rem)]">
-      <header className="shrink-0 space-y-2 pb-4">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-primary"
-        >
-          <ArrowLeft className="size-4" aria-hidden />
-          Dashboard
-        </Link>
-        <div className="flex flex-wrap items-center gap-2">
-          {isPracticeSession || exam.is_practice_mode ? (
-            <span className="rounded-lg bg-primary-soft px-2.5 py-1 text-xs font-semibold text-primary">
-              Practice
+    <div className="mx-auto flex h-[calc(100dvh-7rem)] max-h-[calc(100dvh-7rem)] w-full min-w-0 max-w-3xl flex-col overflow-hidden lg:h-[calc(100dvh-3rem)] lg:max-h-[calc(100dvh-3rem)]">
+      <div className="min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-y-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <header className="space-y-2 pb-4">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-primary"
+          >
+            <ArrowLeft className="size-4" aria-hidden />
+            Dashboard
+          </Link>
+          <div className="flex flex-wrap items-center gap-2">
+            {isPracticeSession || exam.is_practice_mode ? (
+              <span className="rounded-lg bg-primary-soft px-2.5 py-1 text-xs font-semibold text-primary">
+                Practice
+              </span>
+            ) : null}
+            <span className="text-xs text-muted-foreground">
+              {formatExamNumber(exam.exam_number)} · {exam.subject}
             </span>
-          ) : null}
-          <span className="text-xs text-muted-foreground">
-            {formatExamNumber(exam.exam_number)} · {exam.subject}
-          </span>
-        </div>
-        <h1 className="text-lg font-semibold leading-snug text-ink sm:text-xl">
-          {exam.exam_name}
-        </h1>
-      </header>
+          </div>
+          <h1 className="text-lg font-semibold leading-snug text-ink sm:text-xl">
+            {exam.exam_name}
+          </h1>
+        </header>
 
-      <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {orderedQuestions.map((question, index) => (
-          <ExamQuestionCard
-            key={question.questionId}
-            index={index}
-            question={question}
-            selectedOption={answers[question.questionId] ?? null}
-            onSelectOption={(optionIndex) =>
-              handleSelect(question.questionId, optionIndex)
-            }
-          />
-        ))}
+        <div className="space-y-4 pb-4">
+          {orderedQuestions.map((question, index) => (
+            <ExamQuestionCard
+              key={question.questionId}
+              index={index}
+              question={question}
+              selectedOption={answers[question.questionId] ?? null}
+              onSelectOption={(optionIndex) =>
+                handleSelect(question.questionId, optionIndex)
+              }
+            />
+          ))}
+        </div>
       </div>
 
       <ExamStickyFooter

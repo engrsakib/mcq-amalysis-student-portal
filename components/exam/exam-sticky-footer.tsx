@@ -17,7 +17,7 @@ export function ExamStickyFooter({
   onSubmit,
 }: ExamStickyFooterProps) {
   return (
-    <footer className="sticky bottom-0 z-10 shrink-0 border-t border-line/60 bg-card/95 px-4 py-3 backdrop-blur-sm sm:px-0">
+    <footer className="z-10 shrink-0 border-t border-line/60 bg-card/95 px-4 py-3 backdrop-blur-sm sm:px-0">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-4">
         <ExamTimer
           examDateTime={examDateTime}

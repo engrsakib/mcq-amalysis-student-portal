@@ -27,9 +27,7 @@ export function ExamTimer({
   const endAt =
     new Date(examDateTime).getTime() + durationMinutes * 60 * 1000;
 
-  const [remainingMs, setRemainingMs] = useState(() =>
-    enabled ? Math.max(0, endAt - Date.now()) : 0
-  );
+  const [remainingMs, setRemainingMs] = useState<number | null>(null);
 
   useEffect(() => {
     if (!enabled) return;
@@ -53,7 +51,7 @@ export function ExamTimer({
     );
   }
 
-  const timesUp = remainingMs <= 0;
+  const timesUp = remainingMs !== null && remainingMs <= 0;
 
   return (
     <div className="min-w-0">
@@ -67,7 +65,11 @@ export function ExamTimer({
             : "font-mono text-lg font-semibold tabular-nums text-ink"
         }
       >
-        {timesUp ? "Time's up" : formatRemaining(remainingMs)}
+        {remainingMs === null
+          ? "--:--"
+          : timesUp
+            ? "Time's up"
+            : formatRemaining(remainingMs)}
       </p>
     </div>
   );
