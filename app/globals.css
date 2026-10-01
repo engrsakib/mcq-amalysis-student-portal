@@ -154,12 +154,13 @@
     background: var(--primary-pressed);
   }
 
-  /* Exam questions: wrap KaTeX instead of horizontal scroll */
+  /* Exam questions: wrap lines without breaking Bengali graphemes */
   .katex-wrap {
     max-width: 100%;
     overflow-x: hidden;
-    overflow-wrap: anywhere;
-    word-break: break-word;
+    overflow-wrap: break-word;
+    word-break: normal;
+    line-break: normal;
   }
 
   .katex-wrap .katex-display {
@@ -170,8 +171,7 @@
   }
 
   .katex-wrap .katex {
-    max-width: 100%;
-    white-space: normal;
+    font-family: inherit;
   }
 
   /* Mobile: hide scrollbar chrome; touch scroll unchanged */

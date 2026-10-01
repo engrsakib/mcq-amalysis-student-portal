@@ -32,11 +32,11 @@ export function ExamQuestionCard({
       </div>
 
       {title ? (
-        <p className="text-sm font-medium leading-snug text-ink">{title}</p>
+        <p className="text-base font-medium leading-relaxed text-ink">{title}</p>
       ) : null}
 
       {formula ? (
-        <div className="mt-2">
+        <div className="mt-2 min-w-0 overflow-x-hidden">
           <MathContent content={formula} displayMode />
         </div>
       ) : null}
@@ -61,7 +61,7 @@ export function ExamQuestionCard({
                 type="button"
                 onClick={() => onSelectOption(optionIndex)}
                 className={cn(
-                  "flex w-full items-start gap-3 rounded-lg border px-3 py-2.5 text-left text-sm transition-colors",
+                  "flex w-full items-start gap-3 rounded-lg border px-3 py-2.5 text-left text-base transition-colors",
                   selected
                     ? "border-primary bg-primary-soft/50 text-ink"
                     : "border-line/80 bg-page/40 text-ink hover:border-primary/30 hover:bg-primary-soft/20"
