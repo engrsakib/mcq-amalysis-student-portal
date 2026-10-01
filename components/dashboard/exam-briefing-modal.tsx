@@ -12,7 +12,10 @@ import { useEffect, useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { useExamBriefing } from "@/hooks/use-exam-briefing";
+import {
+  useExamBriefing,
+  type ExamBriefingState,
+} from "@/hooks/use-exam-briefing";
 import {
   getBriefingPrimaryLabel,
   getExamModeLabel,
@@ -23,7 +26,8 @@ import { formatExamNumber } from "@/lib/exam/format-exam-number";
 import { formatExamDateShort } from "@/lib/datetime/format-exam";
 import { cn } from "@/lib/utils";
 
-const CLOSE_MS = 280;
+/** Match Tailwind `duration-300` on overlay/panel transitions */
+const CLOSE_MS = 300;
 
 function BriefingMetric({
   icon: Icon,
@@ -48,40 +52,41 @@ function BriefingMetric({
 export function ExamBriefingModal() {
   const { briefing, closeBriefing } = useExamBriefing();
   const rulesId = useId();
-  const [mounted, setMounted] = useState(false);
+  const [panel, setPanel] = useState<ExamBriefingState | null>(null);
   const [visible, setVisible] = useState(false);
   const [rulesAccepted, setRulesAccepted] = useState(false);
 
-  const open = briefing != null;
-
   useEffect(() => {
-    if (open) {
+    if (briefing) {
+      setPanel(briefing);
       setRulesAccepted(false);
-      setMounted(true);
-      requestAnimationFrame(() => setVisible(true));
-      return;
+      const show = requestAnimationFrame(() => {
+        requestAnimationFrame(() => setVisible(true));
+      });
+      return () => cancelAnimationFrame(show);
     }
+
     setVisible(false);
-    const t = window.setTimeout(() => setMounted(false), CLOSE_MS);
-    return () => window.clearTimeout(t);
-  }, [open, briefing?.exam._id]);
+    const hide = window.setTimeout(() => setPanel(null), CLOSE_MS);
+    return () => window.clearTimeout(hide);
+  }, [briefing]);
 
   useEffect(() => {
-    if (!mounted) return;
+    if (!panel) return;
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") closeBriefing();
     }
     document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
+    document.documentElement.classList.add("modal-scroll-lock");
     return () => {
       document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
+      document.documentElement.classList.remove("modal-scroll-lock");
     };
-  }, [mounted, closeBriefing]);
+  }, [panel, closeBriefing]);
 
-  if (!mounted || !briefing) return null;
+  if (!panel) return null;
 
-  const { exam, source } = briefing;
+  const { exam, source } = panel;
   const primaryLabel = getBriefingPrimaryLabel(source);
   const scheduled = formatExamDateShort(exam.exam_date_time);
 
@@ -91,10 +96,14 @@ export function ExamBriefingModal() {
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-end justify-center sm:items-center sm:p-4"
+      className={cn(
+        "fixed inset-0 z-[60] flex items-end justify-center sm:items-center sm:p-4",
+        !visible && "pointer-events-none"
+      )}
       role="dialog"
       aria-modal
       aria-labelledby="exam-briefing-title"
+      aria-hidden={!visible}
     >
       <button
         type="button"
@@ -103,18 +112,19 @@ export function ExamBriefingModal() {
           visible ? "opacity-100" : "opacity-0"
         )}
         aria-label="Close exam briefing"
+        tabIndex={visible ? 0 : -1}
         onClick={closeBriefing}
       />
       <div
         className={cn(
-          "relative flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-2xl bg-card shadow-xl",
-          "transition-all duration-300 ease-out motion-reduce:transition-none sm:max-w-md sm:rounded-2xl",
+          "relative flex max-h-[min(92vh,640px)] w-full flex-col overflow-hidden rounded-t-2xl bg-card shadow-xl",
+          "transition-all duration-300 ease-out motion-reduce:transition-none sm:max-h-[92vh] sm:max-w-md sm:rounded-2xl",
           visible
             ? "translate-y-0 opacity-100 sm:scale-100"
             : "translate-y-6 opacity-0 sm:translate-y-0 sm:scale-[0.98]"
         )}
       >
-        <div className="overflow-y-auto overscroll-contain px-4 pb-4 pt-4 sm:px-6 sm:pb-6 sm:pt-5">
+        <header className="shrink-0 border-b border-line/50 px-4 pb-4 pt-4 sm:px-6 sm:pt-5">
           <div className="flex items-start justify-between gap-3">
             <span className="rounded-lg bg-primary-soft px-2.5 py-1 text-xs font-semibold text-primary">
               Exam briefing
@@ -138,8 +148,10 @@ export function ExamBriefingModal() {
           <p className="mt-1 text-sm text-muted-foreground">
             {formatExamNumber(exam.exam_number)} · {exam.subject}
           </p>
+        </header>
 
-          <div className="mt-5 rounded-xl bg-primary-soft/60 p-4">
+        <div className="scroll-area-brand flex-1 px-4 py-4 sm:px-6">
+          <div className="rounded-xl bg-primary-soft/60 p-4">
             <div className="grid grid-cols-3 gap-4">
               <BriefingMetric
                 icon={Star}
@@ -172,7 +184,7 @@ export function ExamBriefingModal() {
           </div>
 
           <h3 className="mt-6 text-base font-semibold text-ink">Exam Rules</h3>
-          <ul className="mt-3 space-y-2.5" id={rulesId}>
+          <ul className="mt-3 space-y-2.5 pb-1" id={rulesId}>
             {EXAM_BRIEFING_RULES.map((rule) => (
               <li
                 key={rule}
@@ -186,8 +198,10 @@ export function ExamBriefingModal() {
               </li>
             ))}
           </ul>
+        </div>
 
-          <div className="mt-6 flex items-start gap-2.5">
+        <footer className="shrink-0 border-t border-line/50 bg-card px-4 py-4 sm:px-6">
+          <div className="flex items-start gap-2.5">
             <Checkbox
               id="exam-rules-accept"
               checked={rulesAccepted}
@@ -202,7 +216,7 @@ export function ExamBriefingModal() {
             </Label>
           </div>
 
-          <div className="mt-5 flex gap-3">
+          <div className="mt-4 flex gap-3">
             <Button
               type="button"
               variant="outline"
@@ -220,7 +234,7 @@ export function ExamBriefingModal() {
               {primaryLabel}
             </Button>
           </div>
-        </div>
+        </footer>
       </div>
     </div>
   );
