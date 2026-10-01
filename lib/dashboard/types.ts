@@ -6,6 +6,10 @@ export type NavItem = {
   href: string;
   icon: LucideIcon;
   disabled?: boolean;
+  /** When set, item is active if pathname starts with this prefix */
+  activePathPrefix?: string;
+  /** When true, active only on exact pathname match (for href `/`) */
+  activeExact?: boolean;
 };
 
 export type NavGroup = {

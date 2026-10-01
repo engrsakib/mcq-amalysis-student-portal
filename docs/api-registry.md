@@ -485,6 +485,22 @@ Published exams for the signed-in user. Live exams (`is_started` and not complet
 
 ---
 
+### GET `/exam/user/{exam_number}`
+
+Single exam entry for the signed-in user, including full **`questions[]`** (MCQ options under each question’s `answer.options`). Times use Bangladesh offset (`+06:00`) where applicable.
+
+**Auth:** Required (`Authorization`)
+
+**Path:** `exam_number` — numeric public exam id (e.g. `9008190402216`), not Mongo `_id`.
+
+**Success (200):** `data` is one exam object: metadata (`exam_name`, `subject`, `exam_date_time`, `duration_minutes`, `total_marks`, flags) plus `questions[]` with `title`, optional `mathFormula` (LaTeX), `answerType`, `marks`, `image_url`, and `answer.options`. **`answer.correctAnswer` must not be sent to the browser** — strip server-side before rendering.
+
+**Errors:** 401 unauthenticated; 404 when exam not found for user.
+
+**Client:** Server Component on `/exam/[exam_number]` fetches via `getExamByNumberServer`; exam UI shuffles questions client-side; countdown from `exam_date_time` + `duration_minutes` unless practice (`is_started` and `is_completed` both true).
+
+---
+
 ### DELETE `/user/logout`
 
 Log out (server-side session/cookie cleanup as implemented).

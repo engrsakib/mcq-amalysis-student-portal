@@ -19,13 +19,14 @@ export const dashboardNavGroups: NavGroup[] = [
         label: "Dashboard",
         href: "/",
         icon: LayoutDashboard,
+        activeExact: true,
       },
       {
         id: "exams",
         label: "Exams",
-        href: "#",
+        href: "/",
         icon: ClipboardList,
-        disabled: true,
+        activePathPrefix: "/exam/",
       },
       {
         id: "practice",

@@ -9,6 +9,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useId, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -50,6 +51,7 @@ function BriefingMetric({
 }
 
 export function ExamBriefingModal() {
+  const router = useRouter();
   const { briefing, closeBriefing } = useExamBriefing();
   const rulesId = useId();
   const [panel, setPanel] = useState<ExamBriefingState | null>(null);
@@ -92,6 +94,7 @@ export function ExamBriefingModal() {
 
   function handleStart() {
     closeBriefing();
+    router.push(`/exam/${exam.exam_number}`);
   }
 
   return (
@@ -150,7 +153,7 @@ export function ExamBriefingModal() {
           </p>
         </header>
 
-        <div className="scroll-area-brand flex-1 px-4 py-4 sm:px-6">
+        <div className="scroll-area-brand min-h-0 flex-1 py-4 pl-4 pr-3 sm:pl-6 sm:pr-4">
           <div className="rounded-xl bg-primary-soft/60 p-4">
             <div className="grid grid-cols-3 gap-4">
               <BriefingMetric

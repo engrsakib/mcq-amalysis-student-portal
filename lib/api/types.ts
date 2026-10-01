@@ -134,3 +134,61 @@ export type UserExamsPayload = {
   meta: PaginatedMeta;
   data: UserExam[];
 };
+
+export type ExamQuestionAnswer = {
+  options: string[];
+  correctAnswer?: string;
+};
+
+export type ExamQuestion = {
+  _id: string;
+  id?: string;
+  questionId: number;
+  title: string;
+  type: string;
+  answerType: string;
+  marks: number;
+  image_url?: string;
+  mathFormula?: string;
+  answer: ExamQuestionAnswer;
+  options?: string[];
+  category_id?: string;
+  blanks?: unknown[];
+};
+
+export type ExamEntry = UpcomingExam & {
+  rank_notifications_sent?: boolean;
+  questions: ExamQuestion[];
+};
+
+export type ExamQuestionPublic = {
+  _id: string;
+  questionId: number;
+  title: string;
+  type: string;
+  answerType: string;
+  marks: number;
+  image_url?: string;
+  mathFormula?: string;
+  options: string[];
+};
+
+export type ExamSessionMeta = {
+  _id: string;
+  exam_number: number;
+  exam_name: string;
+  subject: string;
+  exam_date_time: string;
+  duration_minutes: number;
+  total_marks: number;
+  is_started: boolean;
+  is_completed: boolean;
+  is_practice_mode?: boolean;
+  negative_mark?: number;
+};
+
+export type ExamSessionPayload = {
+  exam: ExamSessionMeta;
+  questions: ExamQuestionPublic[];
+  isPracticeSession: boolean;
+};

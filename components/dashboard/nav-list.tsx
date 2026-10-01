@@ -32,9 +32,11 @@ export function NavList({
             {group.items.map((item) => {
               const active =
                 !item.disabled &&
-                (item.href === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(item.href));
+                (item.activePathPrefix
+                  ? pathname.startsWith(item.activePathPrefix)
+                  : item.activeExact || item.href === "/"
+                    ? pathname === item.href
+                    : pathname.startsWith(item.href));
               const Icon = item.icon;
               const delay = staggerAnimation ? itemIndex * 40 : 0;
               if (staggerAnimation) itemIndex += 1;

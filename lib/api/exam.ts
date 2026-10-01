@@ -44,3 +44,4 @@ export function getUserExams(params: GetUserExamsParams = {}) {
   }
   return apiGetAuth<UserExamsPayload>(`/exam/user?${query.toString()}`);
 }
+

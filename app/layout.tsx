@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import { baseUrl } from "@/lib/site";
 import { cn } from "@/lib/utils";
+import "katex/dist/katex.min.css";
 import "./globals.css";
 
 const poppins = Poppins({
