@@ -154,6 +154,26 @@
     background: var(--primary-pressed);
   }
 
+  /* Exam questions: wrap KaTeX instead of horizontal scroll */
+  .katex-wrap {
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .katex-wrap .katex-display {
+    margin: 0.25em 0;
+    overflow-x: hidden;
+    max-width: 100%;
+    text-align: left;
+  }
+
+  .katex-wrap .katex {
+    max-width: 100%;
+    white-space: normal;
+  }
+
   /* Mobile: hide scrollbar chrome; touch scroll unchanged */
   @media (max-width: 1023px) {
     .scrollbar-hidden-mobile {

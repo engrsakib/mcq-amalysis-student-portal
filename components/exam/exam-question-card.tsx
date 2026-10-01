@@ -21,7 +21,7 @@ export function ExamQuestionCard({
   const formula = question.mathFormula?.trim();
 
   return (
-    <article className="rounded-xl border border-line/80 bg-card p-4 shadow-sm">
+    <article className="min-w-0 rounded-xl border border-line/80 bg-card p-4 shadow-sm">
       <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
         <span className="rounded-lg bg-primary-soft px-2 py-0.5 text-xs font-semibold text-primary">
           Q{index + 1}
