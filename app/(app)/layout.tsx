@@ -1,15 +1,10 @@
 import { AppShell } from "@/components/dashboard/app-shell";
-import { dashboardMock } from "@/lib/dashboard/mock";
+import { UserProfileProvider } from "@/components/dashboard/user-profile-provider";
 
 export default function AppLayout({ children }: LayoutProps<"/">) {
-  const { student } = dashboardMock;
   return (
-    <AppShell
-      studentName={student.name}
-      studentEmail={student.email}
-      initials={student.initials}
-    >
-      {children}
-    </AppShell>
+    <UserProfileProvider>
+      <AppShell>{children}</AppShell>
+    </UserProfileProvider>
   );
 }

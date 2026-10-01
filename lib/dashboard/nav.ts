@@ -57,9 +57,8 @@ export const dashboardNavGroups: NavGroup[] = [
       {
         id: "settings",
         label: "Settings",
-        href: "#",
+        href: "/settings",
         icon: Settings,
-        disabled: true,
       },
       {
         id: "help",

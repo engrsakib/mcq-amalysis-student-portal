@@ -5,23 +5,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { MobileNavSheet } from "@/components/dashboard/mobile-nav-sheet";
+import { useProfileDisplay } from "@/components/dashboard/user-summary";
 import { TokenRefreshGate } from "@/components/auth/token-refresh-gate";
 import { dashboardNavGroups } from "@/lib/dashboard/nav";
 
 type AppShellProps = {
-  studentName: string;
-  studentEmail: string;
-  initials: string;
   children: React.ReactNode;
 };
 
-export function AppShell({
-  studentName,
-  studentEmail,
-  initials,
-  children,
-}: AppShellProps) {
+export function AppShell({ children }: AppShellProps) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const { initials } = useProfileDisplay();
 
   const openMobileNav = useCallback(() => setMobileNavOpen(true), []);
   const closeMobileNav = useCallback(() => setMobileNavOpen(false), []);
@@ -29,11 +23,7 @@ export function AppShell({
   return (
     <div className="flex min-h-svh w-full bg-page">
       <TokenRefreshGate />
-      <DashboardSidebar
-        studentName={studentName}
-        studentEmail={studentEmail}
-        initials={initials}
-      />
+      <DashboardSidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex items-center justify-between border-b border-line bg-card px-4 py-3 lg:hidden">
           <button
@@ -67,9 +57,6 @@ export function AppShell({
         open={mobileNavOpen}
         onClose={closeMobileNav}
         groups={dashboardNavGroups}
-        studentName={studentName}
-        studentEmail={studentEmail}
-        initials={initials}
       />
     </div>
   );

@@ -71,3 +71,25 @@ export type TokenPair = {
   access_token: string;
   refresh_token: string;
 };
+
+export type UserProfile = {
+  _id: string;
+  name: string;
+  phone_number: string;
+  fcmToken?: string;
+  image?: string;
+  is_Deleted?: boolean;
+  email?: string;
+  role: string;
+  status?: string;
+  last_login_at?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type UpdateProfileRequest = {
+  name?: string;
+  image?: string;
+  phone_number?: string;
+  email?: string;
+};

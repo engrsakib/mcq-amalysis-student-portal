@@ -1,4 +1,7 @@
+"use client";
+
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { useProfileDisplay } from "@/components/dashboard/user-summary";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { ResultTableRow } from "@/lib/dashboard/types";
@@ -31,6 +34,8 @@ function scoreBadgeClass(score: number) {
 }
 
 export function ResultsTable({ rows }: ResultsTableProps) {
+  const { initials } = useProfileDisplay();
+
   return (
     <Card className="rounded-2xl border-border/60 bg-card shadow-sm ring-0">
       <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
@@ -68,7 +73,7 @@ export function ResultsTable({ rows }: ResultsTableProps) {
                 <td className="px-2 py-3">
                   <div className="flex items-center gap-2">
                     <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary-soft text-xs font-semibold text-primary">
-                      TK
+                      {initials}
                     </span>
                     <div>
                       <p className="font-medium text-ink">{row.name}</p>

@@ -2,21 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { PanelLeftClose, Search } from "lucide-react";
 import { NavList } from "@/components/dashboard/nav-list";
+import { UserSummary } from "@/components/dashboard/user-summary";
 import { LogoutButton } from "@/components/home/logout-button";
 import { Input } from "@/components/ui/input";
 import { dashboardNavGroups } from "@/lib/dashboard/nav";
 
-type DashboardSidebarProps = {
-  studentName: string;
-  studentEmail: string;
-  initials: string;
-};
-
-export function DashboardSidebar({
-  studentName,
-  studentEmail,
-  initials,
-}: DashboardSidebarProps) {
+export function DashboardSidebar() {
   return (
     <aside className="hidden h-svh w-[240px] shrink-0 flex-col border-r border-line bg-card lg:flex">
       <div className="flex items-center justify-between gap-2 px-4 py-5">
@@ -52,16 +43,8 @@ export function DashboardSidebar({
         <NavList groups={dashboardNavGroups} />
       </div>
       <div className="border-t border-line p-4">
-        <div className="mb-3 flex items-center gap-3 rounded-xl bg-primary-soft/40 p-2">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-            {initials}
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium text-ink">{studentName}</p>
-            <p className="truncate text-xs text-muted-foreground">
-              {studentEmail}
-            </p>
-          </div>
+        <div className="mb-3 rounded-xl bg-primary-soft/40 p-2">
+          <UserSummary />
         </div>
         <LogoutButton className="w-full" />
       </div>

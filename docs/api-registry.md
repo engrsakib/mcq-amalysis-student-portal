@@ -335,13 +335,80 @@ Issues new access and refresh tokens from a valid refresh token. Used when the a
 
 ### GET `/user/auth`
 
-Current authenticated user.
+Current authenticated user (profile read for dashboard header/sidebar).
 
 **Auth:** Required (`Authorization`)
 
-**Success (200):** `data` user object (password omitted).
+**Success (200):**
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "User retrieved",
+  "data": {
+    "_id": "string",
+    "name": "Jane Student",
+    "phone_number": "01800000000",
+    "fcmToken": "",
+    "image": "",
+    "is_Deleted": false,
+    "email": "jane@example.com",
+    "role": "student",
+    "status": "active",
+    "last_login_at": "2026-10-01T15:01:35.036Z",
+    "createdAt": "2026-10-01T15:01:35.036Z",
+    "updatedAt": "2026-10-01T15:01:35.036Z"
+  }
+}
+```
 
 **Errors:** 401 unauthenticated.
+
+---
+
+### PATCH `/user/self`
+
+Update the authenticated user's own profile (Settings page).
+
+**Auth:** Required (`Authorization`)
+
+**Body (all optional):**
+
+| Field          | Type   |
+| -------------- | ------ |
+| `name`         | string |
+| `image`        | string |
+| `phone_number` | string |
+| `email`        | string |
+
+**Example body:**
+
+```json
+{
+  "name": "Jane Student",
+  "email": "jane@example.com",
+  "phone_number": "01800000000",
+  "image": "https://example.com/avatar.png"
+}
+```
+
+**Success (200):** `data` is the updated user object (same shape as GET `/user/auth`).
+
+**400 example:**
+
+```json
+{
+  "statusCode": 400,
+  "success": false,
+  "message": "Validation Error",
+  "errorMessages": [
+    { "path": "phone_number", "message": "Phone number must be provided" }
+  ]
+}
+```
+
+**401 example:** Same unauthenticated envelope as login.
 
 ---
 
@@ -363,7 +430,6 @@ Log out (server-side session/cookie cleanup as implemented).
 | POST   | `/user/auth/google/register` | Complete Google registration |
 | GET    | `/user/auth/google-config`   | OAuth client IDs             |
 | PATCH  | `/user/change-password`      | Logged-in password change    |
-| PATCH  | `/user/self`                 | Profile update               |
 
 ---
 

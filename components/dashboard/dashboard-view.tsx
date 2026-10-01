@@ -2,6 +2,7 @@
 
 import { ExamsTakenChart } from "@/components/dashboard/charts/exams-taken-chart";
 import { PageHeader } from "@/components/dashboard/page-header";
+import { useProfileDisplay } from "@/components/dashboard/user-summary";
 import { ResultsTable } from "@/components/dashboard/results-table";
 import { StackedResultBars } from "@/components/dashboard/stacked-result-bars";
 import { StatCard } from "@/components/dashboard/stat-card";
@@ -14,12 +15,14 @@ type DashboardViewProps = {
 };
 
 export function DashboardView({ data, onMenuClick }: DashboardViewProps) {
+  const { name, initials, loading } = useProfileDisplay();
+
   return (
     <div className="mx-auto max-w-6xl space-y-6">
       <PageHeader
-        studentName={data.student.name}
+        studentName={loading ? "Student" : name}
         examDate={data.examDate}
-        initials={data.student.initials}
+        initials={loading ? "…" : initials}
         onMenuClick={onMenuClick}
         showMenuButton={false}
       />

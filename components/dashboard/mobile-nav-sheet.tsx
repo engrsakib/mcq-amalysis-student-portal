@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { NavList } from "@/components/dashboard/nav-list";
+import { UserSummary } from "@/components/dashboard/user-summary";
 import { LogoutButton } from "@/components/home/logout-button";
 import type { NavGroup } from "@/lib/dashboard/types";
 import { cn } from "@/lib/utils";
@@ -10,21 +11,11 @@ type MobileNavSheetProps = {
   open: boolean;
   onClose: () => void;
   groups: NavGroup[];
-  studentName: string;
-  studentEmail: string;
-  initials: string;
 };
 
 const CLOSE_MS = 320;
 
-export function MobileNavSheet({
-  open,
-  onClose,
-  groups,
-  studentName,
-  studentEmail,
-  initials,
-}: MobileNavSheetProps) {
+export function MobileNavSheet({ open, onClose, groups }: MobileNavSheetProps) {
   const [mounted, setMounted] = useState(open);
   const [visible, setVisible] = useState(open);
 
@@ -82,18 +73,8 @@ export function MobileNavSheet({
             staggerAnimation
             sheetOpen={visible}
           />
-          <div className="mt-6 flex items-center gap-3 rounded-xl border border-line bg-primary-soft/30 p-3">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
-              {initials}
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-ink">
-                {studentName}
-              </p>
-              <p className="truncate text-xs text-muted-foreground">
-                {studentEmail}
-              </p>
-            </div>
+          <div className="mt-6 rounded-xl border border-line bg-primary-soft/30 p-3">
+            <UserSummary />
           </div>
           <div className="mt-4">
             <LogoutButton className="w-full" />
