@@ -13,20 +13,27 @@ type MobileNavSheetProps = {
   groups: NavGroup[];
 };
 
-const CLOSE_MS = 320;
+/** Backdrop + panel fade; keep in sync with Tailwind duration below */
+const SHEET_ANIM_MS = 500;
+
+const fadeTransition =
+  "transition-opacity duration-500 ease-in-out motion-reduce:transition-none";
 
 export function MobileNavSheet({ open, onClose, groups }: MobileNavSheetProps) {
   const [mounted, setMounted] = useState(open);
-  const [visible, setVisible] = useState(open);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     if (open) {
       setMounted(true);
-      requestAnimationFrame(() => setVisible(true));
-      return;
+      setVisible(false);
+      const frame = requestAnimationFrame(() => {
+        requestAnimationFrame(() => setVisible(true));
+      });
+      return () => cancelAnimationFrame(frame);
     }
     setVisible(false);
-    const t = window.setTimeout(() => setMounted(false), CLOSE_MS);
+    const t = window.setTimeout(() => setMounted(false), SHEET_ANIM_MS);
     return () => window.clearTimeout(t);
   }, [open]);
 
@@ -50,8 +57,9 @@ export function MobileNavSheet({ open, onClose, groups }: MobileNavSheetProps) {
       <button
         type="button"
         className={cn(
-          "absolute inset-0 bg-ink/40 transition-opacity duration-300 ease-out motion-reduce:transition-none",
-          visible ? "opacity-100" : "opacity-0"
+          "absolute inset-0 bg-ink/40",
+          fadeTransition,
+          visible ? "opacity-100" : "pointer-events-none opacity-0"
         )}
         aria-label="Close menu"
         onClick={onClose}
@@ -59,13 +67,18 @@ export function MobileNavSheet({ open, onClose, groups }: MobileNavSheetProps) {
       <div
         className={cn(
           "absolute inset-x-0 bottom-0 max-h-[88vh] overflow-y-auto rounded-t-2xl bg-card pb-6 shadow-xl",
-          "transition-all duration-300 ease-out motion-reduce:transition-none",
-          visible ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
+          fadeTransition,
+          visible ? "opacity-100" : "pointer-events-none opacity-0"
         )}
       >
-        <div className="flex justify-center py-3">
+        <button
+          type="button"
+          className="flex w-full cursor-pointer justify-center py-3 touch-manipulation active:opacity-80"
+          aria-label="Close menu"
+          onClick={onClose}
+        >
           <span className="h-1 w-10 rounded-full bg-line" aria-hidden />
-        </div>
+        </button>
         <div className="px-4">
           <NavList
             groups={groups}
