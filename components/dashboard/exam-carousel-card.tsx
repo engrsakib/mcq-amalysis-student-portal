@@ -9,6 +9,7 @@ const DEFAULT_AUTO_SLIDE_MS = 2000;
 
 type ExamCarouselCardProps<T extends { _id: string }> = {
   title: string;
+  titleExtra?: React.ReactNode;
   countLabel?: number;
   loading: boolean;
   error: string | null;
@@ -20,6 +21,7 @@ type ExamCarouselCardProps<T extends { _id: string }> = {
 
 export function ExamCarouselCard<T extends { _id: string }>({
   title,
+  titleExtra,
   countLabel,
   loading,
   error,
@@ -103,7 +105,10 @@ export function ExamCarouselCard<T extends { _id: string }>({
   return (
     <Card className="min-w-0 overflow-hidden rounded-2xl border-border/60 bg-card shadow-sm ring-0 lg:min-h-[280px]">
       <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
-        <CardTitle className="text-base font-semibold text-ink">{title}</CardTitle>
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
+          <CardTitle className="text-base font-semibold text-ink">{title}</CardTitle>
+          {titleExtra}
+        </div>
         {!loading && exams.length > 0 && countLabel != null ? (
           <span className="shrink-0 rounded-lg border border-line px-2 py-1 text-xs text-muted-foreground">
             {countLabel} exam{countLabel === 1 ? "" : "s"}

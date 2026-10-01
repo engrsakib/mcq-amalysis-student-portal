@@ -2,6 +2,7 @@
 
 import { ExamsTakenChart } from "@/components/dashboard/charts/exams-taken-chart";
 import { PageHeader } from "@/components/dashboard/page-header";
+import { LiveExamsCard } from "@/components/dashboard/live-exams-card";
 import { PreviousExamsCard } from "@/components/dashboard/previous-exams-card";
 import { useProfileDisplay } from "@/components/dashboard/user-summary";
 import { ResultsTable } from "@/components/dashboard/results-table";
@@ -9,6 +10,7 @@ import { StackedResultBars } from "@/components/dashboard/stacked-result-bars";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { UpcomingExamsCard } from "@/components/dashboard/upcoming-exams-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LiveExamsProvider } from "@/hooks/use-live-exams";
 import { PreviousExamsProvider } from "@/hooks/use-previous-exams";
 import {
   UpcomingExamsProvider,
@@ -69,6 +71,7 @@ function DashboardContent({ data, onMenuClick }: DashboardViewProps) {
               </div>
             </CardContent>
           </Card>
+          <LiveExamsCard />
           <UpcomingExamsCard />
         </div>
         <div className="flex min-w-0 flex-col gap-4">
@@ -86,7 +89,9 @@ export function DashboardView(props: DashboardViewProps) {
   return (
     <UpcomingExamsProvider>
       <PreviousExamsProvider>
-        <DashboardContent {...props} />
+        <LiveExamsProvider>
+          <DashboardContent {...props} />
+        </LiveExamsProvider>
       </PreviousExamsProvider>
     </UpcomingExamsProvider>
   );
