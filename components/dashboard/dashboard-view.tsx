@@ -33,7 +33,7 @@ function DashboardContent({ data, onMenuClick }: DashboardViewProps) {
     nearestExamDateLabel ?? (examsLoading ? "…" : data.examDate);
 
   return (
-    <div className="mx-auto w-full min-w-0 max-w-6xl space-y-6">
+    <div className="w-full min-w-0 space-y-6">
       <PageHeader
         studentName={profileLoading ? "Student" : name}
         examDate={examDate}

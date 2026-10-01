@@ -46,8 +46,8 @@ export function PageHeader({
   const isLgUp = useIsLgUp();
 
   return (
-    <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex items-start gap-3">
+    <header className="flex flex-col gap-4 max-lg:items-center max-lg:text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
+      <div className="flex items-start gap-3 max-lg:flex-col max-lg:items-center">
         {showMenuButton ? (
           <Button
             type="button"

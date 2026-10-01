@@ -57,8 +57,8 @@ export function AppShell({ children }: AppShellProps) {
             </div>
           </div>
         </div>
-        <main className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto overscroll-y-contain touch-pan-y p-4 sm:p-6">
-          {children}
+        <main className="scrollbar-hidden-mobile flex flex-1 min-h-0 flex-col overflow-x-hidden overflow-y-auto overscroll-y-contain touch-pan-y px-4 py-4 sm:px-6 sm:py-6 max-lg:items-center">
+          <div className="mx-auto w-full min-w-0 max-w-6xl">{children}</div>
         </main>
       </div>
       <MobileNavSheet
