@@ -16,15 +16,24 @@ export async function apiGetAuthServer<T>(
     );
   }
 
-  const res = await fetch(joinUrl(getApiBaseUrl(), path), {
-    ...init,
-    method: "GET",
-    headers: {
-      Authorization: token,
-      ...init?.headers,
-    },
-    cache: "no-store",
-  });
+  let res: Response;
+  try {
+    res = await fetch(joinUrl(getApiBaseUrl(), path), {
+      ...init,
+      method: "GET",
+      headers: {
+        Authorization: token,
+        ...init?.headers,
+      },
+      cache: "no-store",
+      signal: init?.signal ?? AbortSignal.timeout(30_000),
+    });
+  } catch {
+    throw new ApiError(
+      "Could not reach the server. Check your connection and try again.",
+      503
+    );
+  }
 
   if (res.status === 401) {
     throw new ApiError(

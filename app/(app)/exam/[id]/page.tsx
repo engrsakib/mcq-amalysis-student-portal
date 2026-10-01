@@ -43,6 +43,20 @@ export default async function ExamPage({ params }: ExamPageProps) {
     if (err instanceof ApiError && (err.statusCode === 404 || err.statusCode === 401)) {
       notFound();
     }
+    if (err instanceof ApiError && err.statusCode === 503) {
+      return (
+        <div className="mx-auto max-w-lg py-12 text-center">
+          <p className="text-base font-medium text-ink">Could not load this exam</p>
+          <p className="mt-2 text-sm text-muted-foreground">{err.message}</p>
+          <Link
+            href="/"
+            className="mt-6 inline-block text-sm font-medium text-primary hover:underline"
+          >
+            Back to dashboard
+          </Link>
+        </div>
+      );
+    }
     throw err;
   }
 }

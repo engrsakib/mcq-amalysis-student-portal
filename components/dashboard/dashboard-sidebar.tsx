@@ -7,9 +7,16 @@ import { LogoutButton } from "@/components/home/logout-button";
 import { Input } from "@/components/ui/input";
 import { dashboardNavGroups } from "@/lib/dashboard/nav";
 
-export function DashboardSidebar() {
+type DashboardSidebarProps = {
+  /** Exam/content pages: one app scroll region (main only). */
+  suppressNavScroll?: boolean;
+};
+
+export function DashboardSidebar({
+  suppressNavScroll = false,
+}: DashboardSidebarProps) {
   return (
-    <aside className="fixed inset-y-0 left-0 z-30 hidden w-[240px] flex-col border-r border-line bg-card lg:flex">
+    <aside className="fixed inset-y-0 left-0 z-30 hidden h-svh w-[240px] flex-col overflow-hidden border-r border-line bg-card lg:flex">
       <div className="flex items-center justify-between gap-2 px-4 py-5">
         <Link href="/" className="flex min-w-0 flex-1 items-center">
           <Image
@@ -40,7 +47,13 @@ export function DashboardSidebar() {
           />
         </div>
       </div>
-      <div className="flex-1 overflow-y-auto px-2">
+      <div
+        className={
+          suppressNavScroll
+            ? "min-h-0 flex-1 overflow-hidden px-2"
+            : "min-h-0 flex-1 overflow-y-auto px-2"
+        }
+      >
         <NavList groups={dashboardNavGroups} />
       </div>
       <div className="border-t border-line p-4">

@@ -28,7 +28,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={cn("h-full light", poppins.variable)}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans">{children}</body>
+      <body className="flex h-full min-h-0 flex-col overflow-hidden font-sans">
+        {children}
+      </body>
     </html>
   );
 }

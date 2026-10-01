@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Bell } from "lucide-react";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,8 @@ type AppShellProps = {
 };
 
 export function AppShell({ children }: AppShellProps) {
+  const pathname = usePathname();
+  const isExamRoute = pathname.startsWith("/exam");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const { initials } = useProfileDisplay();
 
@@ -23,7 +26,7 @@ export function AppShell({ children }: AppShellProps) {
   return (
     <div className="flex h-svh max-h-svh w-full overflow-hidden bg-page">
       <TokenRefreshGate />
-      <DashboardSidebar />
+      <DashboardSidebar suppressNavScroll={isExamRoute} />
       <div className="flex min-h-0 min-w-0 flex-1 flex-col lg:ml-[240px]">
         <div className="flex items-center justify-between gap-3 border-b border-line bg-card px-4 py-3 lg:hidden">
           <button
@@ -57,7 +60,7 @@ export function AppShell({ children }: AppShellProps) {
             </div>
           </div>
         </div>
-        <main className="scrollbar-hidden-mobile flex flex-1 min-h-0 flex-col overflow-x-hidden overflow-y-auto overscroll-y-contain touch-pan-y px-4 py-4 sm:px-6 sm:py-6 max-lg:items-center">
+        <main className="scrollbar-hidden-mobile min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain touch-pan-y px-4 py-4 sm:px-6 sm:py-6">
           <div className="mx-auto w-full min-w-0 max-w-6xl">{children}</div>
         </main>
       </div>

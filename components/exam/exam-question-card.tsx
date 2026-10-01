@@ -2,6 +2,7 @@
 
 import { MathContent } from "@/components/exam/math-content";
 import type { ExamQuestionPublic } from "@/lib/api/types";
+import { optionNeedsMultilineLayout } from "@/lib/exam/option-layout";
 import { cn } from "@/lib/utils";
 
 type ExamQuestionCardProps = {
@@ -36,7 +37,7 @@ export function ExamQuestionCard({
       ) : null}
 
       {formula ? (
-        <div className="mt-2 min-w-0 overflow-x-hidden">
+        <div className="mt-2 min-w-0">
           <MathContent content={formula} displayMode />
         </div>
       ) : null}
@@ -54,32 +55,46 @@ export function ExamQuestionCard({
         {question.options.map((option, optionIndex) => {
           const selected = selectedOption === optionIndex;
           const label = String.fromCharCode(65 + optionIndex);
+          const multiline = optionNeedsMultilineLayout(option);
 
           return (
             <li key={`${question.questionId}-${optionIndex}`}>
               <button
                 type="button"
                 onClick={() => onSelectOption(optionIndex)}
+                aria-label={`Option ${label}`}
                 className={cn(
-                  "flex w-full items-start gap-3 rounded-lg border px-3 py-2.5 text-left text-base transition-colors",
+                  "flex w-full min-w-0 rounded-lg border px-3 text-left text-base transition-colors",
+                  multiline
+                    ? "min-h-14 flex-col items-stretch gap-1 py-3"
+                    : "items-center gap-3 py-2.5",
                   selected
                     ? "border-primary bg-primary-soft/50 text-ink"
                     : "border-line/80 bg-page/40 text-ink hover:border-primary/30 hover:bg-primary-soft/20"
                 )}
               >
-                <span
-                  className={cn(
-                    "mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
-                    selected
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-primary-soft text-primary"
-                  )}
-                >
-                  {label}
-                </span>
-                <span className="min-w-0 flex-1 leading-snug">
-                  <MathContent content={option} />
-                </span>
+                {multiline ? (
+                  <span className="min-w-0 w-full leading-relaxed">
+                    <span className="sr-only">{label}. </span>
+                    <MathContent content={option} />
+                  </span>
+                ) : (
+                  <>
+                    <span
+                      className={cn(
+                        "flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
+                        selected
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-primary-soft text-primary"
+                      )}
+                    >
+                      {label}
+                    </span>
+                    <span className="min-w-0 flex-1 leading-snug">
+                      <MathContent content={option} />
+                    </span>
+                  </>
+                )}
               </button>
             </li>
           );

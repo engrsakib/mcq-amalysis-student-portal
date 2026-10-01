@@ -157,7 +157,7 @@
   /* Exam questions: wrap lines without breaking Bengali graphemes */
   .katex-wrap {
     max-width: 100%;
-    overflow-x: hidden;
+    overflow: visible;
     overflow-wrap: break-word;
     word-break: normal;
     line-break: normal;
@@ -165,13 +165,34 @@
 
   .katex-wrap .katex-display {
     margin: 0.25em 0;
-    overflow-x: hidden;
     max-width: 100%;
+    overflow: visible;
     text-align: left;
   }
 
   .katex-wrap .katex {
     font-family: inherit;
+    overflow: visible;
+  }
+
+  /* Avoid duplicate digits from MathML (e.g. 7 8 8 7 next to the fraction) */
+  .katex-wrap .katex .katex-mathml {
+    position: absolute;
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px);
+    height: 1px;
+    width: 1px;
+    padding: 0;
+    border: 0;
+  }
+
+  .katex-wrap .katex .katex-html {
+    overflow: visible;
+  }
+
+  .katex-wrap .katex .text {
+    white-space: normal;
+    overflow-wrap: break-word;
   }
 
   /* Mobile: hide scrollbar chrome; touch scroll unchanged */
@@ -196,6 +217,8 @@
   }
   html {
     @apply font-sans;
+    height: 100%;
+    overflow: hidden;
     scrollbar-gutter: stable;
   }
 
