@@ -9,15 +9,16 @@ import { dashboardNavGroups } from "@/lib/dashboard/nav";
 
 export function DashboardSidebar() {
   return (
-    <aside className="hidden h-svh w-[240px] shrink-0 flex-col border-r border-line bg-card lg:flex">
+    <aside className="fixed inset-y-0 left-0 z-30 hidden w-[240px] flex-col border-r border-line bg-card lg:flex">
       <div className="flex items-center justify-between gap-2 px-4 py-5">
-        <Link href="/" className="flex min-w-0 items-center gap-2">
+        <Link href="/" className="flex min-w-0 flex-1 items-center">
           <Image
             src="/logo.png"
             alt="MCQ Analysis"
-            width={120}
-            height={40}
-            className="h-8 w-auto object-contain"
+            width={320}
+            height={120}
+            className="h-auto w-full max-w-[200px] object-contain"
+            priority
           />
         </Link>
         <button

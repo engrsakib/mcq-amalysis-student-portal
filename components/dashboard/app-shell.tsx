@@ -24,7 +24,7 @@ export function AppShell({ children }: AppShellProps) {
     <div className="flex min-h-svh w-full bg-page">
       <TokenRefreshGate />
       <DashboardSidebar />
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col lg:ml-[240px]">
         <div className="flex items-center justify-between border-b border-line bg-card px-4 py-3 lg:hidden">
           <button
             type="button"

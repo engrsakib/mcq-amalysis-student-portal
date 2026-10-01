@@ -13,6 +13,14 @@ import { getUpcomingExams } from "@/lib/api/exam";
 import type { UpcomingExam } from "@/lib/api/types";
 import { formatExamDateOnly } from "@/lib/datetime/format-exam";
 
+function sortExamsByDateAsc(list: UpcomingExam[]) {
+  return [...list].sort(
+    (a, b) =>
+      new Date(a.exam_date_time).getTime() -
+      new Date(b.exam_date_time).getTime()
+  );
+}
+
 type UpcomingExamsContextValue = {
   exams: UpcomingExam[];
   total: number;
@@ -41,7 +49,7 @@ export function UpcomingExamsProvider({
     setLoading(true);
     try {
       const payload = await getUpcomingExams({ page: 1, limit: 10 });
-      setExams(payload.data);
+      setExams(sortExamsByDateAsc(payload.data));
       setTotal(payload.meta.total);
     } catch (err) {
       if (err instanceof ApiError) {
@@ -62,12 +70,7 @@ export function UpcomingExamsProvider({
 
   const nearestExamDateLabel = useMemo(() => {
     if (exams.length === 0) return null;
-    const sorted = [...exams].sort(
-      (a, b) =>
-        new Date(a.exam_date_time).getTime() -
-        new Date(b.exam_date_time).getTime()
-    );
-    return formatExamDateOnly(sorted[0]!.exam_date_time);
+    return formatExamDateOnly(exams[0]!.exam_date_time);
   }, [exams]);
 
   const value = useMemo(
