@@ -1,6 +1,6 @@
 "use client";
 
-import { Award, Calendar, Clock } from "lucide-react";
+import { Award, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LiveIndicator } from "@/components/dashboard/live-indicator";
 import { useExamBriefing } from "@/hooks/use-exam-briefing";
@@ -26,7 +26,10 @@ type ExamListSlideProps =
 type SlideVariant = "live" | "upcoming" | "previous";
 
 const primaryCtaClass =
-  "mt-auto h-11 w-full shrink-0 rounded-[10px] bg-primary px-3 text-sm font-medium hover:bg-primary-hover";
+  "h-11 w-full shrink-0 rounded-[10px] bg-primary px-3 text-sm font-medium hover:bg-primary-hover";
+
+const practiceCtaClass =
+  "h-11 w-full shrink-0 rounded-[10px] border-primary/40 bg-card text-sm font-medium text-primary hover:bg-primary-soft";
 
 export function ExamListSlide(props: ExamListSlideProps) {
   const { openBriefing } = useExamBriefing();
@@ -40,14 +43,16 @@ export function ExamListSlide(props: ExamListSlideProps) {
     return (
       <ExamSlideShell variant="live">
         <ExamSlideBody exam={exam} when={when} liveNow />
-        <Button
-          type="button"
-          title="Start exam"
-          onClick={open}
-          className={primaryCtaClass}
-        >
-          Start
-        </Button>
+        <ExamSlideFooter>
+          <Button
+            type="button"
+            title="Start exam"
+            onClick={open}
+            className={primaryCtaClass}
+          >
+            Start
+          </Button>
+        </ExamSlideFooter>
       </ExamSlideShell>
     );
   }
@@ -59,60 +64,76 @@ export function ExamListSlide(props: ExamListSlideProps) {
     return (
       <ExamSlideShell variant="upcoming">
         <ExamSlideBody exam={exam} when={when} />
-        <Button
-          type="button"
-          disabled={!canStart}
-          title={canStart ? "Start exam" : buttonLabel}
-          onClick={canStart ? open : undefined}
-          className={cn(
-            primaryCtaClass,
-            !canStart && "cursor-not-allowed opacity-50 hover:bg-primary"
-          )}
-        >
-          {buttonLabel}
-        </Button>
+        <ExamSlideFooter>
+          <Button
+            type="button"
+            disabled={!canStart}
+            title={canStart ? "Start exam" : buttonLabel}
+            onClick={canStart ? open : undefined}
+            className={cn(
+              primaryCtaClass,
+              !canStart && "cursor-not-allowed opacity-50 hover:bg-primary"
+            )}
+          >
+            {buttonLabel}
+          </Button>
+        </ExamSlideFooter>
       </ExamSlideShell>
     );
   }
 
   return (
-    <ExamSlideShell variant="previous" submitted={props.exam.isSubmitted === true}>
-      <ExamSlideBody exam={exam} when={when} submitted={props.exam.isSubmitted === true} />
-      <Button
-        type="button"
-        variant="outline"
-        title="Practice this exam"
-        onClick={open}
-        className="mt-auto h-11 w-full shrink-0 rounded-[10px] border-primary/40 bg-card text-sm font-medium text-primary hover:bg-primary-soft"
-      >
-        Practice
-      </Button>
+    <ExamSlideShell variant="previous">
+      <ExamSlideBody
+        exam={exam}
+        when={when}
+        submitted={props.exam.isSubmitted === true}
+      />
+      <ExamSlideFooter>
+        <Button
+          type="button"
+          variant="outline"
+          title="Practice this exam"
+          onClick={open}
+          className={practiceCtaClass}
+        >
+          Practice
+        </Button>
+      </ExamSlideFooter>
     </ExamSlideShell>
   );
 }
 
 function ExamSlideShell({
   variant,
-  submitted,
   children,
 }: {
   variant: SlideVariant;
-  submitted?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <div
       className={cn(
-        "flex min-h-[220px] w-full min-w-0 flex-col gap-4 rounded-xl border p-4 shadow-sm sm:p-5",
-        variant === "live" &&
-          "border-primary/35 bg-gradient-to-br from-primary-soft/40 to-card ring-1 ring-primary/10",
-        variant === "upcoming" && "border-line/80 bg-card",
-        variant === "previous" &&
-          "border-line/80 bg-card",
-        variant === "previous" &&
-          submitted &&
-          "border-primary/20 bg-gradient-to-br from-primary-soft/15 to-card"
+        "flex min-h-[220px] w-full min-w-0 flex-col overflow-hidden rounded-xl border border-line/80 border-l-4 border-l-primary bg-card p-0 shadow-sm",
+        variant === "live" && "ring-1 ring-primary/10"
       )}
+    >
+      {children}
+    </div>
+  );
+}
+
+function ExamSlideFooter({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mt-auto border-t border-line px-4 py-3 sm:px-5">{children}</div>
+  );
+}
+
+function MetaIconWell({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-soft"
+      aria-hidden
     >
       {children}
     </div>
@@ -131,11 +152,19 @@ function ExamSlideBody({
   liveNow?: boolean;
 }) {
   return (
-    <div className="min-w-0 flex-1 space-y-3">
-      <div className="flex items-start justify-between gap-2">
-        <span className="max-w-[70%] truncate rounded-lg bg-primary-soft px-2.5 py-0.5 text-xs font-medium text-primary">
-          {exam.subject}
-        </span>
+    <>
+      <div className="flex items-start justify-between gap-2 border-b border-line px-4 pb-3 pt-4 sm:px-5">
+        <div className="flex min-w-0 flex-wrap items-center gap-2 text-xs">
+          <span className="shrink-0 rounded-lg border border-primary/40 bg-card px-2.5 py-0.5 font-medium text-primary">
+            {exam.subject}
+          </span>
+          <span className="hidden text-line sm:inline" aria-hidden>
+            |
+          </span>
+          <span className="truncate text-muted-foreground">
+            Exam #{exam.exam_number}
+          </span>
+        </div>
         <div className="flex shrink-0 flex-wrap items-center justify-end gap-1.5">
           {liveNow ? <LiveIndicator className="py-0.5 text-[10px]" /> : null}
           {submitted ? (
@@ -146,24 +175,43 @@ function ExamSlideBody({
         </div>
       </div>
 
-      <h3 className="line-clamp-3 text-base font-semibold leading-snug text-ink sm:line-clamp-2">
-        {exam.exam_name}
-      </h3>
+      <div className="min-w-0 flex-1 px-4 py-3 sm:px-5">
+        <h3 className="line-clamp-2 text-base font-semibold leading-snug text-ink">
+          {exam.exam_name}
+        </h3>
 
-      <div className="flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:gap-x-4 sm:gap-y-2">
-        <span className="inline-flex min-w-0 items-center gap-1.5">
-          <Calendar className="size-4 shrink-0 text-primary/70" aria-hidden />
-          <span className="truncate font-medium text-ink/90">{when}</span>
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <Clock className="size-4 shrink-0 text-primary/70" aria-hidden />
-          {exam.duration_minutes} min
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <Award className="size-4 shrink-0 text-primary/70" aria-hidden />
-          {exam.total_marks} marks
-        </span>
+        <div className="mt-2.5 flex flex-wrap gap-1.5">
+          <span className="rounded-md bg-primary-soft/60 px-2 py-0.5 text-xs font-medium text-primary">
+            {exam.duration_minutes} min
+          </span>
+          <span className="rounded-md bg-primary-soft/60 px-2 py-0.5 text-xs font-medium text-primary">
+            {exam.total_marks} marks
+          </span>
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <div className="flex min-w-0 items-start gap-2.5">
+            <MetaIconWell>
+              <Calendar className="size-4 text-primary" strokeWidth={2} />
+            </MetaIconWell>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-ink">{when}</p>
+              <p className="text-xs text-muted-foreground">Exam date</p>
+            </div>
+          </div>
+          <div className="flex min-w-0 items-start gap-2.5">
+            <MetaIconWell>
+              <Award className="size-4 text-primary" strokeWidth={2} />
+            </MetaIconWell>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-ink">
+                {exam.duration_minutes} min · {exam.total_marks} marks
+              </p>
+              <p className="text-xs text-muted-foreground">Duration & marks</p>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
