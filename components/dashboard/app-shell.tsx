@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { Bell } from "lucide-react";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
+import { Button } from "@/components/ui/button";
 import { MobileNavSheet } from "@/components/dashboard/mobile-nav-sheet";
 import { useProfileDisplay } from "@/components/dashboard/user-summary";
 import { TokenRefreshGate } from "@/components/auth/token-refresh-gate";
@@ -25,7 +25,7 @@ export function AppShell({ children }: AppShellProps) {
       <TokenRefreshGate />
       <DashboardSidebar />
       <div className="flex min-h-0 min-w-0 flex-1 flex-col lg:ml-[240px]">
-        <div className="flex items-center justify-between border-b border-line bg-card px-4 py-3 lg:hidden">
+        <div className="flex items-center justify-between gap-3 border-b border-line bg-card px-4 py-3 lg:hidden">
           <button
             type="button"
             className="rounded-lg p-2 hover:bg-primary-soft"
@@ -38,17 +38,23 @@ export function AppShell({ children }: AppShellProps) {
               <span className="block h-0.5 w-5 bg-ink" />
             </span>
           </button>
-          <Link href="/" className="flex items-center">
-            <Image
-              src="/logo.png"
-              alt="MCQ Analysis"
-              width={100}
-              height={32}
-              className="h-7 w-auto object-contain"
-            />
-          </Link>
-          <div className="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-            {initials}
+          <div className="flex shrink-0 items-center gap-1.5">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              className="relative size-8 shrink-0"
+              aria-label="Notifications"
+            >
+              <Bell className="size-4" />
+              <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-danger" />
+            </Button>
+            <div
+              className="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground"
+              aria-hidden
+            >
+              {initials}
+            </div>
           </div>
         </div>
         <main className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto overscroll-y-contain touch-pan-y p-4 sm:p-6">

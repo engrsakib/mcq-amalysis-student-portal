@@ -1,5 +1,24 @@
+"use client";
+
+import { useSyncExternalStore } from "react";
 import { Bell, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+const LG_MEDIA = "(min-width: 1024px)";
+
+function subscribeLg(cb: () => void) {
+  const mq = window.matchMedia(LG_MEDIA);
+  mq.addEventListener("change", cb);
+  return () => mq.removeEventListener("change", cb);
+}
+
+function getLgSnapshot() {
+  return window.matchMedia(LG_MEDIA).matches;
+}
+
+function useIsLgUp() {
+  return useSyncExternalStore(subscribeLg, getLgSnapshot, () => false);
+}
 
 type PageHeaderProps = {
   studentName: string;
@@ -24,6 +43,7 @@ export function PageHeader({
   showMenuButton = false,
 }: PageHeaderProps) {
   const firstName = studentName.split(" ")[0] ?? studentName;
+  const isLgUp = useIsLgUp();
 
   return (
     <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -53,33 +73,34 @@ export function PageHeader({
           </p>
         </div>
       </div>
-      <div className="flex items-center gap-2 sm:gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          className="hidden sm:inline-flex"
-          aria-label="Search"
-        >
-          <Search className="size-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          className="relative"
-          aria-label="Notifications"
-        >
-          <Bell className="size-4" />
-          <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-danger" />
-        </Button>
-        <div
-          className="flex size-9 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground"
-          aria-hidden
-        >
-          {initials}
+      {isLgUp ? (
+        <div className="flex items-center gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label="Search"
+          >
+            <Search className="size-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="relative"
+            aria-label="Notifications"
+          >
+            <Bell className="size-4" />
+            <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-danger" />
+          </Button>
+          <div
+            className="flex size-9 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground"
+            aria-hidden
+          >
+            {initials}
+          </div>
         </div>
-      </div>
+      ) : null}
     </header>
   );
 }
