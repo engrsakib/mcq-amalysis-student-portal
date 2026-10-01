@@ -2,13 +2,18 @@
 
 import { ExamsTakenChart } from "@/components/dashboard/charts/exams-taken-chart";
 import { PageHeader } from "@/components/dashboard/page-header";
+import { PreviousExamsCard } from "@/components/dashboard/previous-exams-card";
 import { useProfileDisplay } from "@/components/dashboard/user-summary";
 import { ResultsTable } from "@/components/dashboard/results-table";
 import { StackedResultBars } from "@/components/dashboard/stacked-result-bars";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { UpcomingExamsCard } from "@/components/dashboard/upcoming-exams-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { UpcomingExamsProvider, useUpcomingExams } from "@/hooks/use-upcoming-exams";
+import { PreviousExamsProvider } from "@/hooks/use-previous-exams";
+import {
+  UpcomingExamsProvider,
+  useUpcomingExams,
+} from "@/hooks/use-upcoming-exams";
 import type { DashboardMock } from "@/lib/dashboard/types";
 
 type DashboardViewProps = {
@@ -66,7 +71,10 @@ function DashboardContent({ data, onMenuClick }: DashboardViewProps) {
           </Card>
           <UpcomingExamsCard />
         </div>
-        <StackedResultBars rows={data.subjectResults} />
+        <div className="flex min-w-0 flex-col gap-4">
+          <StackedResultBars rows={data.subjectResults} />
+          <PreviousExamsCard />
+        </div>
       </div>
 
       <ResultsTable rows={data.recentResults} />
@@ -77,7 +85,9 @@ function DashboardContent({ data, onMenuClick }: DashboardViewProps) {
 export function DashboardView(props: DashboardViewProps) {
   return (
     <UpcomingExamsProvider>
-      <DashboardContent {...props} />
+      <PreviousExamsProvider>
+        <DashboardContent {...props} />
+      </PreviousExamsProvider>
     </UpcomingExamsProvider>
   );
 }

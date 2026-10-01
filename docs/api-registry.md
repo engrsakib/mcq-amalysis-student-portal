@@ -461,6 +461,29 @@ Upcoming published exams that have not started.
 
 ---
 
+### GET `/exam/user`
+
+Published exams for the signed-in user. Live exams (`is_started` and not completed) are ordered first. Each item includes `isSubmitted`, `isLive`, `is_completed`, and `exam_date_time` in Bangladesh time (`+06:00`).
+
+**Auth:** Required (`Authorization`)
+
+**Query:**
+
+| Param        | Type    | Default | Notes                                      |
+| ------------ | ------- | ------- | ------------------------------------------ |
+| `page`       | integer | 1       |                                            |
+| `limit`      | integer | 10      | Dashboard Previous card fetches 10, shows 5 |
+| `searchTerm` | string  | —       | Optional                                   |
+| `isLive`     | boolean | —       | When `true`, only currently live exams     |
+
+**Success (200):** Same paginated envelope as `/exam/upcoming`, with extra fields per item: `isSubmitted`, `isLive`.
+
+**Errors:** 401 unauthenticated.
+
+**Client:** Dashboard “Previous” card omits `isLive=true`, filters out live rows client-side, keeps completed or past `exam_date_time`, sorts newest first, max **5**; **Practice** button (placeholder until practice route exists).
+
+---
+
 ### DELETE `/user/logout`
 
 Log out (server-side session/cookie cleanup as implemented).

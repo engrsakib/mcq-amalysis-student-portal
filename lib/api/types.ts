@@ -124,3 +124,13 @@ export type UpcomingExamsPayload = {
   meta: PaginatedMeta;
   data: UpcomingExam[];
 };
+
+export type UserExam = UpcomingExam & {
+  isSubmitted?: boolean;
+  isLive?: boolean;
+};
+
+export type UserExamsPayload = {
+  meta: PaginatedMeta;
+  data: UserExam[];
+};
