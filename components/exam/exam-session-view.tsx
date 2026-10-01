@@ -57,7 +57,7 @@ export function ExamSessionView({
         </h1>
       </header>
 
-      <div className="scroll-area-brand min-h-0 flex-1 space-y-4 pb-4 pr-1 sm:pr-2">
+      <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {orderedQuestions.map((question, index) => (
           <ExamQuestionCard
             key={question.questionId}
