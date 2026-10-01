@@ -93,3 +93,34 @@ export type UpdateProfileRequest = {
   phone_number?: string;
   email?: string;
 };
+
+export type PaginatedMeta = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPage: number;
+};
+
+export type UpcomingExam = {
+  _id: string;
+  id?: string;
+  exam_number: number;
+  exam_name: string;
+  subject: string;
+  exam_date_time: string;
+  duration_minutes: number;
+  total_marks: number;
+  is_started: boolean;
+  is_completed: boolean;
+  is_published: boolean;
+  manual_status_override?: boolean;
+  results_published?: boolean;
+  is_practice_mode?: boolean;
+  completed_at?: string | null;
+  negative_mark?: number;
+};
+
+export type UpcomingExamsPayload = {
+  meta: PaginatedMeta;
+  data: UpcomingExam[];
+};

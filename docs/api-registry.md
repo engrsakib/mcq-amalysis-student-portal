@@ -412,6 +412,55 @@ Update the authenticated user's own profile (Settings page).
 
 ---
 
+## Exams (student dashboard)
+
+### GET `/exam/upcoming`
+
+Upcoming published exams that have not started.
+
+**Auth:** Required (`Authorization`)
+
+**Query:**
+
+| Param        | Type    | Default | Notes        |
+| ------------ | ------- | ------- | ------------ |
+| `page`       | integer | 1       |              |
+| `limit`      | integer | 5       | Use up to 10 |
+| `searchTerm` | string  | —       | Optional     |
+
+**Success (200):**
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Upcoming exam entries retrieved successfully",
+  "data": {
+    "meta": { "page": 1, "limit": 10, "total": 5, "totalPage": 1 },
+    "data": [
+      {
+        "_id": "string",
+        "exam_number": 10,
+        "exam_name": "Model Test",
+        "subject": "Model Test",
+        "exam_date_time": "2026-10-12T22:00:00.000+06:00",
+        "duration_minutes": 60,
+        "total_marks": 100,
+        "is_started": false,
+        "is_completed": false,
+        "is_published": true
+      }
+    ]
+  }
+}
+```
+
+**Errors:** 401 unauthenticated.
+
+**Client:** Dashboard “Upcoming” card uses `limit=10`; display times in `Asia/Dhaka` 12-hour format; **Start** disabled when `is_started` is `false`.
+
+---
+
 ### DELETE `/user/logout`
 
 Log out (server-side session/cookie cleanup as implemented).
