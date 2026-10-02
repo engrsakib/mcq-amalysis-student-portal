@@ -77,7 +77,7 @@ export function YoutubeVideoSlide({
           <button
             type="button"
             onClick={onPlay}
-            className="absolute inset-0 flex items-center justify-center bg-ink/20 transition-colors hover:bg-ink/30"
+            className="absolute inset-0 flex touch-pan-y items-center justify-center bg-ink/20 transition-colors hover:bg-ink/30"
             aria-label="Play video"
           >
             <span className="flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md sm:size-16">

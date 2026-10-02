@@ -72,7 +72,7 @@ export function ExamListRow({
       <Button
         type="button"
         variant="outline"
-        className="h-10 w-full shrink-0 touch-pan-y rounded-[10px] border-primary/40 text-sm font-medium text-primary hover:bg-primary-soft sm:w-[120px]"
+        className="pressable h-11 w-full shrink-0 touch-pan-y rounded-[10px] border-primary/40 text-sm font-medium text-primary hover:bg-primary-soft sm:w-[120px]"
         title={actionLabel}
         onClick={() => openBriefing(exam, briefingSource)}
       >

@@ -1,9 +1,9 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useCallback, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Bell, Search } from "lucide-react";
-import { GlobalSearchModal } from "@/components/search/global-search-modal";
 import { SearchProvider, useSearchModal } from "@/components/search/search-provider";
 import { AppPageHeader } from "@/components/dashboard/app-page-header";
 import {
@@ -16,6 +16,14 @@ import { UserAvatar } from "@/components/dashboard/user-summary";
 import { TokenRefreshGate } from "@/components/auth/token-refresh-gate";
 import { dashboardNavGroups } from "@/lib/dashboard/nav";
 import { cn } from "@/lib/utils";
+
+const GlobalSearchModal = dynamic(
+  () =>
+    import("@/components/search/global-search-modal").then(
+      (mod) => mod.GlobalSearchModal
+    ),
+  { ssr: false }
+);
 
 type AppShellProps = {
   children: React.ReactNode;
@@ -42,7 +50,7 @@ function AppShellInner({ children }: AppShellProps) {
       />
       <div
         className={cn(
-          "flex min-h-0 min-w-0 flex-1 flex-col transition-[margin] duration-200 ease-out",
+          "flex min-h-0 min-w-0 flex-1 flex-col",
           sidebarCollapsed ? "lg:ml-[72px]" : "lg:ml-[240px]"
         )}
       >
@@ -67,7 +75,7 @@ function AppShellInner({ children }: AppShellProps) {
                 type="button"
                 variant="outline"
                 size="icon"
-                className="size-8 shrink-0"
+                className="size-11 shrink-0"
                 aria-label="Search"
                 onClick={openSearch}
               >
@@ -78,7 +86,7 @@ function AppShellInner({ children }: AppShellProps) {
               type="button"
               variant="outline"
               size="icon"
-              className="relative size-8 shrink-0"
+              className="relative size-11 shrink-0"
               aria-label="Notifications"
             >
               <Bell className="size-4" />

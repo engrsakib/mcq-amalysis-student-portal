@@ -40,7 +40,7 @@ export function ExamSolutionCatalogRow({
             rel="noopener noreferrer"
             className={cn(
               buttonVariants({ variant: "outline" }),
-              "inline-flex h-9 shrink-0 gap-2 rounded-[10px] border-primary/40 px-3 text-sm font-medium text-primary hover:bg-primary-soft"
+              "pressable inline-flex h-11 shrink-0 gap-2 rounded-[10px] border-primary/40 px-3 text-sm font-medium text-primary hover:bg-primary-soft"
             )}
           >
             Open

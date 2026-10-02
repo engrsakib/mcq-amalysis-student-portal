@@ -45,7 +45,7 @@ export function BookCard({ book, className }: BookCardProps) {
           rel="noopener noreferrer"
           className={cn(
             buttonVariants({ variant: "outline" }),
-            "inline-flex h-10 w-full gap-2 rounded-[10px] border-primary/40 px-4 text-sm font-medium text-primary hover:bg-primary-soft"
+            "pressable inline-flex h-11 w-full gap-2 rounded-[10px] border-primary/40 px-4 text-sm font-medium text-primary hover:bg-primary-soft"
           )}
         >
           Buy now

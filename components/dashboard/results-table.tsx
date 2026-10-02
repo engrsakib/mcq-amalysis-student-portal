@@ -110,21 +110,21 @@ export function ResultsTable({ rows }: ResultsTableProps) {
                   <div className="flex items-center gap-1 text-muted-foreground">
                     <button
                       type="button"
-                      className="rounded p-1 hover:bg-primary-soft hover:text-primary"
+                      className="flex min-h-11 min-w-11 items-center justify-center rounded hover:bg-primary-soft hover:text-primary"
                       aria-label="Delete"
                     >
                       <Trash2 className="size-4" />
                     </button>
                     <button
                       type="button"
-                      className="rounded p-1 hover:bg-primary-soft hover:text-primary"
+                      className="flex min-h-11 min-w-11 items-center justify-center rounded hover:bg-primary-soft hover:text-primary"
                       aria-label="Edit"
                     >
                       <Pencil className="size-4" />
                     </button>
                     <button
                       type="button"
-                      className="rounded p-1 hover:bg-primary-soft hover:text-primary"
+                      className="flex min-h-11 min-w-11 items-center justify-center rounded hover:bg-primary-soft hover:text-primary"
                       aria-label="More"
                     >
                       <MoreHorizontal className="size-4" />

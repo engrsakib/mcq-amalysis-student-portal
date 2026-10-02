@@ -72,7 +72,7 @@ export function YoutubeCatalogRow({
             <button
               type="button"
               onClick={onPlay}
-              className="absolute inset-0 flex items-center justify-center bg-ink/20 hover:bg-ink/30"
+              className="absolute inset-0 flex touch-pan-y items-center justify-center bg-ink/20 hover:bg-ink/30"
               aria-label={`Play ${video.title}`}
             >
               <span className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground">

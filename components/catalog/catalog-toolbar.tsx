@@ -43,7 +43,7 @@ export function CatalogToolbar({
         {searchTerm ? (
           <button
             type="button"
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground hover:bg-primary-soft hover:text-ink"
+            className="absolute right-2 top-1/2 flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:bg-primary-soft hover:text-ink"
             aria-label="Clear search"
             onClick={() => onSearchTermChange("")}
           >
@@ -63,7 +63,7 @@ export function CatalogToolbar({
           aria-pressed={viewMode === "card"}
           onClick={() => onViewModeChange("card")}
           className={cn(
-            "rounded-md p-2 transition-colors",
+            "flex min-h-11 min-w-11 items-center justify-center rounded-md transition-colors",
             viewMode === "card"
               ? "bg-primary-soft text-primary"
               : "text-muted-foreground hover:text-ink"
@@ -77,7 +77,7 @@ export function CatalogToolbar({
           aria-pressed={viewMode === "list"}
           onClick={() => onViewModeChange("list")}
           className={cn(
-            "rounded-md p-2 transition-colors",
+            "flex min-h-11 min-w-11 items-center justify-center rounded-md transition-colors",
             viewMode === "list"
               ? "bg-primary-soft text-primary"
               : "text-muted-foreground hover:text-ink"

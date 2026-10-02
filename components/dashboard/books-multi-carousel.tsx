@@ -314,7 +314,7 @@ export function BooksMultiCarousel<T extends { _id: string }>({
               <>
                 <div
                   ref={scrollRef}
-                  className="scroll-pane-x flex gap-4 touch-pan-x snap-x snap-mandatory overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                  className="scroll-pane-x flex gap-4 touch-[pan-x_pan-y] snap-x snap-mandatory overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                   onPointerDown={() => setPaused(true)}
                   onPointerUp={() => setPaused(false)}
                   onPointerCancel={() => setPaused(false)}
@@ -338,14 +338,19 @@ export function BooksMultiCarousel<T extends { _id: string }>({
                         type="button"
                         aria-label={`Go to ${dotItemLabel} ${i + 1}`}
                         aria-current={i === activeIndex ? "true" : undefined}
-                        className={cn(
-                          "rounded-full transition-colors",
-                          i === activeIndex
-                            ? "size-2.5 bg-primary"
-                            : "size-2 bg-primary-soft"
-                        )}
+                        className="flex min-h-11 min-w-11 items-center justify-center rounded-full"
                         onClick={() => scrollToIndex(i)}
-                      />
+                      >
+                        <span
+                          className={cn(
+                            "rounded-full transition-colors",
+                            i === activeIndex
+                              ? "size-2.5 bg-primary"
+                              : "size-2 bg-primary-soft"
+                          )}
+                          aria-hidden
+                        />
+                      </button>
                     ))}
                   </div>
                 ) : null}

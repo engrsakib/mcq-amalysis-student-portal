@@ -129,6 +129,7 @@
   }
 
   .scroll-pane-x {
+    touch-action: pan-x pan-y;
     scroll-behavior: smooth;
     overscroll-behavior-x: contain;
   }
@@ -140,7 +141,7 @@
     overscroll-behavior-x: contain;
     scroll-behavior: smooth;
     scrollbar-width: none;
-    touch-action: pan-x;
+    touch-action: pan-x pan-y;
   }
 
   .folder-tabs-scroll-x::-webkit-scrollbar {
@@ -189,6 +190,28 @@
     overflow-y: scroll;
   }
 
+  .pressable {
+    touch-action: manipulation;
+    transition:
+      transform 150ms ease-out,
+      opacity 150ms ease-out;
+  }
+
+  .pressable:active {
+    transform: translate3d(0, 0, 0) scale(0.98);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pressable {
+      transition: opacity 150ms ease-out;
+    }
+
+    .pressable:active {
+      transform: none;
+      opacity: 0.92;
+    }
+  }
+
   /* Exam questions: wrap lines without breaking Bengali graphemes */
   .katex-wrap {
     max-width: 100%;
@@ -232,9 +255,14 @@
 
   /* Mobile: hide scrollbar chrome; touch scroll unchanged */
   @media (max-width: 1023px) {
-    .scroll-pane {
+    .scroll-pane,
+    .scroll-area-brand,
+    .scroll-pane-x {
       -webkit-overflow-scrolling: touch;
       scroll-behavior: auto;
+    }
+
+    .scroll-pane {
       -ms-overflow-style: none;
       scrollbar-gutter: auto;
       scrollbar-width: none;

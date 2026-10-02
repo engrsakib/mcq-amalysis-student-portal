@@ -11,6 +11,7 @@ import {
   User,
 } from "lucide-react";
 import type { NavGroup } from "@/lib/dashboard/types";
+import { PLAY_STORE_URL } from "@/lib/important-links/play-store";
 
 export const dashboardNavGroups: NavGroup[] = [
   {
@@ -91,6 +92,13 @@ export const dashboardNavGroups: NavGroup[] = [
         href: "#",
         icon: HelpCircle,
         disabled: true,
+      },
+      {
+        id: "play-store",
+        label: "Get it on Google Play",
+        href: PLAY_STORE_URL,
+        external: true,
+        variant: "playStoreBadge",
       },
     ],
   },

@@ -134,7 +134,7 @@ export function ExamBriefingModal() {
             </span>
             <button
               type="button"
-              className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-primary-soft hover:text-ink"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-primary-soft hover:text-ink"
               aria-label="Close"
               onClick={closeBriefing}
             >

@@ -25,7 +25,7 @@ export function DashboardSidebar({
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-30 hidden h-svh flex-col overflow-hidden border-r border-line bg-card transition-[width] duration-200 ease-out lg:flex",
+        "fixed inset-y-0 left-0 z-30 hidden h-svh flex-col overflow-hidden border-r border-line bg-card lg:flex",
         collapsed ? "w-[72px]" : "w-[240px]"
       )}
     >
@@ -49,7 +49,7 @@ export function DashboardSidebar({
         ) : null}
         <button
           type="button"
-          className="shrink-0 rounded-md p-1 text-muted-foreground hover:bg-primary-soft hover:text-ink"
+          className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-primary-soft hover:text-ink"
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           aria-expanded={!collapsed}
           onClick={onToggleCollapsed}

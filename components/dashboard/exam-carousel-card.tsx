@@ -194,7 +194,7 @@ export function ExamCarouselCard<T extends { _id: string }>({
           <div className="min-w-0">
             <div
               ref={scrollRef}
-              className="scroll-pane-x flex w-full touch-pan-x snap-x snap-mandatory overflow-x-auto scroll-smooth px-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              className="scroll-pane-x flex w-full touch-[pan-x_pan-y] snap-x snap-mandatory overflow-x-auto scroll-smooth px-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
               onPointerDown={() => setPaused(true)}
               onPointerUp={() => setPaused(false)}
               onPointerCancel={() => setPaused(false)}
@@ -218,14 +218,19 @@ export function ExamCarouselCard<T extends { _id: string }>({
                     type="button"
                     aria-label={`Go to slide ${i + 1}`}
                     aria-current={i === activeIndex ? "true" : undefined}
-                    className={cn(
-                      "rounded-full transition-colors",
-                      i === activeIndex
-                        ? "size-2.5 bg-primary"
-                        : "size-2 bg-primary-soft"
-                    )}
+                    className="flex min-h-11 min-w-11 items-center justify-center rounded-full"
                     onClick={() => scrollToIndex(i)}
-                  />
+                  >
+                    <span
+                      className={cn(
+                        "rounded-full transition-colors",
+                        i === activeIndex
+                          ? "size-2.5 bg-primary"
+                          : "size-2 bg-primary-soft"
+                      )}
+                      aria-hidden
+                    />
+                  </button>
                 ))}
               </div>
             ) : null}

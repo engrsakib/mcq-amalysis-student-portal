@@ -74,7 +74,7 @@ export function ExamGridCard({
         <Button
           type="button"
           variant="outline"
-          className="h-10 w-full touch-pan-y rounded-[10px] border-primary/40 text-sm font-medium text-primary hover:bg-primary-soft"
+          className="pressable h-11 w-full touch-pan-y rounded-[10px] border-primary/40 text-sm font-medium text-primary hover:bg-primary-soft"
           title={actionLabel}
           onClick={() => openBriefing(exam, briefingSource)}
         >

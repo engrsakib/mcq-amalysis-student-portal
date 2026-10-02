@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { MathContent } from "@/components/exam/math-content";
 import type { ExamQuestionPublic } from "@/lib/api/types";
 import { optionNeedsMultilineLayout } from "@/lib/exam/option-layout";
@@ -13,7 +14,7 @@ type ExamQuestionCardProps = {
   readOnly?: boolean;
 };
 
-export function ExamQuestionCard({
+export const ExamQuestionCard = memo(function ExamQuestionCard({
   index,
   question,
   selectedOption,
@@ -45,12 +46,16 @@ export function ExamQuestionCard({
       ) : null}
 
       {question.image_url ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={question.image_url}
-          alt=""
-          className="mt-3 max-h-48 w-full rounded-lg object-contain"
-        />
+        <div className="mt-3 aspect-[4/3] max-h-48 w-full overflow-hidden rounded-lg bg-page/60">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={question.image_url}
+            alt=""
+            className="size-full object-contain"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
       ) : null}
 
       <ul className="mt-4 space-y-2">
@@ -68,7 +73,7 @@ export function ExamQuestionCard({
                 aria-label={`Option ${label}`}
                 className={cn(
                   readOnly && "cursor-default opacity-90",
-                  "flex w-full min-w-0 rounded-lg border px-3 text-left text-base transition-colors",
+                  "pressable flex w-full min-w-0 rounded-lg border px-3 text-left text-base transition-colors",
                   multiline
                     ? "min-h-14 items-start gap-3 py-3"
                     : "items-center gap-3 py-2.5",
@@ -103,4 +108,4 @@ export function ExamQuestionCard({
       </ul>
     </article>
   );
-}
+});

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { ExternalLink } from "lucide-react";
+import { PlayStorePromoBanner } from "@/components/important-links/play-store-promo-banner";
 import type { FacebookLinkItem } from "@/lib/important-links/load-important-links";
 import { cn } from "@/lib/utils";
 
@@ -15,7 +16,7 @@ function FacebookLinkCard({ item }: { item: FacebookLinkItem }) {
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        "group flex min-h-[4.5rem] touch-pan-y items-center gap-3 rounded-xl border border-line/80 bg-card p-4 shadow-sm",
+        "pressable group flex min-h-[4.5rem] touch-pan-y items-center gap-3 rounded-xl border border-line/80 bg-card p-4 shadow-sm",
         "transition-colors hover:border-primary/40 hover:bg-primary-soft/35"
       )}
     >
@@ -84,6 +85,8 @@ export function ImportantLinksView({ groups, pages }: ImportantLinksViewProps) {
           model tests, and analysis from MCQ Analysis.
         </p>
       </div>
+
+      <PlayStorePromoBanner />
 
       <FacebookLinkSection
         title="Facebook Groups"

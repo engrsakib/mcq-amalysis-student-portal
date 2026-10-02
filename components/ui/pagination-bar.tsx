@@ -74,7 +74,7 @@ export function PaginationBar({
                   variant={item === page ? "default" : "outline"}
                   size="sm"
                   className={cn(
-                    "size-9 min-w-9 rounded-lg p-0 text-sm font-medium tabular-nums",
+                    "size-11 min-w-11 rounded-lg p-0 text-sm font-medium tabular-nums",
                     item === page &&
                       "bg-primary text-primary-foreground hover:bg-primary-hover"
                   )}

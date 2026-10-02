@@ -1,10 +1,9 @@
 import type { LucideIcon } from "lucide-react";
 
-export type NavItem = {
+type NavItemBase = {
   id: string;
   label: string;
   href: string;
-  icon: LucideIcon;
   disabled?: boolean;
   /** When set, item is active if pathname starts with this prefix */
   activePathPrefix?: string;
@@ -13,6 +12,17 @@ export type NavItem = {
   /** Open href in a new tab (external link) */
   external?: boolean;
 };
+
+export type NavItem =
+  | (NavItemBase & {
+      icon: LucideIcon;
+      variant?: undefined;
+    })
+  | (NavItemBase & {
+      variant: "playStoreBadge";
+      external: true;
+      icon?: never;
+    });
 
 export type NavGroup = {
   id: string;

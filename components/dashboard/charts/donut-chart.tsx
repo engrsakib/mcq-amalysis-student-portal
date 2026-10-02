@@ -28,7 +28,7 @@ export function DonutChart({
         cy={size / 2}
         r={radius}
         fill="none"
-        className="stroke-primary transition-all duration-500"
+        className="stroke-primary transition-[stroke-dashoffset] duration-500"
         strokeWidth={strokeWidth}
         strokeDasharray={circumference}
         strokeDashoffset={offset}

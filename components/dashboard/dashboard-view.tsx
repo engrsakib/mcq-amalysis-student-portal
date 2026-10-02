@@ -1,7 +1,7 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { PersonalGrowthCard } from "@/components/dashboard/personal-growth-card";
-import { ExamBriefingModal } from "@/components/dashboard/exam-briefing-modal";
 import { LiveExamsCard } from "@/components/dashboard/live-exams-card";
 import { PreviousExamsCard } from "@/components/dashboard/previous-exams-card";
 import { SubjectiveModelTestsCard } from "@/components/dashboard/subjective-model-tests-card";
@@ -18,6 +18,14 @@ import { PersonalGrowthProvider } from "@/hooks/use-personal-growth";
 import { PreviousExamsProvider } from "@/hooks/use-previous-exams";
 import { SubjectiveModelTestsProvider } from "@/hooks/use-subjective-model-tests";
 import type { DashboardMock } from "@/lib/dashboard/types";
+
+const ExamBriefingModal = dynamic(
+  () =>
+    import("@/components/dashboard/exam-briefing-modal").then(
+      (mod) => mod.ExamBriefingModal
+    ),
+  { ssr: false }
+);
 
 type DashboardViewProps = {
   data: DashboardMock;

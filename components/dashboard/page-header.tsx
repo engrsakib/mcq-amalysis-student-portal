@@ -38,7 +38,7 @@ export function PageHeader({
             type="button"
             variant="outline"
             size="icon"
-            className="lg:hidden"
+            className="size-11 lg:hidden"
             onClick={onMenuClick}
             aria-label="Open menu"
           >
@@ -65,6 +65,7 @@ export function PageHeader({
             variant="outline"
             size="icon"
             aria-label="Search"
+            className="size-11"
             onClick={openSearch}
           >
             <Search className="size-4" />
@@ -74,7 +75,7 @@ export function PageHeader({
           type="button"
           variant="outline"
           size="icon"
-          className="relative max-lg:hidden"
+          className="relative size-11 max-lg:hidden"
           aria-label="Notifications"
         >
           <Bell className="size-4" />

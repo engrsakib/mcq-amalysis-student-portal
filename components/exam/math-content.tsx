@@ -1,5 +1,6 @@
 "use client";
 
+import "katex/dist/katex.min.css";
 import katex from "katex";
 import { Fragment, useMemo } from "react";
 import {
