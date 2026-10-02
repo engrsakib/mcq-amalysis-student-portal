@@ -4,18 +4,32 @@ import { Award, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useExamBriefing } from "@/hooks/use-exam-briefing";
 import { formatExamDateTime } from "@/lib/datetime/format-exam";
-import type { UserExam } from "@/lib/api/types";
+import type { UpcomingExam, UserExam } from "@/lib/api/types";
+import {
+  getBriefingPrimaryLabel,
+  type ExamBriefingSource,
+} from "@/lib/exam/briefing-mode";
 import { cn } from "@/lib/utils";
 
 type ExamListRowProps = {
-  exam: UserExam;
+  exam: UserExam | UpcomingExam;
+  briefingSource?: ExamBriefingSource;
   className?: string;
 };
 
-export function ExamListRow({ exam, className }: ExamListRowProps) {
+export function ExamListRow({
+  exam,
+  briefingSource = "previous",
+  className,
+}: ExamListRowProps) {
   const { openBriefing } = useExamBriefing();
+  const userExam = exam as UserExam;
   const when = formatExamDateTime(exam.exam_date_time);
-  const submitted = exam.isSubmitted === true;
+  const submitted = userExam.isSubmitted === true;
+  const actionLabel =
+    briefingSource === "previous"
+      ? "Practice"
+      : getBriefingPrimaryLabel(briefingSource);
 
   return (
     <article
@@ -59,10 +73,10 @@ export function ExamListRow({ exam, className }: ExamListRowProps) {
         type="button"
         variant="outline"
         className="h-10 w-full shrink-0 rounded-[10px] border-primary/40 text-sm font-medium text-primary hover:bg-primary-soft sm:w-[120px]"
-        title="Practice this exam"
-        onClick={() => openBriefing(exam, "previous")}
+        title={actionLabel}
+        onClick={() => openBriefing(exam, briefingSource)}
       >
-        Practice
+        {actionLabel}
       </Button>
     </article>
   );
