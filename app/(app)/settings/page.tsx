@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { pageMetadata } from "@/lib/site/metadata";
 
-export const metadata = pageMetadata("Settings");
+export const metadata = pageMetadata("Profile");
 
 export default function SettingsPage() {
   return (

@@ -7,7 +7,7 @@ import {
   ClipboardList,
   HelpCircle,
   LayoutDashboard,
-  Settings,
+  User,
 } from "lucide-react";
 import type { NavGroup } from "@/lib/dashboard/types";
 
@@ -73,9 +73,9 @@ export const dashboardNavGroups: NavGroup[] = [
     items: [
       {
         id: "settings",
-        label: "Settings",
+        label: "Profile",
         href: "/settings",
-        icon: Settings,
+        icon: User,
       },
       {
         id: "help",
