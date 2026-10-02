@@ -2,11 +2,13 @@ import {
   convertBengaliDigitsOutsideTextBlocks,
   foldMultilineTextBlocks,
   hasBengaliLetters,
-  normalizeApiLatexEscaping,
+  normalizeDivCommand,
   normalizeMathPlaceholders,
   repairBareLatexCommands,
   repairDivisionAndFractionTypos,
   repairImplicitFractionEquation,
+  repairPartialFractionAfterDiv,
+  repairTextEmbeddedMathOperators,
   stripInvisibleChars,
 } from "@/lib/exam/math-latex-repairs";
 
@@ -103,8 +105,9 @@ export function repairMathLatex(latex: string): string {
   let s = latex.trim();
   if (!s) return s;
 
-  s = normalizeApiLatexEscaping(s);
+  s = normalizeDivCommand(s);
   s = foldMultilineTextBlocks(s);
+  s = repairTextEmbeddedMathOperators(s);
   s = s.replace(/^[\u09CD\u200C\u200D\uFEFF\s]+/, "");
   s = repairBareLatexCommands(s);
   s = repairDivisionAndFractionTypos(s);
@@ -116,10 +119,12 @@ export function repairMathLatex(latex: string): string {
 
 /** True when undelimited string matches raw implicit fraction API shape. */
 export function isImplicitRawEquation(value: string): boolean {
-  if (/\\frac\s*\{/.test(value)) return false;
   if (hasBengaliLetters(value)) return false;
-  const cleaned = value.trim();
-  return /^[^\s]+\s+[^\s]+\s*(\d+)?\s*(?:\\?div|÷)\s*[^\s]+\s+[^\s]+\s*$/i.test(
+  const cleaned = normalizeDivCommand(stripInvisibleChars(value.trim()));
+  if (/\\frac\s*\{/.test(cleaned)) {
+    return repairPartialFractionAfterDiv(cleaned) !== cleaned;
+  }
+  return /^[^\s]+\s+[^\s]+\s*(\d+)?\s*\\div\s*[^\s]+\s+[^\s]+\s*$/i.test(
     cleaned
   );
 }

@@ -59,7 +59,18 @@ export function convertBengaliDigitsOutsideTextBlocks(value: string): string {
 export function normalizeApiLatexEscaping(value: string): string {
   return value
     .replace(/&#92;/g, "\\")
-    .replace(/\\\\(frac|div|sqrt|text|cdot|times|pm|left|right)\b/g, "\\$1");
+    .replace(/\\\\+(frac|div|sqrt|text|cdot|times|pm|left|right)\b/g, "\\$1");
+}
+
+/** `\div`, `\\div`, bare `div`, spaced `\ div`, unicode ÷ → KaTeX `\div`. */
+export function normalizeDivCommand(value: string): string {
+  let s = normalizeApiLatexEscaping(value);
+  s = s.replace(/÷/g, "\\div ");
+  s = s.replace(/\\\s+div\b/gi, "\\div");
+  s = s.replace(/\\{2,}div\b/gi, "\\div");
+  s = s.replace(/(?<!\\)div(?![a-zA-Z])/gi, "\\div");
+  s = s.replace(/\s*\\div\s*/g, " \\div ");
+  return s;
 }
 
 export function repairBareLatexCommands(value: string): string {
@@ -70,25 +81,43 @@ export function repairBareLatexCommands(value: string): string {
 }
 
 export function repairDivisionAndFractionTypos(value: string): string {
-  let s = value.replace(/÷/g, "\\div ");
+  let s = normalizeDivCommand(value);
   s = s.replace(/\\d\{([^}]*)\}\{([^}]*)\}/g, "\\frac{$1}{$2}");
   s = s.replace(/\\d\s*(?=\\frac)/g, "");
   s = s.replace(/\\d(?![a-zA-Z{])/g, "\\div ");
-  s = s.replace(/(?<!\\)div(?![a-zA-Z])/g, "\\div ");
   s = s.replace(/\^\{\s*\}/g, "");
-  s = s.replace(/\s*\\div\s*/g, " \\div ");
   s = s.replace(/(\})\s*(\d+)\s*(\\div\b)/g, "$1^$2 $3");
   s = s.replace(/(\\frac\{[^}]*\}\{[^}]*\})\s*(\d+)\s*(\\div\b)/g, "$1^$2 $3");
   return s.replace(/\s{2,}/g, " ").trim();
 }
 
-export function repairImplicitFractionEquation(value: string): string {
-  if (/\\frac\s*\{/.test(value)) return value;
+/** `\\frac{..}{..}^2 \\div a a+b` → second side as `\\frac{a+b}{a}`. */
+export function repairPartialFractionAfterDiv(value: string): string {
   if (BENGALI_LETTER.test(value)) return value;
 
   const cleaned = value.replace(/[\u200B-\u200D\uFEFF]/g, "").trim();
   const match = cleaned.match(
-    /^([^\s]+)\s+([^\s]+)\s*(\d+)?\s*(?:\\?div|÷)\s*([^\s]+)\s+([^\s]+)\s*$/i
+    /^([\s\S]*\\frac\{[^}]*\}\{[^}]*\}(?:\^{[^}]*}|\^\d+)?)\s*\\div\s+([^\s]+)\s+([^\s]+)\s*$/
+  );
+  if (!match) return value;
+
+  const [, head, den2, num2] = match;
+  return `${head.trim()} \\div \\frac{${num2}}{${den2}}`;
+}
+
+export function repairImplicitFractionEquation(value: string): string {
+  if (BENGALI_LETTER.test(value)) return value;
+
+  const cleaned = normalizeDivCommand(value)
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
+    .trim();
+
+  if (/\\frac\s*\{/.test(cleaned)) {
+    return repairPartialFractionAfterDiv(cleaned);
+  }
+
+  const match = cleaned.match(
+    /^([^\s]+)\s+([^\s]+)\s*(\d+)?\s*\\div\s*([^\s]+)\s+([^\s]+)\s*$/i
   );
   if (!match) return value;
 
@@ -109,4 +138,84 @@ export function stripInvisibleChars(value: string): string {
 
 export function hasBengaliLetters(value: string): boolean {
   return BENGALI_LETTER.test(value);
+}
+
+function shouldUnwrapEquationTextBlock(inner: string): boolean {
+  if (BENGALI_LETTER.test(inner)) return false;
+  const n = normalizeDivCommand(inner).trim();
+  if (!/\\div\b/.test(n)) return false;
+  if (/\\frac\s*\{/.test(n)) return true;
+  return /^[^\s]+\s+[^\s]+\s*(\d+)?\s*\\div\s*[^\s]+\s+[^\s]+\s*$/i.test(n);
+}
+
+function isMathIdentifierFragment(part: string): boolean {
+  if (/\\frac|\\sqrt|\^/.test(part)) return true;
+  if (/^\d+$/.test(part)) return true;
+  return /^[a-zA-Z][a-zA-Z0-9]*(\+[a-zA-Z0-9]+)*$/.test(part);
+}
+
+function wrapTextOrLeaveMath(part: string): string {
+  const p = part.trim();
+  if (!p) return "";
+  if (BENGALI_LETTER.test(p)) return `\\text{${p}}`;
+  if (/\\frac|\\sqrt|\\text\{/.test(p)) {
+    return repairTextEmbeddedMathOperatorsOnce(p);
+  }
+  if (
+    isMathIdentifierFragment(p) &&
+    (/[+0-9]|\\frac/.test(p) || p.length <= 2)
+  ) {
+    return p;
+  }
+  return `\\text{${p}}`;
+}
+
+function splitTextBlockOnDiv(inner: string): string {
+  const normalized = normalizeDivCommand(inner).trim();
+  if (/^\\div$/i.test(normalized)) return "\\div";
+  const parts = normalized
+    .split(/\s*\\div\s*/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  if (parts.length <= 1) return `\\text{${inner}}`;
+  return parts.map(wrapTextOrLeaveMath).filter(Boolean).join(" \\div ");
+}
+
+/** KaTeX treats `\\div` inside `\\text{}` as an error (red literal). Promote to math mode. */
+export function repairTextEmbeddedMathOperatorsOnce(value: string): string {
+  let s = value.trim();
+  const full = s.match(/^\\text\{([\s\S]*)\}$/);
+  if (full && shouldUnwrapEquationTextBlock(full[1])) {
+    return repairTextEmbeddedMathOperatorsOnce(full[1]);
+  }
+
+  let out = "";
+  let i = 0;
+  while (i < s.length) {
+    if (s.startsWith("\\text{", i)) {
+      const contentStart = i + 6;
+      const end = readBracedGroup(s, contentStart);
+      const inner = s.slice(contentStart, end - 1);
+      if (/\\div\b/i.test(normalizeDivCommand(inner))) {
+        out += splitTextBlockOnDiv(inner);
+      } else {
+        out += `\\text{${inner}}`;
+      }
+      i = end;
+      continue;
+    }
+    out += s[i];
+    i += 1;
+  }
+  return out;
+}
+
+export function repairTextEmbeddedMathOperators(value: string): string {
+  let s = value.trim();
+  for (let pass = 0; pass < 6; pass += 1) {
+    const next = repairTextEmbeddedMathOperatorsOnce(s);
+    if (next === s) break;
+    s = next;
+  }
+  return s;
 }

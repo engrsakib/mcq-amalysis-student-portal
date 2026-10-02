@@ -9,6 +9,7 @@ import {
   readBracedGroup,
   repairBareLatexCommands,
   repairDivisionAndFractionTypos,
+  stripInvisibleChars,
 } from "@/lib/exam/math-latex-repairs";
 import {
   isImplicitRawEquation,
@@ -322,12 +323,9 @@ function plainLines(normalized: string): string[] {
 
 function renderKatexString(
   latex: string,
-  displayMode = false,
-  alreadyNormalized = false
+  displayMode = false
 ): string | null {
-  const normalized = alreadyNormalized
-    ? normalizeMathPlaceholders(latex)
-    : normalizeMathPlaceholders(repairMathLatex(latex));
+  const normalized = normalizeMathPlaceholders(repairMathLatex(latex));
   if (!normalized) return null;
 
   try {
@@ -360,7 +358,7 @@ function renderFullLatexDocument(
   const doc = normalizeMathPlaceholders(normalizeExamLatex(normalized));
   const mode = pickDisplayMode(doc, displayMode);
 
-  return renderKatexString(doc, mode, true);
+  return renderKatexString(doc, mode);
 }
 
 function shouldRenderFullLatexDocument(normalized: string): boolean {
@@ -391,14 +389,12 @@ function DelimitedSegmentContent({
           return <Fragment key={`p-${index}`}>{seg.value}</Fragment>;
         }
 
-        const repaired = repairMathLatex(seg.value);
         const block = seg.display === "block";
         const html = renderKatexString(
-          repaired,
-          block || Boolean(displayMode),
-          true
+          seg.value,
+          block || Boolean(displayMode)
         );
-        const fallback = seg.value;
+        const fallback = repairMathLatex(seg.value);
 
         if (!html) {
           return <Fragment key={`m-${index}`}>{fallback}</Fragment>;
@@ -448,7 +444,7 @@ function MixedFlowContent({
           Boolean(displayMode) &&
           item.value.includes("=") &&
           item.value.length > 12;
-        const html = renderKatexString(item.value, useDisplay, true);
+        const html = renderKatexString(item.value, useDisplay);
         if (!html) {
           return <Fragment key={`m-${index}`}>{item.value}</Fragment>;
         }
@@ -512,21 +508,22 @@ function resolveRenderMode(
   const trimmed = raw.trim();
   if (!trimmed) return { kind: "empty" };
 
-  const parsed = parseExamContentSegments(trimmed);
+  const stripped = stripInvisibleChars(trimmed);
+  const parsed = parseExamContentSegments(stripped);
   if (parsed.hadDelimiters && parsed.segments.length > 0) {
     return { kind: "delimited", segments: parsed.segments };
   }
 
-  const normalized = normalizeExamLatex(trimmed);
+  const normalized = normalizeExamLatex(stripped);
 
   if (shouldRenderFullLatexDocument(normalized)) {
     const html = renderFullLatexDocument(normalized, displayMode);
     if (html) return { kind: "full-document", html };
   }
 
-  if (isImplicitRawEquation(normalized)) {
-    const latex = repairMathLatex(normalized);
-    const html = renderKatexString(latex, displayMode, true);
+  if (isImplicitRawEquation(stripped)) {
+    const latex = repairMathLatex(stripped);
+    const html = renderKatexString(latex, displayMode);
     if (html) return { kind: "single-html", html };
     return {
       kind: "mixed-flow",
@@ -566,8 +563,7 @@ function resolveRenderMode(
     if (pureFrac || hasNonTextLatex(latex)) {
       const html = renderKatexString(
         latex,
-        pickDisplayMode(latex, displayMode),
-        true
+        pickDisplayMode(latex, displayMode)
       );
       if (html) return { kind: "single-html", html };
     }

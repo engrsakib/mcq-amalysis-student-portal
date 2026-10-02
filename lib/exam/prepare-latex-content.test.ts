@@ -73,4 +73,31 @@ describe("isImplicitRawEquation", () => {
   it("rejects Bengali-containing strings", () => {
     assert.equal(isImplicitRawEquation("বাংলা ab ab+b \\div a"), false);
   });
+
+  it("detects partial frac + raw tail after div", () => {
+    const raw = "\\frac{ab+b}{ab}^2 \\div a a+b";
+    assert.equal(isImplicitRawEquation(raw), true);
+    assert.equal(
+      repairMathLatex(raw),
+      "\\frac{ab+b}{ab}^2 \\div \\frac{a+b}{a}"
+    );
+  });
+});
+
+describe("normalizeDivCommand via repairMathLatex", () => {
+  it("fixes double-escaped \\\\div from API JSON", () => {
+    const repaired = repairMathLatex("\\frac{1}{2} \\\\div \\frac{3}{4}");
+    assert.match(repaired, /\\frac\{1\}\{2\} \\div \\frac\{3\}\{4\}/);
+  });
+
+  it("promotes \\\\div out of \\\\text{} so KaTeX renders ÷", () => {
+    const repaired = repairMathLatex("\\text{foo \\div bar}");
+    assert.match(repaired, /\\text\{foo\} \\div \\text\{bar\}/);
+  });
+
+  it("unwraps equation-only \\\\text{... \\\\div ...} wrapper", () => {
+    const repaired = repairMathLatex("\\text{ab ab+b 2 \\div a a+b}");
+    assert.match(repaired, /\\frac\{ab\+b\}\{ab\}/);
+    assert.match(repaired, /\\div \\frac\{a\+b\}\{a\}/);
+  });
 });
