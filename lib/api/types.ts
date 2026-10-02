@@ -135,6 +135,23 @@ export type UserExamsPayload = {
   data: UserExam[];
 };
 
+export type UserYoutubeEntry = {
+  _id: string;
+  id?: string;
+  video_number: number;
+  title: string;
+  thumbnail_url: string;
+  video_url: string;
+  description: string;
+  is_published: boolean;
+  position?: number;
+};
+
+export type UserYoutubePayload = {
+  meta: PaginatedMeta;
+  data: UserYoutubeEntry[];
+};
+
 export type ExamQuestionAnswer = {
   options: string[];
   correctAnswer?: string;

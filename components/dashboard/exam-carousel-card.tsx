@@ -18,6 +18,11 @@ type ExamCarouselCardProps<T extends { _id: string }> = {
   emptyContent?: React.ReactNode;
   renderSlide: (exam: T) => React.ReactNode;
   autoSlideMs?: number;
+  autoPaused?: boolean;
+  onActiveIndexChange?: (index: number) => void;
+  countSuffix?: "exam" | "video";
+  loadingSkeletonClassName?: string;
+  cardClassName?: string;
 };
 
 export function ExamCarouselCard<T extends { _id: string }>({
@@ -31,6 +36,11 @@ export function ExamCarouselCard<T extends { _id: string }>({
   emptyContent,
   renderSlide,
   autoSlideMs = DEFAULT_AUTO_SLIDE_MS,
+  autoPaused = false,
+  onActiveIndexChange,
+  countSuffix = "exam",
+  loadingSkeletonClassName = "h-[220px]",
+  cardClassName,
 }: ExamCarouselCardProps<T>) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const activeIndexRef = useRef(0);
@@ -41,6 +51,10 @@ export function ExamCarouselCard<T extends { _id: string }>({
   useEffect(() => {
     activeIndexRef.current = activeIndex;
   }, [activeIndex]);
+
+  useEffect(() => {
+    onActiveIndexChange?.(activeIndex);
+  }, [activeIndex, onActiveIndexChange]);
 
   useEffect(() => {
     setActiveIndex(0);
@@ -87,14 +101,14 @@ export function ExamCarouselCard<T extends { _id: string }>({
   }, [exams.length, getSlideWidth]);
 
   useEffect(() => {
-    if (exams.length <= 1 || paused || reduceMotion) return;
+    if (exams.length <= 1 || paused || autoPaused || reduceMotion) return;
 
     const id = window.setInterval(() => {
       scrollToIndex(activeIndexRef.current + 1);
     }, autoSlideMs);
 
     return () => window.clearInterval(id);
-  }, [exams.length, paused, reduceMotion, scrollToIndex, autoSlideMs]);
+  }, [exams.length, paused, autoPaused, reduceMotion, scrollToIndex, autoSlideMs]);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -105,7 +119,12 @@ export function ExamCarouselCard<T extends { _id: string }>({
   }, [syncIndexFromScroll]);
 
   return (
-    <Card className="min-w-0 overflow-hidden rounded-2xl border-border/60 bg-card shadow-sm ring-0 lg:min-h-[280px]">
+    <Card
+      className={cn(
+        "min-w-0 overflow-hidden rounded-2xl border-border/60 bg-card shadow-sm ring-0 lg:min-h-[280px]",
+        cardClassName
+      )}
+    >
       <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           <CardTitle className="text-base font-semibold text-ink">{title}</CardTitle>
@@ -113,13 +132,21 @@ export function ExamCarouselCard<T extends { _id: string }>({
         </div>
         {!loading && exams.length > 0 && countLabel != null ? (
           <span className="shrink-0 rounded-lg border border-line px-2 py-1 text-xs text-muted-foreground">
-            {countLabel} exam{countLabel === 1 ? "" : "s"}
+            {countLabel}{" "}
+            {countSuffix === "video"
+              ? `video${countLabel === 1 ? "" : "s"}`
+              : `exam${countLabel === 1 ? "" : "s"}`}
           </span>
         ) : null}
       </CardHeader>
       <CardContent className="min-w-0">
         {loading ? (
-          <div className="h-[220px] animate-pulse rounded-xl bg-primary-soft/40" />
+          <div
+            className={cn(
+              "animate-pulse rounded-xl bg-primary-soft/40",
+              loadingSkeletonClassName
+            )}
+          />
         ) : null}
         {error ? (
           <Alert variant="destructive">

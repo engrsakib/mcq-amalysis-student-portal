@@ -531,6 +531,50 @@ Published exams for the signed-in user. Live exams (`is_started` and not complet
 
 ---
 
+### GET `/youtube/user`
+
+Published YouTube entries for the signed-in user (paginated).
+
+**Auth:** Required (`Authorization`)
+
+**Query:**
+
+| Param   | Type    | Default | Notes                          |
+| ------- | ------- | ------- | ------------------------------ |
+| `page`  | integer | 1       |                                |
+| `limit` | integer | 10      | Dashboard Youtube card uses 5  |
+
+**Success (200):**
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "YouTube entries retrieved successfully",
+  "data": {
+    "meta": { "page": 1, "limit": 5, "total": 8, "totalPage": 2 },
+    "data": [
+      {
+        "_id": "…",
+        "video_number": 9003442050863,
+        "title": "…",
+        "thumbnail_url": "",
+        "video_url": "https://youtu.be/…",
+        "description": "",
+        "is_published": true,
+        "position": 0
+      }
+    ]
+  }
+}
+```
+
+**Errors:** 401 unauthenticated.
+
+**Client:** Dashboard **Youtube** section below “My recent results” — `page=1`, `limit=5`; thumbnails from `thumbnail_url` or YouTube CDN via parsed `video_url`; carousel auto-advances every 4s until user plays a video (iframe embed pauses rotation).
+
+---
+
 ### GET `/exam/user/{exam_number}`
 
 Single exam entry for the signed-in user, including full **`questions[]`** (MCQ options under each question’s `answer.options`). Times use Bangladesh offset (`+06:00`) where applicable.
