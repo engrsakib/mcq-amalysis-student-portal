@@ -1,5 +1,15 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { refreshUserTokens } from "@/lib/api/auth";
+import { ApiError } from "@/lib/api/client";
+import {
+  ACCESS_COOKIE,
+  REFRESH_COOKIE,
+  REMEMBER_COOKIE,
+  REFRESHED_ACCESS_HEADER,
+  writeAuthCookies,
+} from "@/lib/auth/cookie-config";
+import { isJwtExpired } from "@/lib/auth/jwt";
 
 const PUBLIC_PATHS = ["/login", "/verify", "/forgot-password"];
 
@@ -11,12 +21,32 @@ function isPublicPath(pathname: string): boolean {
 
 function hasSession(request: NextRequest): boolean {
   return Boolean(
-    request.cookies.get("access_token")?.value ||
-      request.cookies.get("refresh_token")?.value
+    request.cookies.get(ACCESS_COOKIE)?.value ||
+      request.cookies.get(REFRESH_COOKIE)?.value
   );
 }
 
-export function middleware(request: NextRequest) {
+async function maybeRefreshSession(request: NextRequest) {
+  const refresh = request.cookies.get(REFRESH_COOKIE)?.value;
+  if (!refresh) return null;
+
+  const access = request.cookies.get(ACCESS_COOKIE)?.value;
+  if (access && !isJwtExpired(access)) return null;
+
+  try {
+    return await refreshUserTokens({ refresh_token: refresh });
+  } catch (err) {
+    if (
+      err instanceof ApiError &&
+      (err.statusCode === 401 || err.statusCode === 400)
+    ) {
+      return null;
+    }
+    throw err;
+  }
+}
+
+export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
   if (
@@ -44,7 +74,34 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  return NextResponse.next();
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.delete(REFRESHED_ACCESS_HEADER);
+
+  let response: NextResponse;
+
+  if (authenticated && !isPublicPath(pathname)) {
+    const tokens = await maybeRefreshSession(request);
+    if (tokens) {
+      requestHeaders.set(REFRESHED_ACCESS_HEADER, tokens.access_token);
+      response = NextResponse.next({
+        request: { headers: requestHeaders },
+      });
+      const rememberMe =
+        request.cookies.get(REMEMBER_COOKIE)?.value === "1";
+      writeAuthCookies(
+        (name, value, options) => response.cookies.set(name, value, options),
+        tokens.access_token,
+        tokens.refresh_token,
+        rememberMe
+      );
+      return response;
+    }
+  }
+
+  response = NextResponse.next({
+    request: { headers: requestHeaders },
+  });
+  return response;
 }
 
 export const config = {

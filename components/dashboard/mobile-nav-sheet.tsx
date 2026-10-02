@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavList } from "@/components/dashboard/nav-list";
 import { UserSummary } from "@/components/dashboard/user-summary";
 import { LogoutButton } from "@/components/home/logout-button";
@@ -22,15 +22,23 @@ const fadeTransition =
 export function MobileNavSheet({ open, onClose, groups }: MobileNavSheetProps) {
   const [mounted, setMounted] = useState(open);
   const [visible, setVisible] = useState(false);
+  const ignoreBackdropCloseRef = useRef(false);
 
   useEffect(() => {
     if (open) {
       setMounted(true);
       setVisible(false);
+      ignoreBackdropCloseRef.current = true;
+      const unlock = window.setTimeout(() => {
+        ignoreBackdropCloseRef.current = false;
+      }, 400);
       const frame = requestAnimationFrame(() => {
         requestAnimationFrame(() => setVisible(true));
       });
-      return () => cancelAnimationFrame(frame);
+      return () => {
+        cancelAnimationFrame(frame);
+        window.clearTimeout(unlock);
+      };
     }
     setVisible(false);
     const t = window.setTimeout(() => setMounted(false), SHEET_ANIM_MS);
@@ -52,17 +60,31 @@ export function MobileNavSheet({ open, onClose, groups }: MobileNavSheetProps) {
 
   if (!mounted) return null;
 
+  function handleBackdropClose() {
+    if (ignoreBackdropCloseRef.current) return;
+    onClose();
+  }
+
   return (
-    <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal>
+    <div
+      className={cn(
+        "fixed inset-0 z-50 touch-manipulation lg:hidden",
+        !visible && "pointer-events-none"
+      )}
+      id="mobile-nav-sheet"
+      role="dialog"
+      aria-modal
+      aria-hidden={!visible}
+    >
       <button
         type="button"
         className={cn(
-          "absolute inset-0 bg-ink/40",
+          "absolute inset-0 bg-ink/40 touch-manipulation",
           fadeTransition,
           visible ? "opacity-100" : "pointer-events-none opacity-0"
         )}
         aria-label="Close menu"
-        onClick={onClose}
+        onClick={handleBackdropClose}
       />
       <div
         className={cn(

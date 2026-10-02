@@ -46,12 +46,14 @@ function AppShellInner({ children }: AppShellProps) {
           sidebarCollapsed ? "lg:ml-[72px]" : "lg:ml-[240px]"
         )}
       >
-        <div className="flex items-center justify-between gap-3 border-b border-line bg-card px-4 py-3 lg:hidden">
+        <div className="sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-line bg-card px-4 py-3 lg:hidden">
           <button
             type="button"
-            className="rounded-lg p-2 hover:bg-primary-soft"
+            className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg touch-manipulation active:bg-primary-soft hover:bg-primary-soft"
             onClick={openMobileNav}
             aria-label="Open menu"
+            aria-expanded={mobileNavOpen}
+            aria-controls="mobile-nav-sheet"
           >
             <span className="flex flex-col gap-1">
               <span className="block h-0.5 w-5 bg-ink" />

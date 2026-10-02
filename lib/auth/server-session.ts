@@ -1,16 +1,22 @@
 import "server-only";
 
+import { headers } from "next/headers";
 import { refreshUserTokens } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
+import { REFRESHED_ACCESS_HEADER } from "@/lib/auth/cookie-config";
 import { isJwtExpired } from "@/lib/auth/jwt";
 import {
   getServerAccessToken,
   getServerRefreshToken,
-  isServerRememberMe,
-  setServerAuthCookies,
 } from "@/lib/auth/server-cookies";
 
 export async function ensureServerAccessToken(): Promise<string | null> {
+  const headerStore = await headers();
+  const refreshedAccess = headerStore.get(REFRESHED_ACCESS_HEADER);
+  if (refreshedAccess) {
+    return refreshedAccess;
+  }
+
   const access = await getServerAccessToken();
   if (access && !isJwtExpired(access)) {
     return access;
@@ -23,12 +29,6 @@ export async function ensureServerAccessToken(): Promise<string | null> {
 
   try {
     const tokens = await refreshUserTokens({ refresh_token: refresh });
-    const rememberMe = await isServerRememberMe();
-    await setServerAuthCookies(
-      tokens.access_token,
-      tokens.refresh_token,
-      rememberMe
-    );
     return tokens.access_token;
   } catch (err) {
     if (
