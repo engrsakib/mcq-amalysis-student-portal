@@ -66,35 +66,32 @@ export function ExamQuestionCard({
                 className={cn(
                   "flex w-full min-w-0 rounded-lg border px-3 text-left text-base transition-colors",
                   multiline
-                    ? "min-h-14 flex-col items-stretch gap-1 py-3"
+                    ? "min-h-14 items-start gap-3 py-3"
                     : "items-center gap-3 py-2.5",
                   selected
                     ? "border-primary bg-primary-soft/50 text-ink"
                     : "border-line/80 bg-page/40 text-ink hover:border-primary/30 hover:bg-primary-soft/20"
                 )}
               >
-                {multiline ? (
-                  <span className="min-w-0 w-full leading-relaxed">
-                    <span className="sr-only">{label}. </span>
-                    <MathContent content={option} />
-                  </span>
-                ) : (
-                  <>
-                    <span
-                      className={cn(
-                        "flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
-                        selected
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-primary-soft text-primary"
-                      )}
-                    >
-                      {label}
-                    </span>
-                    <span className="min-w-0 flex-1 leading-snug">
-                      <MathContent content={option} />
-                    </span>
-                  </>
-                )}
+                <span
+                  className={cn(
+                    "flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
+                    multiline && "mt-0.5",
+                    selected
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-primary-soft text-primary"
+                  )}
+                >
+                  {label}
+                </span>
+                <span
+                  className={cn(
+                    "min-w-0 flex-1",
+                    multiline ? "leading-relaxed" : "leading-snug"
+                  )}
+                >
+                  <MathContent content={option} />
+                </span>
               </button>
             </li>
           );
