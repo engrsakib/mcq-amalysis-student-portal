@@ -18,9 +18,10 @@ type ExamCarouselCardProps<T extends { _id: string }> = {
   emptyContent?: React.ReactNode;
   renderSlide: (exam: T) => React.ReactNode;
   autoSlideMs?: number;
+  enableAutoSlide?: boolean;
   autoPaused?: boolean;
   onActiveIndexChange?: (index: number) => void;
-  countSuffix?: "exam" | "video";
+  countSuffix?: "exam" | "video" | "plan";
   loadingSkeletonClassName?: string;
   cardClassName?: string;
 };
@@ -36,6 +37,7 @@ export function ExamCarouselCard<T extends { _id: string }>({
   emptyContent,
   renderSlide,
   autoSlideMs = DEFAULT_AUTO_SLIDE_MS,
+  enableAutoSlide = true,
   autoPaused = false,
   onActiveIndexChange,
   countSuffix = "exam",
@@ -101,14 +103,30 @@ export function ExamCarouselCard<T extends { _id: string }>({
   }, [exams.length, getSlideWidth]);
 
   useEffect(() => {
-    if (exams.length <= 1 || paused || autoPaused || reduceMotion) return;
+    if (
+      !enableAutoSlide ||
+      exams.length <= 1 ||
+      paused ||
+      autoPaused ||
+      reduceMotion
+    ) {
+      return;
+    }
 
     const id = window.setInterval(() => {
       scrollToIndex(activeIndexRef.current + 1);
     }, autoSlideMs);
 
     return () => window.clearInterval(id);
-  }, [exams.length, paused, autoPaused, reduceMotion, scrollToIndex, autoSlideMs]);
+  }, [
+    enableAutoSlide,
+    exams.length,
+    paused,
+    autoPaused,
+    reduceMotion,
+    scrollToIndex,
+    autoSlideMs,
+  ]);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -135,7 +153,9 @@ export function ExamCarouselCard<T extends { _id: string }>({
             {countLabel}{" "}
             {countSuffix === "video"
               ? `video${countLabel === 1 ? "" : "s"}`
-              : `exam${countLabel === 1 ? "" : "s"}`}
+              : countSuffix === "plan"
+                ? `plan${countLabel === 1 ? "" : "s"}`
+                : `exam${countLabel === 1 ? "" : "s"}`}
           </span>
         ) : null}
       </CardHeader>

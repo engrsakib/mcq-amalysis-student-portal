@@ -7,7 +7,7 @@ import { PreviousExamsCard } from "@/components/dashboard/previous-exams-card";
 import { SubjectiveModelTestsCard } from "@/components/dashboard/subjective-model-tests-card";
 import { ResultsTable } from "@/components/dashboard/results-table";
 import { YoutubeSection } from "@/components/dashboard/youtube-section";
-import { StackedResultBars } from "@/components/dashboard/stacked-result-bars";
+import { StudyPlanSection } from "@/components/dashboard/study-plan-section";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { UpcomingExamsCard } from "@/components/dashboard/upcoming-exams-card";
 import { ExamBriefingProvider } from "@/hooks/use-exam-briefing";
@@ -33,7 +33,7 @@ function DashboardContent({ data }: DashboardViewProps) {
 
       <div className="grid min-w-0 gap-4 lg:grid-cols-2">
         <PersonalGrowthCard />
-        <StackedResultBars rows={data.subjectResults} />
+        <StudyPlanSection />
       </div>
 
       <div className="grid min-w-0 gap-4 lg:grid-cols-2">

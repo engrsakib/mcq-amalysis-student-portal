@@ -152,6 +152,26 @@ export type UserYoutubePayload = {
   data: UserYoutubeEntry[];
 };
 
+export type UserStudyPlanEntry = {
+  _id: string;
+  id?: string;
+  study_plan_number: number;
+  title: string;
+  description: string;
+  status: string;
+  thumbnail_url: string;
+  study_plan_url: string;
+  category: string;
+  position?: number;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type UserStudyPlanPayload = {
+  meta: PaginatedMeta;
+  data: UserStudyPlanEntry[];
+};
+
 export type ExamQuestionAnswer = {
   options: string[];
   correctAnswer?: string;

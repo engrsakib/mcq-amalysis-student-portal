@@ -531,6 +531,27 @@ Published exams for the signed-in user. Live exams (`is_started` and not complet
 
 ---
 
+### GET `/study-plan/user`
+
+Study plans for the signed-in user (paginated).
+
+**Auth:** Required (`Authorization`)
+
+**Query:**
+
+| Param   | Type    | Default | Notes                             |
+| ------- | ------- | ------- | --------------------------------- |
+| `page`  | integer | 1       |                                   |
+| `limit` | integer | 10      | Dashboard Study plan card uses 5  |
+
+**Success (200):** `data.meta` plus `data.data[]` items with `study_plan_number`, `title`, `description`, `status`, `thumbnail_url`, `study_plan_url`, `category`, `position`, timestamps.
+
+**Errors:** 401 unauthenticated.
+
+**Client:** Dashboard **Study plan** carousel (beside Personal growth) — `page=1`, `limit=5`, client keeps `status === "active"`; swipe carousel without auto-rotate; thumbnail fallback `/exam.avif`; **Open study plan** opens `study_plan_url` in a new tab.
+
+---
+
 ### GET `/youtube/user`
 
 Published YouTube entries for the signed-in user (paginated).
