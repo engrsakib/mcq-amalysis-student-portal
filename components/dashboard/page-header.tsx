@@ -66,7 +66,7 @@ export function PageHeader({
             variant="outline"
             size="icon"
             aria-label="Search"
-            className="size-11"
+            className="size-11 max-lg:hidden"
             onClick={openSearch}
           >
             <Search className="size-4" />
