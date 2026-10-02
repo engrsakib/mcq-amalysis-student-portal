@@ -5,8 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { NavList } from "@/components/dashboard/nav-list";
-import { UserSummary } from "@/components/dashboard/user-summary";
-import { LogoutButton } from "@/components/home/logout-button";
+import { SidebarUserFooter } from "@/components/dashboard/sidebar-user-footer";
 import { dashboardNavGroups } from "@/lib/dashboard/nav";
 import { cn } from "@/lib/utils";
 
@@ -75,18 +74,7 @@ export function DashboardSidebar({
       </div>
 
       <div className={cn("border-t border-line", collapsed ? "p-2" : "p-4")}>
-        <div
-          className={cn(
-            "mb-3 rounded-xl bg-primary-soft/40",
-            collapsed ? "flex justify-center p-1.5" : "p-2"
-          )}
-        >
-          <UserSummary compact={collapsed} />
-        </div>
-        <LogoutButton
-          className={cn(collapsed && "size-10 px-0")}
-          iconOnly={collapsed}
-        />
+        <SidebarUserFooter collapsed={collapsed} />
       </div>
     </aside>
   );

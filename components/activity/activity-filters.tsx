@@ -9,8 +9,13 @@ import {
 } from "@/lib/activity/constants";
 import { cn } from "@/lib/utils";
 
-const selectClassName =
-  "h-9 w-full min-w-0 rounded-lg border border-input bg-card px-2.5 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
+const fieldClassName = "h-9 w-full min-w-0 bg-card";
+
+const selectClassName = cn(
+  fieldClassName,
+  "appearance-none rounded-lg border border-input bg-card bg-[length:1rem] bg-[position:right_0.5rem_center] bg-no-repeat py-1 pl-2.5 pr-9 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
+  "bg-[url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2716%27 height=%2716%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%235c6b66%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27m6 9 6 6 6-6%27/%3E%3C/svg%3E')]"
+);
 
 type ActivityFiltersProps = {
   dateFrom: string;
@@ -44,62 +49,59 @@ export function ActivityFilters({
         className
       )}
     >
-      <div className="flex flex-col gap-3">
-        <div className="grid grid-cols-2 gap-3">
-          <div className="flex min-w-0 flex-col gap-1.5">
-            <Label htmlFor="activity-date-from">From</Label>
-            <Input
-              id="activity-date-from"
-              type="date"
-              value={dateFrom}
-              onChange={(e) => onDateFromChange(e.target.value)}
-              className="h-9 bg-card"
-              aria-invalid={dateRangeInvalid}
-            />
-          </div>
-          <div className="flex min-w-0 flex-col gap-1.5">
-            <Label htmlFor="activity-date-to">To</Label>
-            <Input
-              id="activity-date-to"
-              type="date"
-              value={dateTo}
-              onChange={(e) => onDateToChange(e.target.value)}
-              className="h-9 bg-card"
-              aria-invalid={dateRangeInvalid}
-            />
-          </div>
+      <div className="grid grid-cols-2 gap-x-3 gap-y-3 lg:grid-cols-4 lg:items-end">
+        <div className="flex min-w-0 flex-col gap-1.5">
+          <Label htmlFor="activity-date-from">From</Label>
+          <Input
+            id="activity-date-from"
+            type="date"
+            value={dateFrom}
+            onChange={(e) => onDateFromChange(e.target.value)}
+            className={fieldClassName}
+            aria-invalid={dateRangeInvalid}
+          />
         </div>
-
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end lg:gap-4">
-          <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-            <Label htmlFor="activity-action">Action</Label>
-            <select
-              id="activity-action"
-              value={actionFilter}
-              onChange={(e) =>
-                onActionFilterChange(e.target.value as ActivityActionFilterValue)
-              }
-              className={selectClassName}
-            >
-              {ACTIVITY_ACTION_FILTERS.map((option) => (
-                <option key={option.value || "all"} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          {hasDates ? (
+        <div className="flex min-w-0 flex-col gap-1.5">
+          <Label htmlFor="activity-date-to">To</Label>
+          <Input
+            id="activity-date-to"
+            type="date"
+            value={dateTo}
+            onChange={(e) => onDateToChange(e.target.value)}
+            className={fieldClassName}
+            aria-invalid={dateRangeInvalid}
+          />
+        </div>
+        <div className="col-span-2 flex min-w-0 flex-col gap-1.5 lg:col-span-1">
+          <Label htmlFor="activity-action">Action</Label>
+          <select
+            id="activity-action"
+            value={actionFilter}
+            onChange={(e) =>
+              onActionFilterChange(e.target.value as ActivityActionFilterValue)
+            }
+            className={selectClassName}
+          >
+            {ACTIVITY_ACTION_FILTERS.map((option) => (
+              <option key={option.value || "all"} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        {hasDates ? (
+          <div className="col-span-2 flex min-w-0 items-end lg:col-span-1">
             <Button
               type="button"
               variant="outline"
               size="sm"
-              className="h-9 w-full shrink-0 rounded-lg sm:w-auto"
+              className="h-9 w-full rounded-lg lg:w-full"
               onClick={onClearDates}
             >
               Clear dates
             </Button>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
       </div>
       {dateRangeInvalid ? (
         <p className="mt-2 text-xs text-destructive" role="status">

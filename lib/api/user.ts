@@ -1,4 +1,4 @@
-import { apiGetAuth, apiPatchAuth } from "@/lib/api/authorized";
+import { apiGetAuth, apiPatchAuth, apiPostAuth } from "@/lib/api/authorized";
 import type { UpdateProfileRequest, UserProfile } from "@/lib/api/types";
 
 export function getCurrentUser() {
@@ -7,4 +7,8 @@ export function getCurrentUser() {
 
 export function updateUserProfile(payload: UpdateProfileRequest) {
   return apiPatchAuth<UserProfile>("/user/self", payload);
+}
+
+export function logoutUser() {
+  return apiPostAuth<unknown>("/user/logout", {});
 }

@@ -768,13 +768,17 @@ Submit a completed exam attempt (MCQ scoring summary + proctoring log).
 
 ---
 
-### DELETE `/user/logout`
+### POST `/user/logout`
 
-Log out (server-side session/cookie cleanup as implemented).
+Log out the signed-in user.
 
-**Auth:** Public (per route definition)
+**Auth:** Required (`Authorization`)
+
+**Body:** none (client sends `{}`)
 
 **Success (200):** Logged out.
+
+**Client:** [`LogoutButton`](components/home/logout-button.tsx) calls `logoutUser()` then clears auth cookies and redirects to login. Sidebar [`SidebarUserFooter`](components/dashboard/sidebar-user-footer.tsx) shows full-width destructive **Log out** when the account panel is expanded.
 
 ---
 
