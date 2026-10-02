@@ -1,8 +1,7 @@
 "use client";
 
-import { Download } from "lucide-react";
+import { ExamResultDownloadButton } from "@/components/exam/exam-result-download-button";
 import { MathContent } from "@/components/exam/math-content";
-import { Button } from "@/components/ui/button";
 import { parseCorrectOptionIndex } from "@/lib/exam/compute-exam-score";
 import type {
   ExamQuestionGrading,
@@ -31,18 +30,10 @@ export function ExamResultReview({
     <section id="exam-result-review" className="mt-6 space-y-4 pb-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg font-semibold text-ink">Answer review</h2>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="shrink-0"
+        <ExamResultDownloadButton
           onClick={onDownloadPdf}
-          disabled={downloadBusy}
-          data-html2canvas-ignore
-        >
-          <Download className="size-4" aria-hidden />
-          {downloadBusy ? "Preparing…" : "Download PDF"}
-        </Button>
+          busy={downloadBusy}
+        />
       </div>
       {downloadError ? (
         <p className="text-sm text-destructive">{downloadError}</p>

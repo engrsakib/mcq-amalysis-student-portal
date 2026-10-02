@@ -1,168 +1,177 @@
-/** Properties copied as inline styles so html2canvas need not parse Tailwind oklab/oklch rules. */
-const INLINE_PROPS = [
-  "color",
-  "background-color",
-  "background-image",
-  "font-family",
-  "font-size",
-  "font-weight",
-  "font-style",
-  "line-height",
-  "letter-spacing",
-  "text-align",
-  "text-decoration",
-  "text-transform",
-  "white-space",
-  "word-break",
-  "opacity",
-  "display",
-  "flex",
-  "flex-direction",
-  "flex-wrap",
-  "flex-grow",
-  "flex-shrink",
-  "flex-basis",
-  "align-items",
-  "align-self",
-  "justify-content",
-  "gap",
-  "grid-template-columns",
-  "grid-column",
-  "width",
-  "min-width",
-  "max-width",
-  "height",
-  "min-height",
-  "max-height",
-  "margin-top",
-  "margin-right",
-  "margin-bottom",
-  "margin-left",
-  "padding-top",
-  "padding-right",
-  "padding-bottom",
-  "padding-left",
-  "border-top-width",
-  "border-right-width",
-  "border-bottom-width",
-  "border-left-width",
-  "border-top-style",
-  "border-right-style",
-  "border-bottom-style",
-  "border-left-style",
-  "border-top-color",
-  "border-right-color",
-  "border-bottom-color",
-  "border-left-color",
-  "border-radius",
-  "box-shadow",
-  "overflow",
-  "overflow-x",
-  "overflow-y",
-  "vertical-align",
-  "list-style",
-  "object-fit",
-] as const;
+const UNSUPPORTED_COLOR = /oklab|oklch|color-mix|lab\(|lch\(/i;
 
-const COLOR_LIKE_PROPS = new Set<string>([
-  "color",
-  "background-color",
-  "border-top-color",
-  "border-right-color",
-  "border-bottom-color",
-  "border-left-color",
-]);
-
-const UNSUPPORTED_COLOR = /oklab|oklch|color-mix/i;
+const COLOR_PROPS =
+  /^(color|background(-color)?|border(-.*-color)?|outline-color|fill|stroke|stop-color|flood-color|lighting-color|text-decoration-color)$/i;
 
 let colorProbe: HTMLElement | null = null;
 
-function resolveSafeColor(raw: string): string {
-  if (!raw || !UNSUPPORTED_COLOR.test(raw)) {
-    return raw;
-  }
+function getColorProbe(): HTMLElement {
   if (!colorProbe) {
     colorProbe = document.createElement("span");
     colorProbe.hidden = true;
     document.body.appendChild(colorProbe);
   }
-  colorProbe.style.color = "";
-  colorProbe.style.color = raw;
-  return getComputedStyle(colorProbe).color || raw;
+  return colorProbe;
 }
 
-function safePropertyValue(prop: string, value: string): string {
-  if (!value) return value;
-  if (COLOR_LIKE_PROPS.has(prop)) {
-    return resolveSafeColor(value);
+/** Force any color string to rgb/rgba via the browser. */
+export function ensureRgbColor(
+  raw: string,
+  mode: "color" | "background" = "color"
+): string {
+  const trimmed = raw?.trim();
+  if (!trimmed || trimmed === "transparent" || trimmed === "inherit") {
+    return trimmed;
   }
-  if (prop === "box-shadow" && UNSUPPORTED_COLOR.test(value)) {
-    return value.replace(
-      /oklab\([^)]+\)|oklch\([^)]+\)|color-mix\([^)]+\)/gi,
-      "rgba(0,0,0,0.15)"
+  if (!UNSUPPORTED_COLOR.test(trimmed)) {
+    return trimmed;
+  }
+
+  const probe = getColorProbe();
+  if (mode === "background") {
+    probe.style.backgroundColor = "";
+    probe.style.backgroundColor = trimmed;
+    return getComputedStyle(probe).backgroundColor || "#ffffff";
+  }
+  probe.style.color = "";
+  probe.style.color = trimmed;
+  return getComputedStyle(probe).color || "#14221e";
+}
+
+function sanitizeCSSValue(prop: string, value: string): string {
+  if (!value) return value;
+  if (!UNSUPPORTED_COLOR.test(value)) return value;
+
+  if (COLOR_PROPS.test(prop)) {
+    return ensureRgbColor(
+      value,
+      prop.startsWith("background") ? "background" : "color"
     );
   }
-  if (prop === "background-image" && UNSUPPORTED_COLOR.test(value)) {
+
+  if (prop === "box-shadow" || prop === "text-shadow" || prop === "filter") {
+    return value.replace(
+      /oklab\([^)]*\)|oklch\([^)]*\)|color-mix\([^)]*\)|lab\([^)]*\)|lch\([^)]*\)/gi,
+      "rgba(0,0,0,0.12)"
+    );
+  }
+
+  if (prop === "background-image") {
     return "none";
   }
-  return value;
+
+  return value.replace(
+    /oklab\([^)]*\)|oklch\([^)]*\)|color-mix\([^)]*\)/gi,
+    "rgb(128, 128, 128)"
+  );
 }
 
-function removeParsedStylesheets(clonedDoc: Document) {
-  clonedDoc.querySelectorAll("style, link[rel='stylesheet']").forEach((node) => {
-    node.parentNode?.removeChild(node);
-  });
-}
-
-/** Fallback palette when cloned stylesheets are stripped (html2canvas-safe rgb/hex only). */
-function injectPdfSafeStyles(clonedDoc: Document) {
-  const style = clonedDoc.createElement("style");
-  style.textContent = `
-    :root { color-scheme: light; }
-    body { background: #ffffff; color: #14221e; }
-  `;
-  clonedDoc.head?.appendChild(style);
-}
-
-function syncInlineStyles(source: Element, target: Element) {
-  if (!(source instanceof HTMLElement && target instanceof HTMLElement)) {
-    return;
-  }
-
-  const computed = getComputedStyle(source);
-  for (const prop of INLINE_PROPS) {
-    const value = computed.getPropertyValue(prop);
-    if (value) {
-      target.style.setProperty(prop, safePropertyValue(prop, value));
-    }
-  }
-
-  const sourceChildren = source.children;
-  const targetChildren = target.children;
-  const len = Math.min(sourceChildren.length, targetChildren.length);
+function pairElements(
+  sourceRoot: HTMLElement,
+  cloneRoot: HTMLElement
+): Array<[HTMLElement, HTMLElement]> {
+  const sources = [
+    sourceRoot,
+    ...sourceRoot.querySelectorAll<HTMLElement>("*"),
+  ];
+  const clones = [cloneRoot, ...cloneRoot.querySelectorAll<HTMLElement>("*")];
+  const len = Math.min(sources.length, clones.length);
+  const pairs: Array<[HTMLElement, HTMLElement]> = [];
   for (let i = 0; i < len; i += 1) {
-    syncInlineStyles(sourceChildren[i]!, targetChildren[i]!);
+    pairs.push([sources[i]!, clones[i]!]);
+  }
+  return pairs;
+}
+
+function inlineAllComputedStylesAsRgb(source: HTMLElement, target: HTMLElement) {
+  const cs = getComputedStyle(source);
+  for (let i = 0; i < cs.length; i += 1) {
+    const prop = cs.item(i);
+    if (!prop) continue;
+    const value = cs.getPropertyValue(prop);
+    if (!value) continue;
+    target.style.setProperty(
+      prop,
+      sanitizeCSSValue(prop, value),
+      cs.getPropertyPriority(prop)
+    );
+  }
+
+  if (source instanceof HTMLImageElement && target instanceof HTMLImageElement) {
+    target.src = source.currentSrc || source.src;
   }
 }
 
-/**
- * html2canvas 1.x cannot parse oklab/oklch from Tailwind v4 stylesheets.
- * Strip cloned stylesheets and mirror resolved computed styles from the live tree.
- */
-function stripClassNames(root: HTMLElement) {
+export function applyRgbInlineTree(sourceRoot: HTMLElement, cloneRoot: HTMLElement) {
+  for (const [source, target] of pairElements(sourceRoot, cloneRoot)) {
+    inlineAllComputedStylesAsRgb(source, target);
+  }
+}
+
+export function stripClassNames(root: HTMLElement) {
   root.removeAttribute("class");
   root.querySelectorAll("[class]").forEach((node) => {
     node.removeAttribute("class");
   });
 }
 
-export function prepareHtml2CanvasClone(
-  originalRoot: HTMLElement,
-  clonedDoc: Document,
-  clonedRoot: HTMLElement
-) {
-  removeParsedStylesheets(clonedDoc);
-  injectPdfSafeStyles(clonedDoc);
-  syncInlineStyles(originalRoot, clonedRoot);
-  stripClassNames(clonedRoot);
+export type PdfCaptureSandbox = {
+  captureRoot: HTMLElement;
+  iframe: HTMLIFrameElement;
+  destroy: () => void;
+};
+
+export function mountPdfCaptureSandbox(
+  sourceRoot: HTMLElement,
+  exportWidthPx: number
+): PdfCaptureSandbox {
+  const iframe = document.createElement("iframe");
+  iframe.setAttribute("aria-hidden", "true");
+  iframe.setAttribute("tabindex", "-1");
+  iframe.style.cssText = `position:fixed;left:-10000px;top:0;width:${exportWidthPx}px;border:0;opacity:0;pointer-events:none;`;
+
+  document.body.appendChild(iframe);
+
+  const doc = iframe.contentDocument;
+  if (!doc) {
+    iframe.remove();
+    throw new Error("Could not create PDF capture frame.");
+  }
+
+  doc.open();
+  doc.write(
+    '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;background:#ffffff"></body></html>'
+  );
+  doc.close();
+
+  doc.body.style.margin = "0";
+  doc.body.style.background = "#ffffff";
+  doc.body.style.width = `${exportWidthPx}px`;
+
+  const clone = sourceRoot.cloneNode(true) as HTMLElement;
+  clone
+    .querySelectorAll("[data-pdf-export-ignore], [data-html2canvas-ignore]")
+    .forEach((node) => {
+      node.remove();
+    });
+
+  applyRgbInlineTree(sourceRoot, clone);
+  stripClassNames(clone);
+
+  clone.style.width = `${exportWidthPx}px`;
+  clone.style.maxWidth = `${exportWidthPx}px`;
+  clone.style.backgroundColor = "#ffffff";
+
+  doc.body.appendChild(clone);
+
+  const contentHeight = Math.max(clone.scrollHeight, clone.offsetHeight, 1);
+  iframe.style.height = `${contentHeight}px`;
+
+  return {
+    captureRoot: clone,
+    iframe,
+    destroy: () => {
+      iframe.remove();
+    },
+  };
 }

@@ -247,7 +247,7 @@ export function ExamSessionView({
                 type="button"
                 onClick={() => router.push("/")}
                 className="text-sm font-medium text-primary hover:underline"
-                data-html2canvas-ignore
+                data-pdf-export-ignore
               >
                 Back to dashboard
               </button>

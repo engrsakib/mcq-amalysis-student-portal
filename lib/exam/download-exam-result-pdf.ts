@@ -1,4 +1,4 @@
-import { prepareHtml2CanvasClone } from "@/lib/exam/html2canvas-prepare-clone";
+import { mountPdfCaptureSandbox } from "@/lib/exam/html2canvas-prepare-clone";
 
 const A4_WIDTH_MM = 210;
 const A4_HEIGHT_MM = 297;
@@ -24,47 +24,57 @@ export async function downloadExamResultPdf(
   await document.fonts.ready;
   await waitForNextFrame();
 
-  const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
-    import("html2canvas"),
+  const [{ toCanvas }, { jsPDF }] = await Promise.all([
+    import("html-to-image"),
     import("jspdf"),
   ]);
 
-  const canvas = await html2canvas(element, {
-    scale: CAPTURE_SCALE,
-    backgroundColor: "#ffffff",
-    useCORS: true,
-    logging: false,
-    onclone: (clonedDoc, clonedElement) => {
-      prepareHtml2CanvasClone(element, clonedDoc, clonedElement);
-      clonedElement.style.width = `${EXPORT_WIDTH_PX}px`;
-      clonedElement.style.maxWidth = `${EXPORT_WIDTH_PX}px`;
-      clonedElement.style.backgroundColor = "#ffffff";
-    },
-  });
+  const sandbox = mountPdfCaptureSandbox(element, EXPORT_WIDTH_PX);
 
-  if (canvas.width === 0 || canvas.height === 0) {
-    throw new Error("Could not capture the results page.");
-  }
+  try {
+    await waitForNextFrame();
 
-  const imgData = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
-  const pdf = new jsPDF("p", "mm", "a4");
+    const captureHeight = Math.max(
+      sandbox.captureRoot.scrollHeight,
+      sandbox.captureRoot.offsetHeight,
+      1
+    );
 
-  const imgWidthMm = A4_WIDTH_MM;
-  const imgHeightMm = (canvas.height * imgWidthMm) / canvas.width;
-  let heightLeftMm = imgHeightMm;
-  let positionMm = 0;
+    const canvas = await toCanvas(sandbox.captureRoot, {
+      width: EXPORT_WIDTH_PX,
+      height: captureHeight,
+      pixelRatio: CAPTURE_SCALE,
+      backgroundColor: "#ffffff",
+      skipFonts: true,
+      cacheBust: true,
+    });
 
-  pdf.addImage(imgData, "JPEG", 0, positionMm, imgWidthMm, imgHeightMm);
-  heightLeftMm -= A4_HEIGHT_MM;
+    if (canvas.width === 0 || canvas.height === 0) {
+      throw new Error("Could not capture the results page.");
+    }
 
-  while (heightLeftMm > 0) {
-    positionMm = heightLeftMm - imgHeightMm;
-    pdf.addPage();
+    const imgData = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    const imgWidthMm = A4_WIDTH_MM;
+    const imgHeightMm = (canvas.height * imgWidthMm) / canvas.width;
+    let heightLeftMm = imgHeightMm;
+    let positionMm = 0;
+
     pdf.addImage(imgData, "JPEG", 0, positionMm, imgWidthMm, imgHeightMm);
     heightLeftMm -= A4_HEIGHT_MM;
-  }
 
-  pdf.save(fileName);
+    while (heightLeftMm > 0) {
+      positionMm = heightLeftMm - imgHeightMm;
+      pdf.addPage();
+      pdf.addImage(imgData, "JPEG", 0, positionMm, imgWidthMm, imgHeightMm);
+      heightLeftMm -= A4_HEIGHT_MM;
+    }
+
+    pdf.save(fileName);
+  } finally {
+    sandbox.destroy();
+  }
 }
 
 export function examResultPdfFileName(examNumber: number): string {
