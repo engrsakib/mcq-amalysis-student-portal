@@ -172,6 +172,27 @@ export type UserStudyPlanPayload = {
   data: UserStudyPlanEntry[];
 };
 
+export type UserBookEntry = {
+  _id: string;
+  id?: string;
+  book_number: number;
+  title: string;
+  thumbnail_url: string;
+  description: string;
+  is_published: boolean;
+  price: number;
+  sold_platform: string;
+  buy_url: string;
+  position?: number;
+  updatedAt?: string;
+  createdAt?: string;
+};
+
+export type UserBooksPayload = {
+  meta: PaginatedMeta;
+  data: UserBookEntry[];
+};
+
 export type ExamQuestionAnswer = {
   options: string[];
   correctAnswer?: string;

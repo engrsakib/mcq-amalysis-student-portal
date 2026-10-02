@@ -6,6 +6,7 @@ import { LiveExamsCard } from "@/components/dashboard/live-exams-card";
 import { PreviousExamsCard } from "@/components/dashboard/previous-exams-card";
 import { SubjectiveModelTestsCard } from "@/components/dashboard/subjective-model-tests-card";
 import { ResultsTable } from "@/components/dashboard/results-table";
+import { BooksSection } from "@/components/dashboard/books-section";
 import { YoutubeSection } from "@/components/dashboard/youtube-section";
 import { StudyPlanSection } from "@/components/dashboard/study-plan-section";
 import { StatCard } from "@/components/dashboard/stat-card";
@@ -53,6 +54,8 @@ function DashboardContent({ data }: DashboardViewProps) {
       </div>
 
       <ResultsTable rows={data.recentResults} />
+
+      <BooksSection />
 
       <YoutubeSection />
     </div>

@@ -531,6 +531,28 @@ Published exams for the signed-in user. Live exams (`is_started` and not complet
 
 ---
 
+### GET `/books/user`
+
+Published book catalog entries for the signed-in user (paginated).
+
+**Auth:** Required (`Authorization`)
+
+**Query:**
+
+| Param        | Type    | Default | Notes                          |
+| ------------ | ------- | ------- | ------------------------------ |
+| `page`       | integer | 1       |                                |
+| `limit`      | integer | 10      | Dashboard Books section uses 5 |
+| `searchTerm` | string  | —       | Optional; client may send `""` |
+
+**Success (200):** `data.meta` plus `data.data[]` with `book_number`, `title`, `thumbnail_url`, `description`, `is_published`, `price`, `sold_platform`, `buy_url`, `position`, timestamps.
+
+**Errors:** 401 unauthenticated.
+
+**Client:** Dashboard **Books** carousel above Youtube — `page=1`, `limit=5`, `searchTerm=`; 1 / 2 / 3 cards visible by breakpoint; auto-advance every 3s; **Buy now** opens `buy_url` in a new tab; thumbnail fallback `/exam.avif`.
+
+---
+
 ### GET `/study-plan/user`
 
 Study plans for the signed-in user (paginated).
