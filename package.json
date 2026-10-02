@@ -32,5 +32,11 @@
     "tsx": "^4.20.5",
     "typescript": "^5"
   },
-  "packageManager": "pnpm@12.8.1"
+  "packageManager": "pnpm@12.8.1",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "core-js"
+    ]
+  }
 }
