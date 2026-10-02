@@ -341,12 +341,16 @@ export type ProctoringEventLocal = {
   endedAt: string | null;
 };
 
+export type LeaderboardRank = number | string;
+
 export type LeaderboardEntry = {
-  rank: number;
+  rank: LeaderboardRank;
   student_name: string;
   student_phone?: string;
   exam_number: number;
   score: number;
+  is_cheated?: boolean;
+  is_on_time?: boolean;
 };
 
 export type LeaderboardCurrentUser = LeaderboardEntry;

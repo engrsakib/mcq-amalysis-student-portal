@@ -2,10 +2,14 @@
 
 import { LeaderboardParticipantRow } from "@/components/results/leaderboard-participant-row";
 import type { LeaderboardCurrentUser, LeaderboardEntry } from "@/lib/api/types";
+import {
+  isLeaderboardParticipant,
+  isNumericLeaderboardRank,
+} from "@/lib/results/leaderboard-user";
 import { cn } from "@/lib/utils";
 
 type LeaderboardYourRankProps = {
-  currentUser: LeaderboardCurrentUser;
+  currentUser: LeaderboardCurrentUser | null;
   topThree: LeaderboardEntry[];
   className?: string;
 };
@@ -24,8 +28,14 @@ export function LeaderboardYourRank({
   topThree,
   className,
 }: LeaderboardYourRankProps) {
-  const onPodium = isOnPodium(currentUser, topThree);
-  if (currentUser.rank <= 3 && onPodium) {
+  const participated = isLeaderboardParticipant(currentUser);
+
+  if (
+    participated &&
+    isNumericLeaderboardRank(currentUser.rank) &&
+    currentUser.rank <= 3 &&
+    isOnPodium(currentUser, topThree)
+  ) {
     return null;
   }
 
@@ -34,7 +44,13 @@ export function LeaderboardYourRank({
       <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
         Your position
       </p>
-      <LeaderboardParticipantRow entry={currentUser} highlight />
+      {participated ? (
+        <LeaderboardParticipantRow entry={currentUser} highlight />
+      ) : (
+        <div className="rounded-lg border border-dashed border-line bg-muted/20 px-4 py-3 text-sm text-muted-foreground">
+          You did not participate in this exam.
+        </div>
+      )}
     </div>
   );
 }

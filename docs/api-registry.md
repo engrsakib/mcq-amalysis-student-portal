@@ -769,7 +769,7 @@ Paginated leaderboard for an exam, including the signed-in user’s rank.
 | `page`  | integer | 1       | `/results` uses 10 |
 | `limit` | integer | 10      | |
 
-**Success (200):** `data.meta`, `data.current_user` (`rank`, `student_name`, `score`, …), `data.data[]` ranked entries.
+**Success (200):** `data.meta`, `data.current_user` (`rank` as number or `"Cheater"`, `student_name`, `student_phone`, `exam_number`, `score`, `is_cheated`, `is_on_time`, …) or `null` when the signed-in user did not take the exam, `data.data[]` ranked entries.
 
 **Errors:** 401 unauthenticated.
 

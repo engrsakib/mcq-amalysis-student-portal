@@ -94,7 +94,9 @@ export function useExamLeaderboard(examNumber: number | null) {
 
   const listEntries = useMemo(() => {
     if (page === 1) {
-      return entries.filter((e) => e.rank > 3);
+      return entries.filter(
+        (e) => typeof e.rank !== "number" || e.rank > 3
+      );
     }
     return entries;
   }, [entries, page]);

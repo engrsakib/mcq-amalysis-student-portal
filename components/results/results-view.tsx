@@ -148,12 +148,10 @@ export function ResultsView() {
             <>
               {hasPodium ? <LeaderboardPodium topThree={topThree} /> : null}
 
-              {currentUser ? (
-                <LeaderboardYourRank
-                  currentUser={currentUser}
-                  topThree={topThree}
-                />
-              ) : null}
+              <LeaderboardYourRank
+                currentUser={currentUser}
+                topThree={topThree}
+              />
 
               {hasList ? (
                 <div className="space-y-1">
