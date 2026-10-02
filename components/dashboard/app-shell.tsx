@@ -116,7 +116,7 @@ function AppShellInner({ children }: AppShellProps) {
         </div>
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           {!isExamSessionRoute ? (
-            <div className="relative z-30 shrink-0 border-b border-gray-100 bg-page">
+            <div className="relative z-30 shrink-0 border-b border-line/80 bg-page">
               <div className="mx-auto w-full min-w-0 max-w-6xl px-4 py-4 sm:px-6 sm:py-5">
                 <AppPageHeader />
               </div>
@@ -138,7 +138,7 @@ function AppShellInner({ children }: AppShellProps) {
               <div
                 ref={mainContentRef}
                 className={cn(
-                  "mx-auto w-full min-w-0 max-w-6xl space-y-6 px-4 py-4 sm:px-6 sm:py-6",
+                  "mx-auto w-full min-w-0 max-w-6xl space-y-6 px-4 py-5 sm:px-6 sm:py-8",
                   !isExamSessionRoute && "view-enter-children"
                 )}
               >

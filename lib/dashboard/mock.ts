@@ -10,8 +10,8 @@ export const dashboardMock: DashboardMock = {
   stats: [
     {
       id: "complete",
-      title: "Need to complete",
-      value: "87% Grade",
+      title: "Grade progress",
+      value: "87%",
       delta: "+4.56%",
       deltaPositive: true,
       variant: "donut",

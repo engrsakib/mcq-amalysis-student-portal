@@ -42,7 +42,6 @@ export function ResultsTable({ rows }: ResultsTableProps) {
         <CardTitle className="text-base font-semibold text-ink">
           My recent results
         </CardTitle>
-        <span className="text-xs text-muted-foreground">Static preview</span>
       </CardHeader>
       <CardContent className="scroll-pane-x overflow-x-auto px-0 pb-2">
         <table className="w-full min-w-[720px] text-left text-sm">

@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { DashboardSection } from "@/components/dashboard/dashboard-section";
 import { PersonalGrowthCard } from "@/components/dashboard/personal-growth-card";
 import { LiveExamsCard } from "@/components/dashboard/live-exams-card";
 import { PreviousExamsCard } from "@/components/dashboard/previous-exams-card";
@@ -34,41 +35,39 @@ type DashboardViewProps = {
 
 function DashboardContent({ data }: DashboardViewProps) {
   return (
-    <div className="w-full min-w-0 space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {data.stats.map((stat) => (
-          <StatCard key={stat.id} data={stat} />
-        ))}
-      </div>
+    <div className="w-full min-w-0 space-y-10 sm:space-y-12">
+      <DashboardSection first>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {data.stats.map((stat) => (
+            <StatCard key={stat.id} data={stat} />
+          ))}
+        </div>
+      </DashboardSection>
 
-      <div className="grid min-w-0 gap-4 lg:grid-cols-2">
-        <div className="order-2 min-w-0 lg:order-none">
-          <PersonalGrowthCard />
-        </div>
-        <div className="order-3 min-w-0 lg:order-none">
-          <StudyPlanSection />
-        </div>
-        <div className="order-1 min-w-0 lg:order-none">
+      <DashboardSection title="Exams & practice">
+        <div className="grid min-w-0 gap-4 lg:grid-cols-2">
           <LiveExamsCard />
-        </div>
-        <div className="order-4 min-w-0 lg:order-none">
           <PreviousExamsCard />
-        </div>
-        <div className="order-5 min-w-0 lg:order-none">
           <UpcomingExamsCard />
-        </div>
-        <div className="order-6 min-w-0 lg:order-none">
           <SubjectiveModelTestsCard />
         </div>
-      </div>
+      </DashboardSection>
 
-      <ResultsTable rows={data.recentResults} />
+      <DashboardSection title="Performance">
+        <div className="grid min-w-0 gap-4 lg:grid-cols-2">
+          <PersonalGrowthCard />
+          <StudyPlanSection />
+        </div>
+        <ResultsTable rows={data.recentResults} />
+      </DashboardSection>
 
-      <ExamRoutineSection />
-
-      <BooksSection />
-
-      <YoutubeSection />
+      <DashboardSection title="Learning resources">
+        <div className="space-y-4">
+          <ExamRoutineSection />
+          <BooksSection />
+          <YoutubeSection />
+        </div>
+      </DashboardSection>
     </div>
   );
 }

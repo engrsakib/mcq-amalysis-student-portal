@@ -32,22 +32,22 @@ function KpiTile({
 }) {
   return (
     <div
-      className="flex min-w-0 items-center justify-center gap-2.5 rounded-xl border border-line/70 bg-card px-1.5 py-2.5 shadow-sm sm:justify-start sm:px-2.5"
+      className="flex min-w-0 items-center gap-2.5 rounded-xl border border-line/70 bg-card px-2.5 py-2.5 shadow-sm sm:px-3"
       aria-label={`${label}: ${value}`}
     >
       <div
         className={cn(
-          "hidden size-9 shrink-0 items-center justify-center rounded-lg ring-1 ring-inset sm:flex",
+          "flex size-8 shrink-0 items-center justify-center rounded-lg ring-1 ring-inset sm:size-9",
           highlight
             ? "bg-primary text-primary-foreground ring-primary/30"
             : "bg-primary-soft/90 text-primary ring-primary/10"
         )}
       >
-        <Icon className="size-[17px]" strokeWidth={2} aria-hidden />
+        <Icon className="size-4 sm:size-[17px]" strokeWidth={2} aria-hidden />
       </div>
       <span
         className={cn(
-          "min-w-0 truncate text-center text-sm font-semibold tabular-nums leading-none tracking-tight sm:flex-1 sm:text-left sm:text-lg",
+          "min-w-0 flex-1 truncate text-left text-sm font-semibold tabular-nums leading-none tracking-tight sm:text-lg",
           highlight ? "text-primary" : "text-ink"
         )}
       >
@@ -91,7 +91,7 @@ export function PersonalGrowthCard() {
       <CardContent className="pt-4">
         {loading ? (
           <div className="space-y-4">
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
               {Array.from({ length: 4 }).map((_, i) => (
                 <div
                   key={i}
@@ -118,7 +118,7 @@ export function PersonalGrowthCard() {
 
         {!loading && !error && hasData ? (
           <>
-            <div className="mb-4 grid grid-cols-4 gap-2">
+            <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
               <KpiTile
                 icon={ClipboardList}
                 label="Total attempts"

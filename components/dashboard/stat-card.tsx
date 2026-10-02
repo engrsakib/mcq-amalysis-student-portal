@@ -11,18 +11,18 @@ type StatCardProps = {
 
 export function StatCard({ data }: StatCardProps) {
   return (
-    <Card className="rounded-2xl border-border/60 bg-card shadow-sm ring-0">
-      <CardContent className="flex items-center justify-between gap-3 pt-1">
+    <Card className="min-h-[7.5rem] rounded-2xl border-border/60 bg-card shadow-sm ring-0">
+      <CardContent className="flex items-center justify-between gap-3 py-4 sm:py-5">
         <div className="min-w-0 flex-1">
           <p className="text-xs font-medium text-muted-foreground">
             {data.title}
           </p>
-          <p className="mt-1 truncate text-lg font-semibold text-ink">
+          <p className="mt-1 truncate text-xl font-semibold tabular-nums tracking-tight text-ink sm:text-2xl">
             {data.value}
           </p>
           <p
             className={cn(
-              "mt-0.5 text-xs font-medium",
+              "mt-1 text-xs font-medium",
               data.deltaPositive ? "text-primary" : "text-danger"
             )}
           >
