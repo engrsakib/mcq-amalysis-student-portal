@@ -547,6 +547,42 @@ Single exam entry for the signed-in user, including full **`questions[]`** (MCQ 
 
 ---
 
+### POST `/results/proctoring-event`
+
+Record a proctoring violation signal while a **live** exam is in progress (tab switch, minimize, app background, or confirmed leave attempt).
+
+**Auth:** Required (`Authorization`)
+
+**Body (JSON):**
+
+| Field         | Type   | Required | Notes                                      |
+| ------------- | ------ | -------- | ------------------------------------------ |
+| `eventType`   | string | yes      | e.g. `app_background`                      |
+| `exam_number` | number | yes      | Public exam id (same as GET `/exam/user/{exam_number}`) |
+| `occurredAt`  | string | yes      | ISO-8601 UTC (e.g. `2026-10-02T03:57:52.891Z`) |
+
+**Success (201):**
+
+```json
+{
+  "statusCode": 201,
+  "success": true,
+  "message": "Proctoring event recorded",
+  "data": {
+    "exam_number": 9000821371595,
+    "eventType": "app_background",
+    "occurredAt": "2026-10-02T03:57:52.891Z",
+    "endedAt": null
+  }
+}
+```
+
+**Errors:** 401 unauthenticated; 4xx validation as implemented server-side.
+
+**Client:** [`lib/api/proctoring.ts`](../lib/api/proctoring.ts) via `postProctoringEvent` (uses `fetch` **`keepalive: true`** on tab hide so the request is not cancelled). Wired from [`hooks/use-exam-proctoring.ts`](../hooks/use-exam-proctoring.ts) for every exam session route (`/exam/[exam_number]`). Backend applies cheat / violation rules (e.g. away &gt; 15s).
+
+---
+
 ### DELETE `/user/logout`
 
 Log out (server-side session/cookie cleanup as implemented).

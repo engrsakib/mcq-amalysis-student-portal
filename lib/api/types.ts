@@ -193,6 +193,21 @@ export type ExamSessionPayload = {
   isPracticeSession: boolean;
 };
 
+export type ProctoringEventType = "app_background";
+
+export type ProctoringEventRequest = {
+  eventType: ProctoringEventType;
+  exam_number: number;
+  occurredAt: string;
+};
+
+export type ProctoringEventRecorded = {
+  exam_number: number;
+  eventType: ProctoringEventType;
+  occurredAt: string;
+  endedAt: string | null;
+};
+
 export type PersonalGrowthTimePoint = {
   date: string;
   avgScore: number;

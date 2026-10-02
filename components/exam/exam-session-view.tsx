@@ -1,10 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { ExamProctoringModal } from "@/components/exam/exam-proctoring-modal";
 import { ExamQuestionCard } from "@/components/exam/exam-question-card";
 import { ExamStickyFooter } from "@/components/exam/exam-sticky-footer";
+import { useExamProctoring } from "@/hooks/use-exam-proctoring";
 import { formatExamNumber } from "@/lib/exam/format-exam-number";
 import { shuffleExamQuestions } from "@/lib/exam/shuffle-questions";
 import type { ExamSessionPayload } from "@/lib/api/types";
@@ -24,6 +25,13 @@ export function ExamSessionView({
   }, [questions]);
 
   const timerEnabled = !isPracticeSession;
+  /** Proctoring applies to live, model test, subjective, and all other exam sessions. */
+  const proctoringEnabled = true;
+
+  const proctoring = useExamProctoring({
+    examNumber: exam.exam_number,
+    enabled: proctoringEnabled,
+  });
 
   const handleSelect = useCallback(
     (questionId: number, optionIndex: number) => {
@@ -41,15 +49,25 @@ export function ExamSessionView({
 
   return (
     <>
+      <ExamProctoringModal
+        modal={proctoring.modal}
+        visible={proctoring.modalVisible}
+        awayThresholdMs={proctoring.awayThresholdMs}
+        onStay={proctoring.handleStay}
+        onConfirmLeave={proctoring.handleConfirmLeave}
+        onDismissReturn={proctoring.closeReturnWarning}
+      />
+
       <div className="mx-auto w-full min-w-0 max-w-3xl pb-28">
         <header className="space-y-2 pb-4">
-          <Link
-            href="/"
+          <button
+            type="button"
+            onClick={proctoring.handleDashboardLeaveClick}
             className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-primary"
           >
             <ArrowLeft className="size-4" aria-hidden />
             Dashboard
-          </Link>
+          </button>
           <div className="flex flex-wrap items-center gap-2">
             {isPracticeSession || exam.is_practice_mode ? (
               <span className="rounded-lg bg-primary-soft px-2.5 py-1 text-xs font-semibold text-primary">
