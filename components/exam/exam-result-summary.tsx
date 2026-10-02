@@ -78,6 +78,7 @@ export function ExamResultSummary({
         type="button"
         className="mt-5 w-full rounded-[10px] bg-primary hover:bg-primary-hover"
         onClick={onReviewClick}
+        data-html2canvas-ignore
       >
         Review answers
       </Button>

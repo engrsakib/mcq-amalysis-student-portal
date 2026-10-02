@@ -1,6 +1,8 @@
 "use client";
 
+import { Download } from "lucide-react";
 import { MathContent } from "@/components/exam/math-content";
+import { Button } from "@/components/ui/button";
 import { parseCorrectOptionIndex } from "@/lib/exam/compute-exam-score";
 import type {
   ExamQuestionGrading,
@@ -12,16 +14,39 @@ type ExamResultReviewProps = {
   questions: ExamQuestionPublic[];
   answers: Record<number, number>;
   gradingByQuestionId: Record<number, ExamQuestionGrading>;
+  onDownloadPdf: () => void;
+  downloadBusy?: boolean;
+  downloadError?: string | null;
 };
 
 export function ExamResultReview({
   questions,
   answers,
   gradingByQuestionId,
+  onDownloadPdf,
+  downloadBusy = false,
+  downloadError = null,
 }: ExamResultReviewProps) {
   return (
     <section id="exam-result-review" className="mt-6 space-y-4 pb-8">
-      <h2 className="text-lg font-semibold text-ink">Answer review</h2>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-lg font-semibold text-ink">Answer review</h2>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="shrink-0"
+          onClick={onDownloadPdf}
+          disabled={downloadBusy}
+          data-html2canvas-ignore
+        >
+          <Download className="size-4" aria-hidden />
+          {downloadBusy ? "Preparing…" : "Download PDF"}
+        </Button>
+      </div>
+      {downloadError ? (
+        <p className="text-sm text-destructive">{downloadError}</p>
+      ) : null}
       {questions.map((question, index) => {
         const grading = gradingByQuestionId[question.questionId];
         const correctIndex = parseCorrectOptionIndex(grading?.correctAnswer);

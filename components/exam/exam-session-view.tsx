@@ -24,6 +24,10 @@ import {
   getOrCreateSessionStartedAt,
   getProctoringEvents,
 } from "@/lib/exam/proctoring-storage";
+import {
+  downloadExamResultPdf,
+  examResultPdfFileName,
+} from "@/lib/exam/download-exam-result-pdf";
 import { shuffleExamQuestions } from "@/lib/exam/shuffle-questions";
 
 type ExamSessionViewProps = ExamSessionPayload;
@@ -48,6 +52,9 @@ export function ExamSessionView({
 
   const sessionStartedAtRef = useRef<string>("");
   const submittingRef = useRef(false);
+  const exportRef = useRef<HTMLDivElement>(null);
+  const [pdfBusy, setPdfBusy] = useState(false);
+  const [pdfError, setPdfError] = useState<string | null>(null);
 
   useEffect(() => {
     setOrderedQuestions(shuffleExamQuestions(questions));
@@ -174,6 +181,26 @@ export function ExamSessionView({
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
+  const handleDownloadPdf = useCallback(async () => {
+    const root = exportRef.current;
+    if (!root || pdfBusy) return;
+
+    setPdfError(null);
+    setPdfBusy(true);
+    try {
+      await downloadExamResultPdf(
+        root,
+        examResultPdfFileName(exam.exam_number)
+      );
+    } catch (err) {
+      setPdfError(
+        err instanceof Error ? err.message : "Could not create PDF. Try again."
+      );
+    } finally {
+      setPdfBusy(false);
+    }
+  }, [exam.exam_number, pdfBusy]);
+
   const readOnly = phase !== "exam";
 
   return (
@@ -199,22 +226,28 @@ export function ExamSessionView({
       <div className="mx-auto w-full min-w-0 max-w-3xl pb-28">
         {phase === "results" && result ? (
           <>
-            <ExamResultSummary
-              examName={exam.exam_name}
-              result={result}
-              apiMessage={submitMessage ?? undefined}
-              onReviewClick={scrollToReview}
-            />
-            <ExamResultReview
-              questions={orderedQuestions}
-              answers={answers}
-              gradingByQuestionId={gradingByQuestionId}
-            />
+            <div id="exam-result-export" ref={exportRef}>
+              <ExamResultSummary
+                examName={exam.exam_name}
+                result={result}
+                apiMessage={submitMessage ?? undefined}
+                onReviewClick={scrollToReview}
+              />
+              <ExamResultReview
+                questions={orderedQuestions}
+                answers={answers}
+                gradingByQuestionId={gradingByQuestionId}
+                onDownloadPdf={handleDownloadPdf}
+                downloadBusy={pdfBusy}
+                downloadError={pdfError}
+              />
+            </div>
             <div className="mt-6 pb-8">
               <button
                 type="button"
                 onClick={() => router.push("/")}
                 className="text-sm font-medium text-primary hover:underline"
+                data-html2canvas-ignore
               >
                 Back to dashboard
               </button>
