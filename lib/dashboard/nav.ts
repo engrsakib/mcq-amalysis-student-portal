@@ -54,9 +54,9 @@ export const dashboardNavGroups: NavGroup[] = [
       {
         id: "certificates",
         label: "Certificates",
-        href: "#",
+        href: "/certificates",
         icon: Award,
-        disabled: true,
+        activePathPrefix: "/certificates",
       },
       {
         id: "activity",

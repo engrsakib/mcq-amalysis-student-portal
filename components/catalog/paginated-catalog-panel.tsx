@@ -1,10 +1,13 @@
 "use client";
 
+import type { LucideIcon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { ContentEmptyState } from "@/components/ui/content-empty-state";
 import { PaginationBar } from "@/components/ui/pagination-bar";
 import { CatalogToolbar } from "@/components/catalog/catalog-toolbar";
 import type { CatalogViewMode } from "@/hooks/use-catalog-view-mode";
+import { useIsSmUp } from "@/hooks/use-is-sm-up";
 import type { PaginatedMeta } from "@/lib/api/types";
 import { cn } from "@/lib/utils";
 
@@ -46,6 +49,8 @@ export type PaginatedCatalogPanelProps<T extends { _id: string }> = {
   onRetry: () => void;
   errorTitle?: string;
   emptyMessage: string;
+  emptyDescription?: string;
+  emptyIcon?: LucideIcon;
   renderCard: (item: T) => React.ReactNode;
   renderListRow: (item: T) => React.ReactNode;
   skeletonCount?: number;
@@ -68,11 +73,16 @@ export function PaginatedCatalogPanel<T extends { _id: string }>({
   onRetry,
   errorTitle = "Could not load items",
   emptyMessage,
+  emptyDescription,
+  emptyIcon,
   renderCard,
   renderListRow,
   skeletonCount = 6,
   className,
 }: PaginatedCatalogPanelProps<T>) {
+  const isSmUp = useIsSmUp();
+  const displayViewMode = isSmUp ? viewMode : "card";
+
   return (
     <div className={cn("min-w-0 space-y-4", className)}>
       <CatalogToolbar
@@ -97,7 +107,7 @@ export function PaginatedCatalogPanel<T extends { _id: string }>({
       ) : null}
 
       {loading ? (
-        viewMode === "card" ? (
+        displayViewMode === "card" ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: skeletonCount }, (_, i) => (
               <CatalogCardSkeleton key={i} />
@@ -111,10 +121,14 @@ export function PaginatedCatalogPanel<T extends { _id: string }>({
           </div>
         )
       ) : items.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-line bg-card/50 px-4 py-12 text-center">
-          <p className="text-sm text-muted-foreground">{emptyMessage}</p>
+        <div className="rounded-xl border border-dashed border-line bg-card/50">
+          <ContentEmptyState
+            icon={emptyIcon}
+            title={emptyMessage}
+            description={emptyDescription}
+          />
         </div>
-      ) : viewMode === "card" ? (
+      ) : displayViewMode === "card" ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (
             <div key={item._id}>{renderCard(item)}</div>

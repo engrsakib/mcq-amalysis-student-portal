@@ -171,11 +171,13 @@ function LearningMaterialsTabPanels({ tab }: { tab: LearningMaterialsTabId }) {
   }
 
   return (
-    <ContentEmptyState
-      icon={BookOpen}
-      title="No guidelines available yet."
-      description="Guidelines will appear here when they are published for your account."
-    />
+    <div className="rounded-xl border border-dashed border-line bg-card/50">
+      <ContentEmptyState
+        icon={BookOpen}
+        title="No guidelines available yet."
+        description="Guidelines will appear here when they are published for your account."
+      />
+    </div>
   );
 }
 

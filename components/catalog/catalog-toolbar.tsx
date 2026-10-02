@@ -55,7 +55,7 @@ export function CatalogToolbar({
       <div
         role="group"
         aria-label={layoutAriaLabel}
-        className="flex shrink-0 rounded-lg border border-line bg-card p-0.5"
+        className="hidden shrink-0 rounded-lg border border-line bg-card p-0.5 sm:flex"
       >
         <button
           type="button"
