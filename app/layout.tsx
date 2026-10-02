@@ -19,9 +19,9 @@ export const metadata: Metadata = {
   },
   description: "Student portal for MCQ Analysis",
   icons: {
-    icon: [{ url: "/logo.png", type: "image/png" }],
-    shortcut: "/logo.png",
-    apple: [{ url: "/logo.png", type: "image/png" }],
+    icon: [{ url: "/icons.svg", type: "image/svg+xml" }],
+    shortcut: "/icons.svg",
+    apple: [{ url: "/icons.svg", type: "image/svg+xml" }],
   },
 };
 

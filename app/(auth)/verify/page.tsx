@@ -2,12 +2,15 @@ import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { VerifyForm } from "@/components/auth/verify-form";
+import { pageMetadata } from "@/lib/site/metadata";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
+export const metadata = pageMetadata("Verify account");
 
 export default function VerifyPage() {
   return (

@@ -6,6 +6,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { pageMetadata } from "@/lib/site/metadata";
+
+export const metadata = pageMetadata("Settings");
 
 export default function SettingsPage() {
   return (

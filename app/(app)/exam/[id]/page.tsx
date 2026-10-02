@@ -1,14 +1,34 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExamSessionView } from "@/components/exam/exam-session-view";
 import { ApiError } from "@/lib/api/client";
 import { getExamByNumberServer } from "@/lib/api/exam-server";
 import { toExamSessionPayload } from "@/lib/exam/sanitize-questions";
+import { pageMetadata } from "@/lib/site/metadata";
 
 type ExamPageProps = PageProps<"/exam/[id]">;
 
 function isValidExamNumber(id: string): boolean {
   return /^\d+$/.test(id) && id.length > 0;
+}
+
+export async function generateMetadata({
+  params,
+}: ExamPageProps): Promise<Metadata> {
+  const { id } = await params;
+
+  if (!isValidExamNumber(id)) {
+    return pageMetadata("Exam");
+  }
+
+  try {
+    const entry = await getExamByNumberServer(id);
+    const name = entry.exam_name?.trim();
+    return pageMetadata(name || `Exam ${id}`);
+  } catch {
+    return pageMetadata("Exam");
+  }
 }
 
 export default async function ExamPage({ params }: ExamPageProps) {
