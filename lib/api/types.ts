@@ -341,6 +341,30 @@ export type ProctoringEventLocal = {
   endedAt: string | null;
 };
 
+export type LeaderboardEntry = {
+  rank: number;
+  student_name: string;
+  student_phone?: string;
+  exam_number: number;
+  score: number;
+};
+
+export type LeaderboardCurrentUser = LeaderboardEntry;
+
+export type LeaderboardMetaRaw = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPage?: number;
+  totalPages?: number;
+};
+
+export type ExamLeaderboardPayload = {
+  meta: PaginatedMeta;
+  current_user: LeaderboardCurrentUser | null;
+  data: LeaderboardEntry[];
+};
+
 export type SubmitExamResultRequest = {
   clientSubmittedAt: string;
   correctAnswers: number;

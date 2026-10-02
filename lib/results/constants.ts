@@ -1,0 +1,2 @@
+export const RESULTS_EXAM_OPTIONS_LIMIT = 100;
+export const LEADERBOARD_PAGE_LIMIT = 10;

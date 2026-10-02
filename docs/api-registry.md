@@ -754,6 +754,29 @@ Record a proctoring violation signal while a **live** exam is in progress (tab s
 
 ---
 
+### GET `/results/{exam_number}/leaderboard`
+
+Paginated leaderboard for an exam, including the signed-in user’s rank.
+
+**Auth:** Required (`Authorization`)
+
+**Path:** `exam_number` — public exam id.
+
+**Query:**
+
+| Param   | Type    | Default | Notes |
+| ------- | ------- | ------- | ----- |
+| `page`  | integer | 1       | `/results` uses 10 |
+| `limit` | integer | 10      | |
+
+**Success (200):** `data.meta`, `data.current_user` (`rank`, `student_name`, `score`, …), `data.data[]` ranked entries.
+
+**Errors:** 401 unauthenticated.
+
+**Client:** [`/results`](app/(app)/results/page.tsx) — exam select from `GET /exam/user`; podium (top 3), your rank, paginated participant list via [`getExamLeaderboard`](lib/api/leaderboard.ts).
+
+---
+
 ### POST `/results/`
 
 Submit a completed exam attempt (MCQ scoring summary + proctoring log).
