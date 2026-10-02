@@ -2,6 +2,20 @@
 
 import katex from "katex";
 import { Fragment, useMemo } from "react";
+import {
+  convertBengaliDigitsOutsideTextBlocks,
+  foldMultilineTextBlocks,
+  normalizeMathPlaceholders,
+  readBracedGroup,
+  repairBareLatexCommands,
+  repairDivisionAndFractionTypos,
+} from "@/lib/exam/math-latex-repairs";
+import {
+  isImplicitRawEquation,
+  parseExamContentSegments,
+  repairMathLatex,
+  type ExamContentSegment,
+} from "@/lib/exam/prepare-latex-content";
 import { cn } from "@/lib/utils";
 
 type MathContentProps = {
@@ -21,51 +35,6 @@ function looksLikeLatex(value: string): boolean {
     /\\[a-zA-Z]|\\text\{|\^|_|\\frac|\\sqrt/.test(value) ||
     /(?<!\\)(frac|sqrt|text)\{/.test(value)
   );
-}
-
-/** API often omits the leading backslash (e.g. `frac{11}{12}`). */
-function repairBareLatexCommands(value: string): string {
-  return value
-    .replace(/(?<!\\)frac\{([^}]*)\}\{([^}]*)\}/g, "\\frac{$1}{$2}")
-    .replace(/(?<!\\)sqrt\{([^}]*)\}/g, "\\sqrt{$1}")
-    .replace(/(?<!\\)text\{([^}]*)\}/g, "\\text{$1}");
-}
-
-function hasDollarMath(value: string): boolean {
-  return /\$[\s\S]+?\$/.test(value);
-}
-
-function readBracedGroup(value: string, contentStart: number): number {
-  let depth = 1;
-  let j = contentStart;
-  while (j < value.length && depth > 0) {
-    if (value[j] === "{") depth += 1;
-    else if (value[j] === "}") depth -= 1;
-    j += 1;
-  }
-  return j;
-}
-
-/** `\text{` … `}` may span lines from the API. */
-function foldMultilineTextBlocks(value: string): string {
-  let out = "";
-  let i = 0;
-  while (i < value.length) {
-    if (value.startsWith("\\text{", i)) {
-      const contentStart = i + 6;
-      const end = readBracedGroup(value, contentStart);
-      const inner = value
-        .slice(contentStart, end - 1)
-        .replace(/\s+/g, " ")
-        .trim();
-      out += `\\text{${inner}}`;
-      i = end;
-      continue;
-    }
-    out += value[i];
-    i += 1;
-  }
-  return out;
 }
 
 function isInsideTextBlock(value: string, index: number): boolean {
@@ -113,21 +82,20 @@ function hasTextAndMathLatex(value: string): boolean {
   return /\\text\{/.test(value) && hasNonTextLatex(value);
 }
 
+/** Legacy undelimited normalization — not used when `$` / `$$` delimiters present. */
 function normalizeExamLatex(value: string): string {
   let s = value.trim();
+  s = s.replace(/[\u200B-\u200D\uFEFF]/g, "");
   s = foldMultilineTextBlocks(s);
   s = s.replace(/^[\u09CD\u200C\u200D\uFEFF\s]+/, "");
   s = s.replace(/^[\u09CD]+(?=\\text)/, "");
   s = repairBareLatexCommands(s);
+  s = repairDivisionAndFractionTypos(s);
+  if (looksLikeLatex(s)) {
+    s = convertBengaliDigitsOutsideTextBlocks(s);
+  }
   s = s.replace(/\\frac(\d)(\d)(?!\d)/g, "\\frac{$1}{$2}");
   s = s.replace(/(\\text\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\})(?:\s*\1)+/g, "$1");
-  return s;
-}
-
-function normalizeMixedContent(value: string): string {
-  let s = normalizeExamLatex(value);
-  s = s.replace(/(\$[^$]+\$)([\u0980-\u09FF])/g, "$1 $2");
-  s = s.replace(/([\u0980-\u09FF])(\$)/g, "$1 $2");
   return s;
 }
 
@@ -149,30 +117,6 @@ function dedupeRepeatedProse(text: string): string {
   if (second.startsWith(first) && first.length >= 30) return first;
 
   return compact;
-}
-
-function parseDollarSegments(value: string): ContentSegment[] {
-  const segments: ContentSegment[] = [];
-  const re = /\$\s*([\s\S]*?)\s*\$/g;
-  let lastIndex = 0;
-  let match: RegExpExecArray | null;
-
-  while ((match = re.exec(value)) !== null) {
-    if (match.index > lastIndex) {
-      segments.push({
-        kind: "text",
-        value: value.slice(lastIndex, match.index),
-      });
-    }
-    segments.push({ kind: "math", value: match[1].trim() });
-    lastIndex = match.index + match[0].length;
-  }
-
-  if (lastIndex < value.length) {
-    segments.push({ kind: "text", value: value.slice(lastIndex) });
-  }
-
-  return segments.length > 0 ? segments : [{ kind: "text", value }];
 }
 
 function parseInlineLatexSegmentsOrdered(value: string): ContentSegment[] {
@@ -265,7 +209,6 @@ function firstBengaliIndex(value: string): number {
   return value.search(/[\u0980-\u09FF]/);
 }
 
-/** e.g. `\frac{9}{\text{?}}=\frac{?}{81}` + Bengali question (no `\text{}` wrapper). */
 function parseLatexEquationWithTail(value: string): ContentSegment[] | null {
   const idx = firstBengaliIndex(value);
   if (idx <= 0) return null;
@@ -278,15 +221,57 @@ function parseLatexEquationWithTail(value: string): ContentSegment[] | null {
   if (!mathPart || !textPart || !looksLikeLatex(mathPart)) return null;
 
   return [
-    { kind: "math", value: mathPart },
+    { kind: "math", value: repairMathLatex(mathPart) },
     { kind: "text", value: textPart },
   ];
 }
 
-function normalizeMathPlaceholders(value: string): string {
-  return value
-    .replace(/\\frac\{\?\}\{/g, "\\frac{\\text{?}}{")
-    .replace(/\\frac\{\?\}/g, "\\frac{\\text{?}}");
+function isMathGlueText(value: string): boolean {
+  const t = value.trim();
+  if (!t || /[\u0980-\u09FF]/.test(t)) return false;
+  if (/\\(div|cdot|times|pm|frac|sqrt)/i.test(t)) return true;
+  if (/^\^[\d{}]+/.test(t)) return true;
+  if (/^[\d\s^\\=+\-]+$/.test(t)) return true;
+  return looksLikeLatex(t) && /\\/.test(t);
+}
+
+function isEquationOnlyLatex(value: string): boolean {
+  if (/[\u0980-\u09FF]/.test(stripTextBlocks(value))) return false;
+  const s = normalizeExamLatex(value);
+  if (!hasNonTextLatex(s)) return false;
+  if (/\\frac[\s\S]*\\div[\s\S]*\\frac/.test(s)) return true;
+  const fracs = s.match(/\\frac/g)?.length ?? 0;
+  if (fracs >= 2 || /\\sqrt/.test(s)) return true;
+  return false;
+}
+
+function coalesceMathExpressionSegments(
+  segments: ContentSegment[]
+): ContentSegment[] {
+  const merged: ContentSegment[] = [];
+  let pendingMath = "";
+
+  const flushMath = () => {
+    if (pendingMath.trim()) {
+      merged.push({ kind: "math", value: pendingMath.trim() });
+      pendingMath = "";
+    }
+  };
+
+  for (const seg of segments) {
+    if (seg.kind === "math") {
+      pendingMath += seg.value;
+      continue;
+    }
+    if (isMathGlueText(seg.value)) {
+      pendingMath += seg.value;
+      continue;
+    }
+    flushMath();
+    if (seg.value.trim()) merged.push({ kind: "text", value: seg.value.trim() });
+  }
+  flushMath();
+  return merged;
 }
 
 function segmentsToFlowItems(segments: ContentSegment[]): FlowItem[] {
@@ -297,14 +282,16 @@ function segmentsToFlowItems(segments: ContentSegment[]): FlowItem[] {
     if (segment.kind === "math") {
       flow.push(segment);
       const next = segments[i + 1];
-      if (next?.kind === "text") flow.push({ kind: "break" });
+      if (next?.kind === "text" && !isMathGlueText(next.value)) {
+        flow.push({ kind: "break" });
+      }
       continue;
     }
 
     const lines = splitAtSentenceBoundaries(segment.value);
-    for (let i = 0; i < lines.length; i += 1) {
-      if (i > 0) flow.push({ kind: "break" });
-      flow.push({ kind: "text", value: lines[i] });
+    for (let j = 0; j < lines.length; j += 1) {
+      if (j > 0) flow.push({ kind: "break" });
+      flow.push({ kind: "text", value: lines[j] });
     }
   }
 
@@ -333,11 +320,14 @@ function plainLines(normalized: string): string[] {
   return split;
 }
 
-function renderKatexInline(
+function renderKatexString(
   latex: string,
-  displayMode = false
+  displayMode = false,
+  alreadyNormalized = false
 ): string | null {
-  const normalized = normalizeMathPlaceholders(normalizeExamLatex(latex));
+  const normalized = alreadyNormalized
+    ? normalizeMathPlaceholders(latex)
+    : normalizeMathPlaceholders(repairMathLatex(latex));
   if (!normalized) return null;
 
   try {
@@ -367,22 +357,10 @@ function renderFullLatexDocument(
 ): string | null {
   if (!looksLikeLatex(normalized)) return null;
 
-  const doc = normalizeMathPlaceholders(normalized);
+  const doc = normalizeMathPlaceholders(normalizeExamLatex(normalized));
   const mode = pickDisplayMode(doc, displayMode);
 
-  try {
-    const rendered = katex.renderToString(doc, {
-      displayMode: mode,
-      output: "html",
-      throwOnError: false,
-      strict: false,
-      trust: true,
-    });
-    if (rendered.includes('class="katex-error"')) return null;
-    return rendered;
-  } catch {
-    return null;
-  }
+  return renderKatexString(doc, mode, true);
 }
 
 function shouldRenderFullLatexDocument(normalized: string): boolean {
@@ -392,7 +370,56 @@ function shouldRenderFullLatexDocument(normalized: string): boolean {
 }
 
 const wrapClassName =
-  "katex-wrap block w-full min-w-0 max-w-full overflow-visible text-base leading-loose text-ink [overflow-wrap:break-word] [word-break:normal]";
+  "katex-wrap flex w-full min-w-0 max-w-full flex-wrap items-baseline gap-x-1 overflow-visible text-base leading-relaxed text-ink [overflow-wrap:break-word] [word-break:normal]";
+
+function DelimitedSegmentContent({
+  segments,
+  className,
+  displayMode,
+}: {
+  segments: ExamContentSegment[];
+  className?: string;
+  displayMode?: boolean;
+}) {
+  return (
+    <span
+      lang="bn"
+      className={cn(wrapClassName, displayMode && "py-1", className)}
+    >
+      {segments.map((seg, index) => {
+        if (seg.kind === "prose") {
+          return <Fragment key={`p-${index}`}>{seg.value}</Fragment>;
+        }
+
+        const repaired = repairMathLatex(seg.value);
+        const block = seg.display === "block";
+        const html = renderKatexString(
+          repaired,
+          block || Boolean(displayMode),
+          true
+        );
+        const fallback = seg.value;
+
+        if (!html) {
+          return <Fragment key={`m-${index}`}>{fallback}</Fragment>;
+        }
+
+        return (
+          <span
+            key={`m-${index}`}
+            className={cn(
+              block
+                ? "my-1 block w-full max-w-full overflow-x-auto overflow-y-visible [&_.katex-display]:my-0"
+                : "inline-block max-w-full align-middle whitespace-nowrap overflow-visible",
+              "[&_.katex]:overflow-visible [&_.katex]:text-[1em]"
+            )}
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
+        );
+      })}
+    </span>
+  );
+}
 
 function MixedFlowContent({
   flow,
@@ -417,9 +444,11 @@ function MixedFlowContent({
           return <Fragment key={`t-${index}`}>{item.value}</Fragment>;
         }
 
-        const block =
-          item.value.includes("=") && item.value.length > 12;
-        const html = renderKatexInline(item.value, block);
+        const useDisplay =
+          Boolean(displayMode) &&
+          item.value.includes("=") &&
+          item.value.length > 12;
+        const html = renderKatexString(item.value, useDisplay, true);
         if (!html) {
           return <Fragment key={`m-${index}`}>{item.value}</Fragment>;
         }
@@ -428,10 +457,10 @@ function MixedFlowContent({
           <span
             key={`m-${index}`}
             className={cn(
-              "overflow-visible [&_.katex]:overflow-visible [&_.katex]:text-[1em]",
-              block
+              "overflow-visible [&_.katex]:overflow-visible [&_.katex-display]:my-0 [&_.katex]:text-[1em]",
+              useDisplay
                 ? "my-1 block w-full"
-                : "mx-0.5 inline-block align-middle whitespace-nowrap"
+                : "inline-block max-w-full align-middle whitespace-nowrap"
             )}
             dangerouslySetInnerHTML={{ __html: html }}
           />
@@ -468,81 +497,113 @@ function PlainProse({
   );
 }
 
+type RenderMode =
+  | { kind: "empty" }
+  | { kind: "delimited"; segments: ExamContentSegment[] }
+  | { kind: "full-document"; html: string }
+  | { kind: "mixed-flow"; flow: FlowItem[] }
+  | { kind: "single-html"; html: string }
+  | { kind: "plain"; lines: string[]; fallback: string };
+
+function resolveRenderMode(
+  raw: string,
+  displayMode: boolean
+): RenderMode {
+  const trimmed = raw.trim();
+  if (!trimmed) return { kind: "empty" };
+
+  const parsed = parseExamContentSegments(trimmed);
+  if (parsed.hadDelimiters && parsed.segments.length > 0) {
+    return { kind: "delimited", segments: parsed.segments };
+  }
+
+  const normalized = normalizeExamLatex(trimmed);
+
+  if (shouldRenderFullLatexDocument(normalized)) {
+    const html = renderFullLatexDocument(normalized, displayMode);
+    if (html) return { kind: "full-document", html };
+  }
+
+  if (isImplicitRawEquation(normalized)) {
+    const latex = repairMathLatex(normalized);
+    const html = renderKatexString(latex, displayMode, true);
+    if (html) return { kind: "single-html", html };
+    return {
+      kind: "mixed-flow",
+      flow: [{ kind: "math", value: latex }],
+    };
+  }
+
+  if (isEquationOnlyLatex(normalized)) {
+    const latex = repairMathLatex(normalized);
+    return {
+      kind: "mixed-flow",
+      flow: [{ kind: "math", value: latex }],
+    };
+  }
+
+  const equationTail = parseLatexEquationWithTail(normalized);
+  if (equationTail) {
+    return { kind: "mixed-flow", flow: segmentsToFlowItems(equationTail) };
+  }
+
+  if (hasTextAndMathLatex(normalized)) {
+    const segments = coalesceMathExpressionSegments(
+      parseInlineLatexSegmentsOrdered(normalized)
+    ).map((seg) =>
+      seg.kind === "math"
+        ? { kind: "math" as const, value: repairMathLatex(seg.value) }
+        : seg
+    );
+    if (segments.some((s) => s.kind === "math")) {
+      return { kind: "mixed-flow", flow: segmentsToFlowItems(segments) };
+    }
+  }
+
+  if (looksLikeLatex(normalized) && hasNonTextLatex(normalized)) {
+    const latex = repairMathLatex(normalized);
+    const pureFrac = /^\\frac\{[^}]+\}\{[^}]+\}$/.test(latex);
+    if (pureFrac || hasNonTextLatex(latex)) {
+      const html = renderKatexString(
+        latex,
+        pickDisplayMode(latex, displayMode),
+        true
+      );
+      if (html) return { kind: "single-html", html };
+    }
+  }
+
+  const lines = plainLines(normalized);
+  return {
+    kind: "plain",
+    lines: lines.length > 0 ? lines : [dedupeRepeatedProse(normalized)],
+    fallback: normalized,
+  };
+}
+
 export function MathContent({
   content,
   displayMode = false,
   className,
 }: MathContentProps) {
-  const normalized = useMemo(() => {
-    const trimmed = content?.trim() ?? "";
-    if (hasDollarMath(trimmed)) return normalizeMixedContent(trimmed);
-    return normalizeExamLatex(trimmed);
-  }, [content]);
-
-  const fullDocumentHtml = useMemo(() => {
-    if (!normalized || hasDollarMath(normalized)) return null;
-    if (!shouldRenderFullLatexDocument(normalized)) return null;
-    return renderFullLatexDocument(normalized, displayMode);
-  }, [normalized, displayMode]);
-
-  const mixedFlow = useMemo((): FlowItem[] | null => {
-    if (!normalized || fullDocumentHtml) return null;
-
-    if (hasDollarMath(normalized)) {
-      return segmentsToFlowItems(parseDollarSegments(normalized));
-    }
-
-    const equationTail = parseLatexEquationWithTail(normalized);
-    if (equationTail) {
-      return segmentsToFlowItems(equationTail);
-    }
-
-    if (hasTextAndMathLatex(normalized)) {
-      const segments = parseInlineLatexSegmentsOrdered(normalized);
-      if (segments.some((s) => s.kind === "math")) {
-        return segmentsToFlowItems(segments);
-      }
-    }
-
-    return null;
-  }, [normalized, fullDocumentHtml]);
-
-  const lines = useMemo(
-    () => (normalized && !mixedFlow && !fullDocumentHtml ? plainLines(normalized) : []),
-    [normalized, mixedFlow, fullDocumentHtml]
+  const mode = useMemo(
+    () => resolveRenderMode(content ?? "", displayMode),
+    [content, displayMode]
   );
 
-  const html = useMemo(() => {
-    if (!normalized || mixedFlow || fullDocumentHtml) return null;
-    if (!looksLikeLatex(normalized)) return null;
-    const pureFrac = /^\\frac\{[^}]+\}\{[^}]+\}$/.test(normalized);
-    if (!hasNonTextLatex(normalized) && !pureFrac) return null;
+  if (mode.kind === "empty") return null;
 
-    const mode = pickDisplayMode(normalized, displayMode);
-
-    try {
-      const rendered = katex.renderToString(
-        normalizeMathPlaceholders(normalized),
-        {
-          displayMode: mode,
-          output: "html",
-          throwOnError: false,
-          strict: false,
-          trust: true,
-        }
-      );
-      if (rendered.includes('class="katex-error"')) return null;
-      return rendered;
-    } catch {
-      return null;
-    }
-  }, [normalized, displayMode, mixedFlow]);
-
-  if (!normalized) {
-    return null;
+  if (mode.kind === "delimited") {
+    return (
+      <DelimitedSegmentContent
+        segments={mode.segments}
+        className={className}
+        displayMode={displayMode}
+      />
+    );
   }
 
-  if (fullDocumentHtml) {
+  if (mode.kind === "full-document" || mode.kind === "single-html") {
     return (
       <span
         lang="bn"
@@ -552,25 +613,15 @@ export function MathContent({
           className,
           "[&_.katex]:text-[1em]"
         )}
-        dangerouslySetInnerHTML={{ __html: fullDocumentHtml }}
+        dangerouslySetInnerHTML={{ __html: mode.html }}
       />
     );
   }
 
-  if (mixedFlow) {
+  if (mode.kind === "mixed-flow") {
     return (
       <MixedFlowContent
-        flow={mixedFlow}
-        className={className}
-        displayMode={displayMode}
-      />
-    );
-  }
-
-  if (!html) {
-    return (
-      <PlainProse
-        lines={lines.length > 0 ? lines : [dedupeRepeatedProse(normalized)]}
+        flow={mode.flow}
         className={className}
         displayMode={displayMode}
       />
@@ -578,15 +629,10 @@ export function MathContent({
   }
 
   return (
-    <span
-      lang="bn"
-      className={cn(
-        wrapClassName,
-        displayMode && "py-1",
-        className,
-        "[&_.katex]:text-[1em]"
-      )}
-      dangerouslySetInnerHTML={{ __html: html }}
+    <PlainProse
+      lines={mode.lines}
+      className={className}
+      displayMode={displayMode}
     />
   );
 }
