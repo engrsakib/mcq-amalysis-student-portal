@@ -4,6 +4,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api/client";
 import { postProctoringEvent } from "@/lib/api/proctoring";
+import {
+  appendBackgroundStart,
+  closeLastBackgroundEvent,
+} from "@/lib/exam/proctoring-storage";
 
 export const PROCTORING_AWAY_THRESHOLD_MS = 15_000;
 
@@ -36,6 +40,7 @@ export function useExamProctoring({
 
   const recordBackgroundEvent = useCallback(async (keepalive = false) => {
     const occurredAt = new Date().toISOString();
+    appendBackgroundStart(examNumberRef.current, occurredAt);
     const body = {
       eventType: "app_background" as const,
       exam_number: examNumberRef.current,
@@ -81,6 +86,10 @@ export function useExamProctoring({
     leaveConfirmedRef.current = true;
     closeModal();
     await recordBackgroundEvent(false);
+    closeLastBackgroundEvent(
+      examNumberRef.current,
+      new Date().toISOString()
+    );
     router.push("/");
   }, [closeModal, recordBackgroundEvent, router]);
 
@@ -102,6 +111,11 @@ export function useExamProctoring({
     const hiddenAt = hiddenAtRef.current;
     hiddenAtRef.current = null;
     postedForHideRef.current = false;
+
+    closeLastBackgroundEvent(
+      examNumberRef.current,
+      new Date().toISOString()
+    );
 
     if (hiddenAt != null) {
       const awayMs = Date.now() - hiddenAt;

@@ -10,6 +10,7 @@ type ExamQuestionCardProps = {
   question: ExamQuestionPublic;
   selectedOption: number | null;
   onSelectOption: (optionIndex: number) => void;
+  readOnly?: boolean;
 };
 
 export function ExamQuestionCard({
@@ -17,6 +18,7 @@ export function ExamQuestionCard({
   question,
   selectedOption,
   onSelectOption,
+  readOnly = false,
 }: ExamQuestionCardProps) {
   const title = question.title?.trim();
   const formula = question.mathFormula?.trim();
@@ -61,9 +63,11 @@ export function ExamQuestionCard({
             <li key={`${question.questionId}-${optionIndex}`}>
               <button
                 type="button"
+                disabled={readOnly}
                 onClick={() => onSelectOption(optionIndex)}
                 aria-label={`Option ${label}`}
                 className={cn(
+                  readOnly && "cursor-default opacity-90",
                   "flex w-full min-w-0 rounded-lg border px-3 text-left text-base transition-colors",
                   multiline
                     ? "min-h-14 items-start gap-3 py-3"

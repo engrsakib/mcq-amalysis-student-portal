@@ -187,10 +187,60 @@ export type ExamSessionMeta = {
   negative_mark?: number;
 };
 
+export type ExamQuestionGrading = {
+  correctAnswer: string;
+  marks: number;
+};
+
 export type ExamSessionPayload = {
   exam: ExamSessionMeta;
   questions: ExamQuestionPublic[];
+  gradingByQuestionId: Record<number, ExamQuestionGrading>;
   isPracticeSession: boolean;
+};
+
+export type ProctoringEventLocal = {
+  type: "app_background";
+  at: string;
+  endedAt: string | null;
+};
+
+export type SubmitExamResultRequest = {
+  clientSubmittedAt: string;
+  correctAnswers: number;
+  exam_number: number;
+  is_cheated: boolean;
+  is_on_time: boolean;
+  proctoringEvents: ProctoringEventLocal[];
+  score: number;
+  sessionStartedAt: string;
+  student_name: string;
+  student_phone: string;
+  totalQuestions: number;
+  total_score: number;
+  unanswered: number;
+  writtenExam: unknown[];
+  wrongAnswers: number;
+};
+
+export type SubmitExamResultResponse = {
+  student_name: string;
+  student_phone: string;
+  exam_number: number;
+  total_score: number;
+  score: number;
+  totalQuestions: number;
+  correctAnswers: number;
+  wrongAnswers: number;
+  unanswered: number;
+  is_cheated: boolean;
+  is_on_time: boolean;
+  dateTaken: string;
+  writtenExam: unknown[];
+  is_written_mark_updated?: boolean;
+  _id: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type ProctoringEventType = "app_background";

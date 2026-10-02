@@ -1,6 +1,7 @@
 import type {
   ExamEntry,
   ExamQuestion,
+  ExamQuestionGrading,
   ExamQuestionPublic,
   ExamSessionMeta,
   ExamSessionPayload,
@@ -27,6 +28,21 @@ export function isPracticeSession(exam: Pick<ExamEntry, "is_started" | "is_compl
   return exam.is_started === true && exam.is_completed === true;
 }
 
+export function buildGradingKeyMap(
+  questions: ExamQuestion[]
+): Record<number, ExamQuestionGrading> {
+  const map: Record<number, ExamQuestionGrading> = {};
+  for (const q of questions) {
+    const correct = q.answer?.correctAnswer;
+    if (correct === undefined || correct === "") continue;
+    map[q.questionId] = {
+      correctAnswer: String(correct),
+      marks: q.marks,
+    };
+  }
+  return map;
+}
+
 export function toExamSessionPayload(entry: ExamEntry): ExamSessionPayload {
   const exam: ExamSessionMeta = {
     _id: entry._id,
@@ -42,9 +58,12 @@ export function toExamSessionPayload(entry: ExamEntry): ExamSessionPayload {
     negative_mark: entry.negative_mark,
   };
 
+  const rawQuestions = entry.questions ?? [];
+
   return {
     exam,
-    questions: (entry.questions ?? []).map(sanitizeExamQuestion),
+    questions: rawQuestions.map(sanitizeExamQuestion),
+    gradingByQuestionId: buildGradingKeyMap(rawQuestions),
     isPracticeSession: isPracticeSession(entry),
   };
 }

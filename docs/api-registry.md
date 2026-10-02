@@ -539,7 +539,7 @@ Single exam entry for the signed-in user, including full **`questions[]`** (MCQ 
 
 **Path:** `exam_number` — numeric public exam id (e.g. `9008190402216`), not Mongo `_id`.
 
-**Success (200):** `data` is one exam object: metadata (`exam_name`, `subject`, `exam_date_time`, `duration_minutes`, `total_marks`, flags) plus `questions[]` with `title`, optional `mathFormula` (LaTeX), `answerType`, `marks`, `image_url`, and `answer.options`. **`answer.correctAnswer` must not be sent to the browser** — strip server-side before rendering.
+**Success (200):** `data` is one exam object: metadata (`exam_name`, `subject`, `exam_date_time`, `duration_minutes`, `total_marks`, flags) plus `questions[]` with `title`, optional `mathFormula` (LaTeX), `answerType`, `marks`, `image_url`, and `answer.options`. **`answer.correctAnswer` must not appear in question UI during the attempt** — the student web app maps it into a grading-only structure for submit/review ([`gradingByQuestionId`](lib/exam/sanitize-questions.ts)), not rendered on [`ExamQuestionCard`](components/exam/exam-question-card.tsx).
 
 **Errors:** 401 unauthenticated; 404 when exam not found for user.
 
@@ -579,7 +579,21 @@ Record a proctoring violation signal while a **live** exam is in progress (tab s
 
 **Errors:** 401 unauthenticated; 4xx validation as implemented server-side.
 
-**Client:** [`lib/api/proctoring.ts`](../lib/api/proctoring.ts) via `postProctoringEvent` (uses `fetch` **`keepalive: true`** on tab hide so the request is not cancelled). Wired from [`hooks/use-exam-proctoring.ts`](../hooks/use-exam-proctoring.ts) for every exam session route (`/exam/[exam_number]`). Backend applies cheat / violation rules (e.g. away &gt; 15s).
+**Client:** [`lib/api/proctoring.ts`](../lib/api/proctoring.ts) via `postProctoringEvent` (uses `fetch` **`keepalive: true`** on tab hide so the request is not cancelled). Wired from [`hooks/use-exam-proctoring.ts`](../hooks/use-exam-proctoring.ts) for every exam session route (`/exam/[exam_number]`). Events with `at` / `endedAt` are also stored in `localStorage` for final submit. Backend applies cheat / violation rules (e.g. away &gt; 15s).
+
+---
+
+### POST `/results/`
+
+Submit a completed exam attempt (MCQ scoring summary + proctoring log).
+
+**Auth:** Required (`Authorization`)
+
+**Body (JSON):** `clientSubmittedAt`, `exam_number`, `sessionStartedAt`, `student_name`, `student_phone`, `totalQuestions`, `total_score`, `score`, `correctAnswers`, `wrongAnswers`, `unanswered`, `is_cheated`, `is_on_time`, `proctoringEvents` (array of `{ type: "app_background", at, endedAt }`), `writtenExam` (often `[]` for MCQ-only).
+
+**Success (201):** `data` includes submitted scores, flags, `dateTaken`, and result `_id`.
+
+**Client:** [`lib/api/results.ts`](../lib/api/results.ts) via `submitExamResult`; scoring in [`lib/exam/compute-exam-score.ts`](../lib/exam/compute-exam-score.ts). Grading keys from GET exam response are kept in a client-only map (not shown during the attempt); see [`lib/exam/sanitize-questions.ts`](../lib/exam/sanitize-questions.ts).
 
 ---
 
