@@ -2,7 +2,9 @@
 
 import { useCallback, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Bell } from "lucide-react";
+import { Bell, Search } from "lucide-react";
+import { GlobalSearchModal } from "@/components/search/global-search-modal";
+import { SearchProvider, useSearchModal } from "@/components/search/search-provider";
 import { AppPageHeader } from "@/components/dashboard/app-page-header";
 import {
   DashboardSidebar,
@@ -19,9 +21,10 @@ type AppShellProps = {
   children: React.ReactNode;
 };
 
-export function AppShell({ children }: AppShellProps) {
+function AppShellInner({ children }: AppShellProps) {
   const pathname = usePathname();
   const isExamSessionRoute = /^\/exam\/\d+/.test(pathname);
+  const { openSearch } = useSearchModal();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const { collapsed: sidebarCollapsed, toggle: toggleSidebarCollapsed } =
     useSidebarCollapsed();
@@ -58,6 +61,18 @@ export function AppShell({ children }: AppShellProps) {
             </span>
           </button>
           <div className="flex shrink-0 items-center gap-1.5">
+            {!isExamSessionRoute ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="size-8 shrink-0"
+                aria-label="Search"
+                onClick={openSearch}
+              >
+                <Search className="size-4" />
+              </Button>
+            ) : null}
             <Button
               type="button"
               variant="outline"
@@ -94,6 +109,15 @@ export function AppShell({ children }: AppShellProps) {
         onClose={closeMobileNav}
         groups={dashboardNavGroups}
       />
+      <GlobalSearchModal />
     </div>
+  );
+}
+
+export function AppShell({ children }: AppShellProps) {
+  return (
+    <SearchProvider>
+      <AppShellInner>{children}</AppShellInner>
+    </SearchProvider>
   );
 }

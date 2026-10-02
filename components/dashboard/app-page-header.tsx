@@ -1,10 +1,13 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { useProfileDisplay } from "@/components/dashboard/user-summary";
 import { useUpcomingExams } from "@/hooks/use-upcoming-exams";
 
 export function AppPageHeader() {
+  const pathname = usePathname();
+  const isExamSessionRoute = /^\/exam\/\d+/.test(pathname);
   const { name, initials, loading: profileLoading } = useProfileDisplay();
   const { nearestExamDateLabel, loading: examsLoading } = useUpcomingExams();
 
@@ -15,6 +18,7 @@ export function AppPageHeader() {
       studentName={profileLoading ? "Student" : name}
       examDate={examDate}
       initials={profileLoading ? "…" : initials}
+      hideSearch={isExamSessionRoute}
     />
   );
 }

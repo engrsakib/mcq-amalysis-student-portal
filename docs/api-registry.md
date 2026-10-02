@@ -333,6 +333,28 @@ Issues new access and refresh tokens from a valid refresh token. Used when the a
 
 ---
 
+### GET `/search`
+
+Global search across exams, books, YouTube, study plans, and guidelines.
+
+**Auth:** Required (`Authorization`)
+
+**Query:**
+
+| Param   | Type    | Default | Notes        |
+| ------- | ------- | ------- | ------------ |
+| `q`     | string  | —       | Required     |
+| `page`  | integer | 1       | Per group    |
+| `limit` | integer | 10      | Per group    |
+
+**Success (200):** `data.query`, `data.results` with `exams`, `books`, `youtube`, `studyPlans`, `guidelines` — each `{ meta, data[] }` (same item shapes as user catalog endpoints where applicable).
+
+**Errors:** 401 unauthenticated.
+
+**Client:** Header search modal via [`getGlobalSearch`](lib/api/search.ts), [`GlobalSearchModal`](components/search/global-search-modal.tsx).
+
+---
+
 ### GET `/user/auth`
 
 Current authenticated user (profile read for dashboard header/sidebar).

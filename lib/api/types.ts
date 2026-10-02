@@ -215,6 +215,35 @@ export type UserBooksPayload = {
   data: UserBookEntry[];
 };
 
+export type SearchResultSection<T> = {
+  meta: PaginatedMeta;
+  data: T[];
+};
+
+export type SearchGuidelineEntry = {
+  _id: string;
+  id?: string;
+  title: string;
+  description?: string;
+  thumbnail_url?: string;
+  guideline_url?: string;
+  status?: string;
+  position?: number;
+};
+
+export type GlobalSearchResults = {
+  exams: SearchResultSection<UserExam>;
+  books: SearchResultSection<UserBookEntry>;
+  youtube: SearchResultSection<UserYoutubeEntry>;
+  studyPlans: SearchResultSection<UserStudyPlanEntry>;
+  guidelines: SearchResultSection<SearchGuidelineEntry>;
+};
+
+export type GlobalSearchPayload = {
+  query: string;
+  results: GlobalSearchResults;
+};
+
 export type UserExamRoutineEntry = {
   _id: string;
   id?: string;
