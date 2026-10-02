@@ -395,6 +395,8 @@ Update the authenticated user's own profile (Settings page).
 
 **Success (200):** `data` is the updated user object (same shape as GET `/user/auth`).
 
+**Client ([`/settings`](app/(app)/settings/page.tsx)):** Profile photo is uploaded to Cloudinary (unsigned preset), then `image` is set to the returned `secure_url` and saved via [`updateUserProfile`](lib/api/user.ts).
+
 **400 example:**
 
 ```json
@@ -409,6 +411,20 @@ Update the authenticated user's own profile (Settings page).
 ```
 
 **401 example:** Same unauthenticated envelope as login.
+
+---
+
+### Client: Cloudinary (unsigned profile upload)
+
+Not an Express route. The student web app uploads directly from the browser.
+
+**Env:** `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` (unsigned preset in Cloudinary dashboard).
+
+**Upload:** `POST https://api.cloudinary.com/v1_1/{cloud_name}/image/upload` — `FormData` fields `file`, `upload_preset`.
+
+**Response:** Use `secure_url` as `image` on PATCH `/user/self`.
+
+**Client:** [`uploadProfileImage`](lib/cloudinary/upload-image.ts), [`ProfileImageField`](components/settings/profile-image-field.tsx).
 
 ---
 

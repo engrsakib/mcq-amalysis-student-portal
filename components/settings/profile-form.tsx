@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Mail, Phone, User, ImageIcon } from "lucide-react";
+import { Mail, Phone, User } from "lucide-react";
+import { ProfileImageField } from "@/components/settings/profile-image-field";
 import { ApiError } from "@/lib/api/client";
 import { useUserProfile } from "@/components/dashboard/user-profile-provider";
 import { AuthIconInput } from "@/components/auth/auth-icon-input";
@@ -117,12 +118,11 @@ export function ProfileForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
-      <AuthIconInput
-        icon={<ImageIcon className="size-4" />}
-        type="url"
-        placeholder="Profile image URL (optional)"
-        value={image}
-        onChange={(e) => setImage(e.target.value)}
+      <ProfileImageField
+        imageUrl={image}
+        onChange={setImage}
+        displayName={name}
+        disabled={loading}
       />
 
       <Button

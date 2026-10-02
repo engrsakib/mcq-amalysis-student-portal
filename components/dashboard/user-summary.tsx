@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useUserProfile } from "@/components/dashboard/user-profile-provider";
 import {
   getDisplayContact,
@@ -18,17 +19,28 @@ export function UserSummary({ avatarClassName, compact }: UserSummaryProps) {
   const name = loading ? "…" : getDisplayName(profile);
   const contact = loading ? "…" : profile ? getDisplayContact(profile) : "—";
   const initials = loading ? "…" : getInitials(getDisplayName(profile));
+  const avatarUrl = profile?.image?.trim() || null;
 
   return (
     <div className={cn("flex items-center gap-3", compact && "gap-2")}>
       <div
         className={cn(
-          "flex shrink-0 items-center justify-center rounded-full bg-primary font-semibold text-primary-foreground",
+          "relative flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary font-semibold text-primary-foreground",
           compact ? "size-8 text-xs" : "size-9 text-xs",
           avatarClassName
         )}
       >
-        {initials}
+        {avatarUrl && !loading ? (
+          <Image
+            src={avatarUrl}
+            alt=""
+            fill
+            className="object-cover"
+            sizes={compact ? "32px" : "36px"}
+          />
+        ) : (
+          initials
+        )}
       </div>
       {!compact ? (
         <div className="min-w-0 flex-1">
