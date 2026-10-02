@@ -3,12 +3,17 @@
 import { useCallback, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Bell } from "lucide-react";
-import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
+import { AppPageHeader } from "@/components/dashboard/app-page-header";
+import {
+  DashboardSidebar,
+  useSidebarCollapsed,
+} from "@/components/dashboard/dashboard-sidebar";
 import { Button } from "@/components/ui/button";
 import { MobileNavSheet } from "@/components/dashboard/mobile-nav-sheet";
 import { useProfileDisplay } from "@/components/dashboard/user-summary";
 import { TokenRefreshGate } from "@/components/auth/token-refresh-gate";
 import { dashboardNavGroups } from "@/lib/dashboard/nav";
+import { cn } from "@/lib/utils";
 
 type AppShellProps = {
   children: React.ReactNode;
@@ -16,8 +21,10 @@ type AppShellProps = {
 
 export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
-  const isExamRoute = pathname.startsWith("/exam");
+  const isExamSessionRoute = /^\/exam\/\d+/.test(pathname);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const { collapsed: sidebarCollapsed, toggle: toggleSidebarCollapsed } =
+    useSidebarCollapsed();
   const { initials } = useProfileDisplay();
 
   const openMobileNav = useCallback(() => setMobileNavOpen(true), []);
@@ -26,8 +33,17 @@ export function AppShell({ children }: AppShellProps) {
   return (
     <div className="flex h-svh max-h-svh w-full overflow-hidden bg-page">
       <TokenRefreshGate />
-      <DashboardSidebar suppressNavScroll={isExamRoute} />
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col lg:ml-[240px]">
+      <DashboardSidebar
+        suppressNavScroll={isExamSessionRoute}
+        collapsed={sidebarCollapsed}
+        onToggleCollapsed={toggleSidebarCollapsed}
+      />
+      <div
+        className={cn(
+          "flex min-h-0 min-w-0 flex-1 flex-col transition-[margin] duration-200 ease-out",
+          sidebarCollapsed ? "lg:ml-[72px]" : "lg:ml-[240px]"
+        )}
+      >
         <div className="flex items-center justify-between gap-3 border-b border-line bg-card px-4 py-3 lg:hidden">
           <button
             type="button"
@@ -61,7 +77,10 @@ export function AppShell({ children }: AppShellProps) {
           </div>
         </div>
         <main className="scrollbar-hidden-mobile min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain touch-pan-y px-4 py-4 sm:px-6 sm:py-6">
-          <div className="mx-auto w-full min-w-0 max-w-6xl">{children}</div>
+          <div className="mx-auto w-full min-w-0 max-w-6xl space-y-6">
+            {!isExamSessionRoute ? <AppPageHeader /> : null}
+            {children}
+          </div>
         </main>
       </div>
       <MobileNavSheet

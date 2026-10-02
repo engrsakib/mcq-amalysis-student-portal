@@ -24,9 +24,9 @@ export const dashboardNavGroups: NavGroup[] = [
       {
         id: "exams",
         label: "Exams",
-        href: "/",
+        href: "/exam",
         icon: ClipboardList,
-        activePathPrefix: "/exam/",
+        activePathPrefix: "/exam",
       },
       {
         id: "practice",

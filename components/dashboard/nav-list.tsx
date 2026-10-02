@@ -10,6 +10,7 @@ type NavListProps = {
   onNavigate?: () => void;
   staggerAnimation?: boolean;
   sheetOpen?: boolean;
+  collapsed?: boolean;
 };
 
 export function NavList({
@@ -17,6 +18,7 @@ export function NavList({
   onNavigate,
   staggerAnimation = false,
   sheetOpen = true,
+  collapsed = false,
 }: NavListProps) {
   const pathname = usePathname();
   let itemIndex = 0;
@@ -25,7 +27,12 @@ export function NavList({
     <nav className="space-y-6">
       {groups.map((group) => (
         <div key={group.id}>
-          <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <p
+            className={cn(
+              "mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground",
+              collapsed && "sr-only"
+            )}
+          >
             {group.label}
           </p>
           <ul className="space-y-0.5">
@@ -44,12 +51,13 @@ export function NavList({
               const content = (
                 <>
                   <Icon className="size-4 shrink-0" />
-                  <span>{item.label}</span>
+                  <span className={cn(collapsed && "sr-only")}>{item.label}</span>
                 </>
               );
 
               const className = cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-150",
+                "flex items-center rounded-lg py-2.5 text-sm font-medium transition-colors duration-150",
+                collapsed ? "justify-center px-2" : "gap-3 px-3",
                 active
                   ? "bg-primary-soft text-primary"
                   : "text-muted-foreground hover:bg-primary-soft/60 hover:text-ink",
@@ -75,6 +83,7 @@ export function NavList({
                       className={className}
                       style={style}
                       aria-disabled
+                      title={collapsed ? item.label : undefined}
                     >
                       {content}
                     </span>
@@ -85,6 +94,7 @@ export function NavList({
                       style={style}
                       onClick={onNavigate}
                       aria-current={active ? "page" : undefined}
+                      title={collapsed ? item.label : undefined}
                     >
                       {content}
                     </Link>
