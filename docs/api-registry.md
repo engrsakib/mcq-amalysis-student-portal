@@ -677,6 +677,31 @@ Dashboard carousels unchanged (`limit=5` on `/`).
 
 ---
 
+### GET `/activity/me`
+
+Activity audit log for the signed-in user (paginated).
+
+**Auth:** Required (`Authorization`)
+
+**Query:**
+
+| Param        | Type    | Default | Notes |
+| ------------ | ------- | ------- | ----- |
+| `page`       | integer | 1       | `/activity` uses 20 |
+| `limit`      | integer | 10      | `/activity` uses 20 |
+| `searchTerm` | string  | —       | Optional; client may send `""` |
+| `dateFrom`   | string  | —       | Optional `YYYY-MM-DD` |
+| `dateTo`     | string  | —       | Optional `YYYY-MM-DD` |
+| `action`     | string  | —       | Optional: `exam_started`, `exam_submitted`, `offline_submit`, `cheated_submit`, `proctoring`; omit for all |
+
+**Success (200):** `data.data[]` with `action`, `title`, `description`, `severity`, optional `examNumber`, `createdAt`, etc.; `data.meta` includes `page`, `limit`, `total`, and `totalPages` (client maps to `totalPage`).
+
+**Errors:** 401 unauthenticated.
+
+**Client:** [`/activity`](app/(app)/activity/page.tsx) — date range + action filter, timeline list; cheat/proctoring/non-normal severity styled with danger tokens; pagination via `PaginationBar`.
+
+---
+
 ### GET `/exam/user/{exam_number}`
 
 Single exam entry for the signed-in user, including full **`questions[]`** (MCQ options under each question’s `answer.options`). Times use Bangladesh offset (`+06:00`) where applicable.

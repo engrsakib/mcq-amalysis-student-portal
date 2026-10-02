@@ -1,4 +1,5 @@
 import {
+  Activity,
   Award,
   BarChart3,
   Book,
@@ -56,6 +57,13 @@ export const dashboardNavGroups: NavGroup[] = [
         href: "#",
         icon: Award,
         disabled: true,
+      },
+      {
+        id: "activity",
+        label: "Activity",
+        href: "/activity",
+        icon: Activity,
+        activePathPrefix: "/activity",
       },
     ],
   },

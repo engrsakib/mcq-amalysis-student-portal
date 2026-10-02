@@ -236,6 +236,41 @@ export type UserExamRoutinePayload = {
   data: UserExamRoutineEntry[];
 };
 
+export type ActivityActionSlug =
+  | "exam_started"
+  | "exam_submitted"
+  | "offline_submit"
+  | "cheated_submit"
+  | "proctoring";
+
+export type ActivityLogEntry = {
+  _id: string;
+  actorId?: string;
+  actorName?: string;
+  action: ActivityActionSlug | string;
+  module?: string;
+  title: string;
+  description: string;
+  entityType?: string;
+  entityId?: string;
+  severity?: string;
+  examNumber?: number;
+  createdAt: string;
+};
+
+export type ActivityLogsMetaRaw = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPage?: number;
+  totalPages?: number;
+};
+
+export type ActivityLogsPayload = {
+  meta: PaginatedMeta;
+  data: ActivityLogEntry[];
+};
+
 export type ExamQuestionAnswer = {
   options: string[];
   correctAnswer?: string;
