@@ -10,6 +10,8 @@ export type NavItem = {
   activePathPrefix?: string;
   /** When true, active only on exact pathname match (for href `/`) */
   activeExact?: boolean;
+  /** Open href in a new tab (external link) */
+  external?: boolean;
 };
 
 export type NavGroup = {

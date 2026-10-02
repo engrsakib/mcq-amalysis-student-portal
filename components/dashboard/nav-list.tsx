@@ -87,6 +87,18 @@ export function NavList({
                     >
                       {content}
                     </span>
+                  ) : item.external ? (
+                    <a
+                      href={item.href}
+                      className={className}
+                      style={style}
+                      onClick={onNavigate}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={collapsed ? item.label : undefined}
+                    >
+                      {content}
+                    </a>
                   ) : (
                     <Link
                       href={item.href}

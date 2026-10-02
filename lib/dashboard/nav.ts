@@ -1,6 +1,7 @@
 import {
   Award,
   BarChart3,
+  Book,
   BookOpen,
   ClipboardList,
   HelpCircle,
@@ -27,6 +28,13 @@ export const dashboardNavGroups: NavGroup[] = [
         href: "/exam",
         icon: ClipboardList,
         activePathPrefix: "/exam",
+      },
+      {
+        id: "book",
+        label: "Book",
+        href: "https://rkmri.co/SMT300Tee5IM/",
+        icon: Book,
+        external: true,
       },
       {
         id: "practice",
