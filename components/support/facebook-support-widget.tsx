@@ -44,7 +44,7 @@ export function FacebookSupportWidget() {
           aria-labelledby={titleId}
           className={cn(
             "pointer-events-auto w-[min(100vw-2rem,20rem)] origin-bottom-right rounded-2xl bg-card p-4 shadow-lg ring-1 ring-line/80",
-            "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-200"
+            "motion-safe:animate-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-200"
           )}
         >
           <div className="flex items-start gap-3 border-b border-line/60 pb-3">

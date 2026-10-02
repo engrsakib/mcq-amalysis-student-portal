@@ -131,7 +131,7 @@ function AppShellInner({ children }: AppShellProps) {
             <main
               ref={mainScrollRef}
               className={cn(
-                "scroll-pane scroll-fade-y min-h-0 flex-1 overflow-x-hidden overflow-y-auto touch-pan-y",
+                "scroll-pane min-h-0 flex-1 overflow-x-hidden overflow-y-auto touch-pan-y",
                 lenisEnabled && "scroll-pane-lenis"
               )}
             >

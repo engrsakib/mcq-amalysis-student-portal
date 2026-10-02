@@ -41,7 +41,7 @@ export function ExamStickyFooter({
   onSubmit,
 }: ExamStickyFooterProps) {
   return (
-    <footer className="fixed bottom-0 left-0 right-0 z-20 border-t border-line/60 bg-card/95 px-4 py-3 backdrop-blur-sm lg:left-[240px] sm:px-6">
+    <footer className="fixed bottom-0 left-0 right-0 z-20 border-t border-line/60 bg-card px-4 py-3 lg:left-[240px] sm:px-6">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-4">
         <div className="flex min-w-0 flex-1 items-center gap-5 sm:gap-8">
           <ExamTimer

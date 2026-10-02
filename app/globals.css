@@ -118,8 +118,8 @@
 
 @keyframes view-enter {
   from {
-    opacity: 0;
-    transform: translate3d(0, 12px, 0) scale(0.985);
+    opacity: 1;
+    transform: translate3d(0, 6px, 0) scale(0.993);
   }
   to {
     opacity: 1;
@@ -187,17 +187,22 @@
     );
   }
 
+  .view-enter,
+  .view-enter-children > * {
+    opacity: 1;
+  }
+
   @supports (animation-timeline: view()) {
     .view-enter {
       animation: view-enter linear both;
       animation-timeline: view();
-      animation-range: entry 0% cover 22%;
+      animation-range: entry 0% cover 18%;
     }
 
     .view-enter-children > * {
       animation: view-enter linear both;
       animation-timeline: view();
-      animation-range: entry 0% cover 22%;
+      animation-range: entry 0% cover 18%;
     }
   }
 
@@ -259,9 +264,7 @@
 
   .pressable {
     touch-action: manipulation;
-    transition:
-      transform 150ms ease-out,
-      opacity 150ms ease-out;
+    transition: transform 150ms ease-out;
   }
 
   .pressable:active {
@@ -269,13 +272,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .pressable {
-      transition: opacity 150ms ease-out;
-    }
-
     .pressable:active {
-      transform: none;
-      opacity: 0.92;
+      transform: translate3d(0, 0, 0) scale(0.99);
     }
   }
 
