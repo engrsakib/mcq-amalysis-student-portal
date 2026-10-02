@@ -132,6 +132,22 @@
     overscroll-behavior-x: contain;
   }
 
+  /* Horizontal tab strip: swipe scroll, no visible scrollbar */
+  .folder-tabs-scroll-x {
+    -ms-overflow-style: none;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    touch-action: pan-x;
+  }
+
+  .folder-tabs-scroll-x::-webkit-scrollbar {
+    display: none;
+    height: 0;
+    width: 0;
+  }
+
   .scroll-pane::-webkit-scrollbar,
   .scroll-area-brand::-webkit-scrollbar {
     width: var(--scrollbar-size);
