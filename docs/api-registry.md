@@ -583,10 +583,11 @@ Study plans for the signed-in user (paginated).
 
 **Query:**
 
-| Param   | Type    | Default | Notes                             |
-| ------- | ------- | ------- | --------------------------------- |
-| `page`  | integer | 1       |                                   |
-| `limit` | integer | 10      | Dashboard Study plan card uses 5  |
+| Param        | Type    | Default | Notes                             |
+| ------------ | ------- | ------- | --------------------------------- |
+| `page`       | integer | 1       |                                   |
+| `limit`      | integer | 10      | Dashboard Study plan card uses 5  |
+| `searchTerm` | string  | —       | Optional; client may send `""`  |
 
 **Success (200):** `data.meta` plus `data.data[]` items with `study_plan_number`, `title`, `description`, `status`, `thumbnail_url`, `study_plan_url`, `category`, `position`, timestamps.
 
@@ -604,10 +605,11 @@ Published YouTube entries for the signed-in user (paginated).
 
 **Query:**
 
-| Param   | Type    | Default | Notes                          |
-| ------- | ------- | ------- | ------------------------------ |
-| `page`  | integer | 1       |                                |
-| `limit` | integer | 10      | Dashboard Youtube card uses 5  |
+| Param        | Type    | Default | Notes                          |
+| ------------ | ------- | ------- | ------------------------------ |
+| `page`       | integer | 1       |                                |
+| `limit`      | integer | 10      | Dashboard Youtube card uses 5  |
+| `searchTerm` | string  | —       | Optional; client may send `""` |
 
 **Success (200):**
 
@@ -637,6 +639,41 @@ Published YouTube entries for the signed-in user (paginated).
 **Errors:** 401 unauthenticated.
 
 **Client:** Dashboard **Youtube** section below “My recent results” — `page=1`, `limit=5`; thumbnails from `thumbnail_url` or YouTube CDN via parsed `video_url`; carousel auto-advances every 4s until user plays a video (iframe embed pauses rotation).
+
+---
+
+### GET `/exam-solution/user`
+
+Exam / model test solution documents for the signed-in user (paginated).
+
+**Auth:** Required (`Authorization`)
+
+**Query:**
+
+| Param        | Type    | Default | Notes                                      |
+| ------------ | ------- | ------- | ------------------------------------------ |
+| `page`       | integer | 1       |                                            |
+| `limit`      | integer | 10      | Learning Materials catalog uses 20         |
+| `searchTerm` | string  | —       | Optional; client may send `""`             |
+
+**Success (200):** `data.meta` plus `data.data[]` with `title`, `description`, `status`, `thumbnail_url`, external URL (`exam_solution_url` or `solution_url`), optional `category`, `position`, timestamps.
+
+**Errors:** 401 unauthenticated.
+
+---
+
+### Learning Materials page (`/learning-materials`)
+
+**Client:** Mobile-first **FolderTabs** (study plan → Youtube → model test solution → guideline); optional `?tab=youtube` | `model-test` | `guideline` (default study plan omits `tab`). Each data tab uses the shared **paginated catalog** UX (debounced search, card/list toggle, grid, `PaginationBar`).
+
+| Tab | Source | Catalog `limit` |
+| --- | --- | --- |
+| Study plan | `GET /study-plan/user` | 20 |
+| Youtube | `GET /youtube/user` | 100 |
+| Model test solution | `GET /exam-solution/user` | 20 |
+| Guideline | — | Placeholder empty state until a guideline API exists |
+
+Dashboard carousels unchanged (`limit=5` on `/`).
 
 ---
 

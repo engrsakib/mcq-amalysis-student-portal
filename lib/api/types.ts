@@ -172,6 +172,28 @@ export type UserStudyPlanPayload = {
   data: UserStudyPlanEntry[];
 };
 
+export type UserExamSolutionEntry = {
+  _id: string;
+  id?: string;
+  exam_solution_number?: number;
+  title: string;
+  description: string;
+  status: string;
+  thumbnail_url: string;
+  /** API may use exam_solution_url or solution_url */
+  exam_solution_url?: string;
+  solution_url?: string;
+  category?: string;
+  position?: number;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type UserExamSolutionPayload = {
+  meta: PaginatedMeta;
+  data: UserExamSolutionEntry[];
+};
+
 export type UserBookEntry = {
   _id: string;
   id?: string;

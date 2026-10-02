@@ -5,11 +5,12 @@ import { ApiError } from "@/lib/api/client";
 import { getUserStudyPlans } from "@/lib/api/study-plan";
 import type { UserStudyPlanEntry } from "@/lib/api/types";
 
-export function useUserStudyPlans() {
+export function useUserStudyPlans(enabled = true) {
   const [plans, setPlans] = useState<UserStudyPlanEntry[]>([]);
   const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fetched, setFetched] = useState(false);
 
   const refresh = useCallback(async () => {
     setError(null);
@@ -29,12 +30,21 @@ export function useUserStudyPlans() {
       setTotal(0);
     } finally {
       setLoading(false);
+      setFetched(true);
     }
   }, []);
 
   useEffect(() => {
+    if (!enabled || fetched) return;
     void refresh();
-  }, [refresh]);
+  }, [enabled, fetched, refresh]);
 
-  return { plans, total, loading, error, refresh };
+  return {
+    plans,
+    total,
+    loading: enabled && !fetched ? true : loading,
+    error,
+    refresh,
+    fetched,
+  };
 }

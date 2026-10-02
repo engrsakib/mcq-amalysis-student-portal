@@ -24,6 +24,8 @@ type ExamCarouselCardProps<T extends { _id: string }> = {
   countSuffix?: "exam" | "video" | "plan" | "routine";
   loadingSkeletonClassName?: string;
   cardClassName?: string;
+  /** Hide card title row (e.g. tabbed Learning Materials panels) */
+  hideHeader?: boolean;
 };
 
 export function ExamCarouselCard<T extends { _id: string }>({
@@ -43,6 +45,7 @@ export function ExamCarouselCard<T extends { _id: string }>({
   countSuffix = "exam",
   loadingSkeletonClassName = "h-[220px]",
   cardClassName,
+  hideHeader = false,
 }: ExamCarouselCardProps<T>) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const activeIndexRef = useRef(0);
@@ -143,25 +146,29 @@ export function ExamCarouselCard<T extends { _id: string }>({
         cardClassName
       )}
     >
-      <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
-        <div className="flex min-w-0 flex-wrap items-center gap-2">
-          <CardTitle className="text-base font-semibold text-ink">{title}</CardTitle>
-          {titleExtra}
-        </div>
-        {!loading && exams.length > 0 && countLabel != null ? (
-          <span className="shrink-0 rounded-lg border border-line px-2 py-1 text-xs text-muted-foreground">
-            {countLabel}{" "}
-            {countSuffix === "video"
-              ? `video${countLabel === 1 ? "" : "s"}`
-              : countSuffix === "plan"
-                ? `plan${countLabel === 1 ? "" : "s"}`
-                : countSuffix === "routine"
-                  ? `routine${countLabel === 1 ? "" : "s"}`
-                  : `exam${countLabel === 1 ? "" : "s"}`}
-          </span>
-        ) : null}
-      </CardHeader>
-      <CardContent className="min-w-0">
+      {hideHeader ? (
+        <CardTitle className="sr-only">{title}</CardTitle>
+      ) : (
+        <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <CardTitle className="text-base font-semibold text-ink">{title}</CardTitle>
+            {titleExtra}
+          </div>
+          {!loading && exams.length > 0 && countLabel != null ? (
+            <span className="shrink-0 rounded-lg border border-line px-2 py-1 text-xs text-muted-foreground">
+              {countLabel}{" "}
+              {countSuffix === "video"
+                ? `video${countLabel === 1 ? "" : "s"}`
+                : countSuffix === "plan"
+                  ? `plan${countLabel === 1 ? "" : "s"}`
+                  : countSuffix === "routine"
+                    ? `routine${countLabel === 1 ? "" : "s"}`
+                    : `exam${countLabel === 1 ? "" : "s"}`}
+            </span>
+          ) : null}
+        </CardHeader>
+      )}
+      <CardContent className={cn("min-w-0", hideHeader && "pt-(--card-spacing)")}>
         {loading ? (
           <div
             className={cn(

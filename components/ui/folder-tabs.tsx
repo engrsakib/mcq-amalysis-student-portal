@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 export type FolderTabItem<T extends string = string> = {
   id: T;
   label: string;
+  /** Shown below `sm` when set; full `label` from `sm` and up */
+  shortLabel?: string;
   icon?: LucideIcon;
 };
 
@@ -15,6 +17,7 @@ type FolderTabsProps<T extends string> = {
   onValueChange: (id: T) => void;
   className?: string;
   listClassName?: string;
+  scrollableOnMobile?: boolean;
   "aria-label"?: string;
 };
 
@@ -24,6 +27,7 @@ export function FolderTabs<T extends string>({
   onValueChange,
   className,
   listClassName,
+  scrollableOnMobile = false,
   "aria-label": ariaLabel = "Tabs",
 }: FolderTabsProps<T>) {
   return (
@@ -31,7 +35,13 @@ export function FolderTabs<T extends string>({
       <div
         role="tablist"
         aria-label={ariaLabel}
-        className={cn("flex flex-wrap items-end gap-1 sm:gap-2", listClassName)}
+        className={cn(
+          "flex items-end gap-1 sm:gap-2",
+          scrollableOnMobile
+            ? "scroll-pane-x -mx-1 flex-nowrap overflow-x-auto px-1 snap-x snap-mandatory sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0"
+            : "flex-wrap",
+          listClassName
+        )}
       >
         {items.map((item) => {
           const active = value === item.id;
@@ -47,7 +57,8 @@ export function FolderTabs<T extends string>({
               tabIndex={active ? 0 : -1}
               onClick={() => onValueChange(item.id)}
               className={cn(
-                "relative inline-flex items-center gap-2 px-3 py-2.5 text-sm font-medium transition-colors sm:px-4",
+                "relative inline-flex min-h-11 shrink-0 snap-start items-center gap-2 px-3 py-2.5 text-sm font-medium transition-colors sm:min-h-0 sm:px-4",
+                scrollableOnMobile && "snap-start",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-page",
                 active
                   ? "-mb-px z-[1] rounded-t-lg border border-primary border-b-page bg-page text-primary"
@@ -60,7 +71,14 @@ export function FolderTabs<T extends string>({
                   aria-hidden
                 />
               ) : null}
-              <span>{item.label}</span>
+              {item.shortLabel ? (
+                <>
+                  <span className="sm:hidden">{item.shortLabel}</span>
+                  <span className="hidden sm:inline">{item.label}</span>
+                </>
+              ) : (
+                <span>{item.label}</span>
+              )}
             </button>
           );
         })}

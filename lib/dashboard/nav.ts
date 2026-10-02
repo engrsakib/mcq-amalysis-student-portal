@@ -37,11 +37,11 @@ export const dashboardNavGroups: NavGroup[] = [
         external: true,
       },
       {
-        id: "practice",
-        label: "Practice",
-        href: "#",
+        id: "learning-materials",
+        label: "Learning Materials",
+        href: "/learning-materials",
         icon: BookOpen,
-        disabled: true,
+        activePathPrefix: "/learning-materials",
       },
       {
         id: "results",
