@@ -12,7 +12,7 @@ import {
 } from "@/components/dashboard/dashboard-sidebar";
 import { Button } from "@/components/ui/button";
 import { MobileNavSheet } from "@/components/dashboard/mobile-nav-sheet";
-import { useProfileDisplay } from "@/components/dashboard/user-summary";
+import { UserAvatar } from "@/components/dashboard/user-summary";
 import { TokenRefreshGate } from "@/components/auth/token-refresh-gate";
 import { dashboardNavGroups } from "@/lib/dashboard/nav";
 import { cn } from "@/lib/utils";
@@ -24,11 +24,10 @@ type AppShellProps = {
 function AppShellInner({ children }: AppShellProps) {
   const pathname = usePathname();
   const isExamSessionRoute = /^\/exam\/\d+/.test(pathname);
-  const { openSearch } = useSearchModal();
+  const { openSearch, open: searchOpen } = useSearchModal();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const { collapsed: sidebarCollapsed, toggle: toggleSidebarCollapsed } =
     useSidebarCollapsed();
-  const { initials } = useProfileDisplay();
 
   const openMobileNav = useCallback(() => setMobileNavOpen(true), []);
   const closeMobileNav = useCallback(() => setMobileNavOpen(false), []);
@@ -83,33 +82,37 @@ function AppShellInner({ children }: AppShellProps) {
               <Bell className="size-4" />
               <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-danger" />
             </Button>
-            <div
-              className="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground"
-              aria-hidden
-            >
-              {initials}
-            </div>
+            <UserAvatar compact />
           </div>
         </div>
-        <main className="scroll-pane min-h-0 flex-1 overflow-x-hidden overflow-y-auto touch-pan-y">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           {!isExamSessionRoute ? (
-            <div className="sticky top-0 z-20 border-b border-gray-100 bg-page">
+            <div className="relative z-30 shrink-0 border-b border-gray-100 bg-page">
               <div className="mx-auto w-full min-w-0 max-w-6xl px-4 py-4 sm:px-6 sm:py-5">
                 <AppPageHeader />
               </div>
             </div>
           ) : null}
-          <div className="mx-auto w-full min-w-0 max-w-6xl space-y-6 px-4 py-4 sm:px-6 sm:py-6">
-            {children}
+          <div
+            className={cn(
+              "relative flex min-h-0 min-w-0 flex-1 flex-col",
+              searchOpen && "overflow-hidden"
+            )}
+          >
+            <main className="scroll-pane min-h-0 flex-1 overflow-x-hidden overflow-y-auto touch-pan-y">
+              <div className="mx-auto w-full min-w-0 max-w-6xl space-y-6 px-4 py-4 sm:px-6 sm:py-6">
+                {children}
+              </div>
+            </main>
+            <GlobalSearchModal />
           </div>
-        </main>
+        </div>
       </div>
       <MobileNavSheet
         open={mobileNavOpen}
         onClose={closeMobileNav}
         groups={dashboardNavGroups}
       />
-      <GlobalSearchModal />
     </div>
   );
 }

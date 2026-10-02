@@ -9,6 +9,40 @@ import {
 } from "@/lib/user/display";
 import { cn } from "@/lib/utils";
 
+type UserAvatarProps = {
+  className?: string;
+  compact?: boolean;
+};
+
+export function UserAvatar({ className, compact }: UserAvatarProps) {
+  const { profile, loading } = useUserProfile();
+  const initials = loading ? "…" : getInitials(getDisplayName(profile));
+  const avatarUrl = profile?.image?.trim() || null;
+
+  return (
+    <div
+      className={cn(
+        "relative flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-xs font-semibold text-primary-foreground",
+        compact ? "size-8" : "size-9",
+        className
+      )}
+      aria-hidden
+    >
+      {avatarUrl && !loading ? (
+        <Image
+          src={avatarUrl}
+          alt=""
+          fill
+          className="object-cover"
+          sizes={compact ? "32px" : "36px"}
+        />
+      ) : (
+        initials
+      )}
+    </div>
+  );
+}
+
 type UserSummaryProps = {
   avatarClassName?: string;
   compact?: boolean;
@@ -18,30 +52,10 @@ export function UserSummary({ avatarClassName, compact }: UserSummaryProps) {
   const { profile, loading } = useUserProfile();
   const name = loading ? "…" : getDisplayName(profile);
   const contact = loading ? "…" : profile ? getDisplayContact(profile) : "—";
-  const initials = loading ? "…" : getInitials(getDisplayName(profile));
-  const avatarUrl = profile?.image?.trim() || null;
 
   return (
     <div className={cn("flex items-center gap-3", compact && "gap-2")}>
-      <div
-        className={cn(
-          "relative flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary font-semibold text-primary-foreground",
-          compact ? "size-8 text-xs" : "size-9 text-xs",
-          avatarClassName
-        )}
-      >
-        {avatarUrl && !loading ? (
-          <Image
-            src={avatarUrl}
-            alt=""
-            fill
-            className="object-cover"
-            sizes={compact ? "32px" : "36px"}
-          />
-        ) : (
-          initials
-        )}
-      </div>
+      <UserAvatar compact={compact} className={avatarClassName} />
       {!compact ? (
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium text-ink">{name}</p>

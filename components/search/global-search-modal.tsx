@@ -123,7 +123,7 @@ export function GlobalSearchModal() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col bg-page"
+      className="absolute inset-0 z-50 flex flex-col bg-page"
       role="dialog"
       aria-modal="true"
       aria-label="Search"

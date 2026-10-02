@@ -2,12 +2,12 @@
 
 import { Bell, Search } from "lucide-react";
 import { useSearchModal } from "@/components/search/search-provider";
+import { UserAvatar } from "@/components/dashboard/user-summary";
 import { Button } from "@/components/ui/button";
 
 type PageHeaderProps = {
   studentName: string;
   examDate: string;
-  initials: string;
   onMenuClick?: () => void;
   showMenuButton?: boolean;
   hideSearch?: boolean;
@@ -23,7 +23,6 @@ function getGreeting() {
 export function PageHeader({
   studentName,
   examDate,
-  initials,
   onMenuClick,
   showMenuButton = false,
   hideSearch = false,
@@ -81,12 +80,7 @@ export function PageHeader({
           <Bell className="size-4" />
           <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-danger" />
         </Button>
-        <div
-          className="flex size-9 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground max-lg:hidden"
-          aria-hidden
-        >
-          {initials}
-        </div>
+        <UserAvatar className="max-lg:hidden" />
       </div>
     </header>
   );

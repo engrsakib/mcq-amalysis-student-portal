@@ -8,7 +8,7 @@ import { useUpcomingExams } from "@/hooks/use-upcoming-exams";
 export function AppPageHeader() {
   const pathname = usePathname();
   const isExamSessionRoute = /^\/exam\/\d+/.test(pathname);
-  const { name, initials, loading: profileLoading } = useProfileDisplay();
+  const { name, loading: profileLoading } = useProfileDisplay();
   const { nearestExamDateLabel, loading: examsLoading } = useUpcomingExams();
 
   const examDate = nearestExamDateLabel ?? (examsLoading ? "…" : "—");
@@ -17,7 +17,6 @@ export function AppPageHeader() {
     <PageHeader
       studentName={profileLoading ? "Student" : name}
       examDate={examDate}
-      initials={profileLoading ? "…" : initials}
       hideSearch={isExamSessionRoute}
     />
   );
