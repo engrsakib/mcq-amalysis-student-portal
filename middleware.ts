@@ -11,10 +11,14 @@ import {
 } from "@/lib/auth/cookie-config";
 import { isJwtExpired } from "@/lib/auth/jwt";
 import { isPreviewBot } from "@/lib/site/preview-bot";
+import { GOOGLE_SITEMAP_PATH } from "@/lib/site/sitemap";
 
 const PUBLIC_PATHS = ["/login", "/verify", "/forgot-password"];
 
+const PUBLIC_EXACT_PATHS = new Set([GOOGLE_SITEMAP_PATH, "/robots.txt"]);
+
 function isPublicPath(pathname: string): boolean {
+  if (PUBLIC_EXACT_PATHS.has(pathname)) return true;
   return PUBLIC_PATHS.some(
     (path) => pathname === path || pathname.startsWith(`${path}/`)
   );
