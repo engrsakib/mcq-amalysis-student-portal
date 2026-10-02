@@ -10,6 +10,7 @@ import {
   writeAuthCookies,
 } from "@/lib/auth/cookie-config";
 import { isJwtExpired } from "@/lib/auth/jwt";
+import { isPreviewBot } from "@/lib/site/preview-bot";
 
 const PUBLIC_PATHS = ["/login", "/verify", "/forgot-password"];
 
@@ -69,6 +70,10 @@ export async function middleware(request: NextRequest) {
   }
 
   if (!isPublicPath(pathname) && !authenticated) {
+    if (pathname === "/" && isPreviewBot(request.headers.get("user-agent"))) {
+      return NextResponse.next();
+    }
+
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("redirect", `${pathname}${search}` || pathname);
     return NextResponse.redirect(loginUrl);

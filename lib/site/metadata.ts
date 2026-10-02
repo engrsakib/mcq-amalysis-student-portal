@@ -3,6 +3,9 @@ import type { ExamEntry } from "@/lib/api/types";
 
 export const SITE_NAME = "MCQ Analysis";
 
+/** Default document / Open Graph title for the student portal home and root layout. */
+export const PORTAL_BRAND_TITLE = "MCQ Analysis - Student Portal";
+
 export const DEFAULT_OG_DESCRIPTION =
   "A general educational tool for Android featuring verified past questions, customized quizzes, a live leaderboard, and a deep mistake-analysis tool to track weak areas.";
 
@@ -116,12 +119,32 @@ export function examPageMetadata(
 
 export const rootSiteMetadata: Metadata = {
   title: {
-    default: SITE_NAME,
+    default: PORTAL_BRAND_TITLE,
     template: `%s — ${SITE_NAME}`,
   },
   description: DEFAULT_OG_DESCRIPTION,
   keywords: DEFAULT_KEYWORDS,
-  openGraph: defaultOpenGraph(),
-  twitter: defaultTwitter(),
+  openGraph: defaultOpenGraph({
+    title: PORTAL_BRAND_TITLE,
+  }),
+  twitter: defaultTwitter({
+    title: PORTAL_BRAND_TITLE,
+  }),
+  robots: { index: true, follow: true },
+};
+
+/** Metadata for `/` — brand title for tabs and social previews (not "Dashboard" / login redirect). */
+export const homePageMetadata: Metadata = {
+  title: { absolute: PORTAL_BRAND_TITLE },
+  description: DEFAULT_OG_DESCRIPTION,
+  keywords: DEFAULT_KEYWORDS,
+  alternates: { canonical: "/" },
+  openGraph: defaultOpenGraph({
+    title: PORTAL_BRAND_TITLE,
+    url: "/",
+  }),
+  twitter: defaultTwitter({
+    title: PORTAL_BRAND_TITLE,
+  }),
   robots: { index: true, follow: true },
 };
