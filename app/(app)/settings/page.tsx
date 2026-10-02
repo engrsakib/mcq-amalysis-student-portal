@@ -8,7 +8,11 @@ import {
 } from "@/components/ui/card";
 import { pageMetadata } from "@/lib/site/metadata";
 
-export const metadata = pageMetadata("Profile");
+export const metadata = pageMetadata("Profile", {
+  path: "/settings",
+  description:
+    "Manage your MCQ Analysis student profile, photo, and account settings.",
+});
 
 export default function SettingsPage() {
   return (

@@ -120,6 +120,7 @@
   /* Vertical scroll: smooth motion + branded rail (main, sidebar, auth, modals) */
   .scroll-pane,
   .scroll-area-brand {
+    touch-action: pan-y;
     scroll-behavior: smooth;
     overscroll-behavior: contain;
     scrollbar-gutter: stable;
@@ -232,6 +233,8 @@
   /* Mobile: hide scrollbar chrome; touch scroll unchanged */
   @media (max-width: 1023px) {
     .scroll-pane {
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: auto;
       -ms-overflow-style: none;
       scrollbar-gutter: auto;
       scrollbar-width: none;

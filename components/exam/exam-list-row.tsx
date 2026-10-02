@@ -34,7 +34,7 @@ export function ExamListRow({
   return (
     <article
       className={cn(
-        "flex flex-col gap-3 rounded-xl border border-line/80 border-l-4 border-l-primary bg-card px-4 py-3 shadow-sm sm:flex-row sm:items-center sm:gap-4",
+        "flex touch-pan-y flex-col gap-3 rounded-xl border border-line/80 border-l-4 border-l-primary bg-card px-4 py-3 shadow-sm sm:flex-row sm:items-center sm:gap-4",
         className
       )}
     >
@@ -72,7 +72,7 @@ export function ExamListRow({
       <Button
         type="button"
         variant="outline"
-        className="h-10 w-full shrink-0 rounded-[10px] border-primary/40 text-sm font-medium text-primary hover:bg-primary-soft sm:w-[120px]"
+        className="h-10 w-full shrink-0 touch-pan-y rounded-[10px] border-primary/40 text-sm font-medium text-primary hover:bg-primary-soft sm:w-[120px]"
         title={actionLabel}
         onClick={() => openBriefing(exam, briefingSource)}
       >

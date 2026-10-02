@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import { baseUrl } from "@/lib/site";
+import { rootSiteMetadata } from "@/lib/site/metadata";
 import { cn } from "@/lib/utils";
 import "katex/dist/katex.min.css";
 import "./globals.css";
@@ -12,12 +13,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
+  ...rootSiteMetadata,
   metadataBase: new URL(baseUrl),
-  title: {
-    default: "MCQ Analysis — Student",
-    template: "%s — MCQ Analysis",
-  },
-  description: "Student portal for MCQ Analysis",
   icons: {
     icon: [{ url: "/icons.svg", type: "image/svg+xml" }],
     shortcut: "/icons.svg",

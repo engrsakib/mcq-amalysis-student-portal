@@ -34,7 +34,7 @@ export function ExamGridCard({
   return (
     <article
       className={cn(
-        "flex min-h-[220px] flex-col overflow-hidden rounded-xl border border-line/80 border-l-4 border-l-primary bg-card shadow-sm",
+        "flex min-h-[220px] touch-pan-y flex-col overflow-hidden rounded-xl border border-line/80 border-l-4 border-l-primary bg-card shadow-sm",
         className
       )}
     >
@@ -74,7 +74,7 @@ export function ExamGridCard({
         <Button
           type="button"
           variant="outline"
-          className="h-10 w-full rounded-[10px] border-primary/40 text-sm font-medium text-primary hover:bg-primary-soft"
+          className="h-10 w-full touch-pan-y rounded-[10px] border-primary/40 text-sm font-medium text-primary hover:bg-primary-soft"
           title={actionLabel}
           onClick={() => openBriefing(exam, briefingSource)}
         >

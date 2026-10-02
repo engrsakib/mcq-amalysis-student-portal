@@ -108,13 +108,13 @@ export function PaginatedCatalogPanel<T extends { _id: string }>({
 
       {loading ? (
         displayViewMode === "card" ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid touch-pan-y grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: skeletonCount }, (_, i) => (
               <CatalogCardSkeleton key={i} />
             ))}
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="flex touch-pan-y flex-col gap-3">
             {Array.from({ length: skeletonCount }, (_, i) => (
               <CatalogListSkeleton key={i} />
             ))}
@@ -129,15 +129,19 @@ export function PaginatedCatalogPanel<T extends { _id: string }>({
           />
         </div>
       ) : displayViewMode === "card" ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid touch-pan-y grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (
-            <div key={item._id}>{renderCard(item)}</div>
+            <div key={item._id} className="touch-pan-y">
+              {renderCard(item)}
+            </div>
           ))}
         </div>
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="flex touch-pan-y flex-col gap-3">
           {items.map((item) => (
-            <div key={item._id}>{renderListRow(item)}</div>
+            <div key={item._id} className="touch-pan-y">
+              {renderListRow(item)}
+            </div>
           ))}
         </div>
       )}

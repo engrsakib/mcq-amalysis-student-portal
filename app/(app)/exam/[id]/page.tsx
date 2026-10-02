@@ -5,7 +5,7 @@ import { ExamSessionView } from "@/components/exam/exam-session-view";
 import { ApiError } from "@/lib/api/client";
 import { getExamByNumberServer } from "@/lib/api/exam-server";
 import { toExamSessionPayload } from "@/lib/exam/sanitize-questions";
-import { pageMetadata } from "@/lib/site/metadata";
+import { examPageMetadata, pageMetadata } from "@/lib/site/metadata";
 
 type ExamPageProps = PageProps<"/exam/[id]">;
 
@@ -19,15 +19,20 @@ export async function generateMetadata({
   const { id } = await params;
 
   if (!isValidExamNumber(id)) {
-    return pageMetadata("Exam");
+    return pageMetadata("Exam", {
+      path: `/exam/${id}`,
+      description: "Open this exam in MCQ Analysis to practice or take the test.",
+    });
   }
 
   try {
     const entry = await getExamByNumberServer(id);
-    const name = entry.exam_name?.trim();
-    return pageMetadata(name || `Exam ${id}`);
+    return examPageMetadata(entry, id);
   } catch {
-    return pageMetadata("Exam");
+    return pageMetadata("Exam", {
+      path: `/exam/${id}`,
+      description: "Open this exam in MCQ Analysis to practice or take the test.",
+    });
   }
 }
 

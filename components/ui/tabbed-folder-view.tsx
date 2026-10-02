@@ -41,7 +41,7 @@ export function TabbedFolderView<T extends string>({
         role="tabpanel"
         id={`folder-tabpanel-${value}`}
         aria-labelledby={`folder-tab-${value}`}
-        className="min-w-0"
+        className="min-w-0 touch-pan-y"
       >
         {children}
       </section>
