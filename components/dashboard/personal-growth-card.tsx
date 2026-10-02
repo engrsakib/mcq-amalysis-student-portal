@@ -32,12 +32,12 @@ function KpiTile({
 }) {
   return (
     <div
-      className="flex min-w-0 items-center gap-2.5 rounded-xl border border-line/70 bg-card px-2.5 py-2.5 shadow-sm"
+      className="flex min-w-0 items-center justify-center gap-2.5 rounded-xl border border-line/70 bg-card px-1.5 py-2.5 shadow-sm sm:justify-start sm:px-2.5"
       aria-label={`${label}: ${value}`}
     >
       <div
         className={cn(
-          "flex size-9 shrink-0 items-center justify-center rounded-lg ring-1 ring-inset",
+          "hidden size-9 shrink-0 items-center justify-center rounded-lg ring-1 ring-inset sm:flex",
           highlight
             ? "bg-primary text-primary-foreground ring-primary/30"
             : "bg-primary-soft/90 text-primary ring-primary/10"
@@ -47,7 +47,7 @@ function KpiTile({
       </div>
       <span
         className={cn(
-          "min-w-0 flex-1 truncate text-base font-semibold tabular-nums leading-none tracking-tight sm:text-lg",
+          "min-w-0 truncate text-center text-sm font-semibold tabular-nums leading-none tracking-tight sm:flex-1 sm:text-left sm:text-lg",
           highlight ? "text-primary" : "text-ink"
         )}
       >
