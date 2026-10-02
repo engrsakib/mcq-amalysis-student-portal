@@ -7,6 +7,7 @@ import {
   ClipboardList,
   HelpCircle,
   LayoutDashboard,
+  Link2,
   User,
 } from "lucide-react";
 import type { NavGroup } from "@/lib/dashboard/types";
@@ -64,6 +65,13 @@ export const dashboardNavGroups: NavGroup[] = [
         href: "/activity",
         icon: Activity,
         activePathPrefix: "/activity",
+      },
+      {
+        id: "important-links",
+        label: "Important Links",
+        href: "/important-links",
+        icon: Link2,
+        activePathPrefix: "/important-links",
       },
     ],
   },
