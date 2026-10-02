@@ -68,7 +68,7 @@ export function PageHeader({
           <h1 className="text-xl font-semibold text-ink sm:text-2xl">
             {getGreeting()}, {firstName}
           </h1>
-          <p className="mt-0.5 text-sm text-muted-foreground">
+          <p className="mt-0.5 text-sm font-medium text-primary">
             Next exam: {examDate}
           </p>
         </div>

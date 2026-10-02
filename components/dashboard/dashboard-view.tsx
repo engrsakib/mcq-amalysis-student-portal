@@ -32,15 +32,24 @@ function DashboardContent({ data }: DashboardViewProps) {
       </div>
 
       <div className="grid min-w-0 gap-4 lg:grid-cols-2">
-        <PersonalGrowthCard />
-        <StudyPlanSection />
-      </div>
-
-      <div className="grid min-w-0 gap-4 lg:grid-cols-2">
-        <LiveExamsCard />
-        <PreviousExamsCard />
-        <UpcomingExamsCard />
-        <SubjectiveModelTestsCard />
+        <div className="order-2 min-w-0 lg:order-none">
+          <PersonalGrowthCard />
+        </div>
+        <div className="order-3 min-w-0 lg:order-none">
+          <StudyPlanSection />
+        </div>
+        <div className="order-1 min-w-0 lg:order-none">
+          <LiveExamsCard />
+        </div>
+        <div className="order-4 min-w-0 lg:order-none">
+          <PreviousExamsCard />
+        </div>
+        <div className="order-5 min-w-0 lg:order-none">
+          <UpcomingExamsCard />
+        </div>
+        <div className="order-6 min-w-0 lg:order-none">
+          <SubjectiveModelTestsCard />
+        </div>
       </div>
 
       <ResultsTable rows={data.recentResults} />
