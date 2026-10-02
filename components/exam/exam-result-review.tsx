@@ -9,6 +9,9 @@ import type {
 } from "@/lib/api/types";
 import { cn } from "@/lib/utils";
 
+/** Re-enable when PDF export is fixed. */
+const EXAM_RESULT_PDF_DOWNLOAD_ENABLED = false;
+
 type ExamResultReviewProps = {
   questions: ExamQuestionPublic[];
   answers: Record<number, number>;
@@ -30,12 +33,14 @@ export function ExamResultReview({
     <section id="exam-result-review" className="mt-6 space-y-4 pb-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg font-semibold text-ink">Answer review</h2>
-        <ExamResultDownloadButton
-          onClick={onDownloadPdf}
-          busy={downloadBusy}
-        />
+        {EXAM_RESULT_PDF_DOWNLOAD_ENABLED ? (
+          <ExamResultDownloadButton
+            onClick={onDownloadPdf}
+            busy={downloadBusy}
+          />
+        ) : null}
       </div>
-      {downloadError ? (
+      {EXAM_RESULT_PDF_DOWNLOAD_ENABLED && downloadError ? (
         <p className="text-sm text-destructive">{downloadError}</p>
       ) : null}
       {questions.map((question, index) => {
