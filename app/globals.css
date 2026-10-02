@@ -116,6 +116,17 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+@keyframes view-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
 @layer utilities {
   /* Vertical scroll: smooth motion + branded rail (main, sidebar, auth, modals) */
   .scroll-pane,
@@ -132,6 +143,62 @@
     touch-action: pan-x pan-y;
     scroll-behavior: smooth;
     overscroll-behavior-x: contain;
+  }
+
+  /* Lenis owns wheel smoothing on desktop; avoid fighting CSS smooth-scroll */
+  .scroll-pane-lenis {
+    scroll-behavior: auto;
+  }
+
+  /* Desktop-only vertical edge fade (opt-in on main scroll surfaces) */
+  @media (min-width: 1024px) {
+    .scroll-fade-y {
+      -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        #000 24px,
+        #000 calc(100% - 24px),
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        #000 24px,
+        #000 calc(100% - 24px),
+        transparent 100%
+      );
+    }
+  }
+
+  .scroll-fade-x {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 18px,
+      #000 calc(100% - 18px),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 18px,
+      #000 calc(100% - 18px),
+      transparent 100%
+    );
+  }
+
+  @supports (animation-timeline: view()) {
+    .view-enter {
+      animation: view-enter linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 22%;
+    }
+
+    .view-enter-children > * {
+      animation: view-enter linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 22%;
+    }
   }
 
   /* Horizontal tab strip: swipe scroll, no visible scrollbar */
@@ -262,6 +329,16 @@
       scroll-behavior: auto;
     }
 
+    .scroll-pane,
+    .scroll-area-brand {
+      overscroll-behavior-y: auto;
+    }
+
+    .scroll-pane-x {
+      overscroll-behavior-x: auto;
+      overscroll-behavior-y: auto;
+    }
+
     .scroll-pane {
       -ms-overflow-style: none;
       scrollbar-gutter: auto;
@@ -281,6 +358,17 @@
     .scroll-area-brand,
     .scroll-pane-x {
       scroll-behavior: auto;
+    }
+
+    .scroll-fade-y,
+    .scroll-fade-x {
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+
+    .view-enter,
+    .view-enter-children > * {
+      animation: none !important;
     }
   }
 }

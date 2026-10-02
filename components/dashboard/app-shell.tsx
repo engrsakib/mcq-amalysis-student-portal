@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Bell, Search } from "lucide-react";
 import { SearchProvider, useSearchModal } from "@/components/search/search-provider";
@@ -14,6 +14,9 @@ import { Button } from "@/components/ui/button";
 import { MobileNavSheet } from "@/components/dashboard/mobile-nav-sheet";
 import { UserAvatar } from "@/components/dashboard/user-summary";
 import { TokenRefreshGate } from "@/components/auth/token-refresh-gate";
+import { useIsLgUp } from "@/hooks/use-is-lg-up";
+import { useLenisScroll } from "@/hooks/use-lenis-scroll";
+import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { dashboardNavGroups } from "@/lib/dashboard/nav";
 import { cn } from "@/lib/utils";
 
@@ -39,6 +42,22 @@ function AppShellInner({ children }: AppShellProps) {
 
   const openMobileNav = useCallback(() => setMobileNavOpen(true), []);
   const closeMobileNav = useCallback(() => setMobileNavOpen(false), []);
+
+  const mainScrollRef = useRef<HTMLElement>(null);
+  const mainContentRef = useRef<HTMLDivElement>(null);
+  const isLgUp = useIsLgUp();
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const lenisEnabled =
+    isLgUp &&
+    !prefersReducedMotion &&
+    !searchOpen &&
+    !mobileNavOpen;
+
+  useLenisScroll({
+    wrapperRef: mainScrollRef,
+    contentRef: mainContentRef,
+    enabled: lenisEnabled,
+  });
 
   return (
     <div className="flex h-svh max-h-svh w-full overflow-hidden bg-page">
@@ -109,8 +128,20 @@ function AppShellInner({ children }: AppShellProps) {
               searchOpen && "overflow-hidden"
             )}
           >
-            <main className="scroll-pane min-h-0 flex-1 overflow-x-hidden overflow-y-auto touch-pan-y">
-              <div className="mx-auto w-full min-w-0 max-w-6xl space-y-6 px-4 py-4 sm:px-6 sm:py-6">
+            <main
+              ref={mainScrollRef}
+              className={cn(
+                "scroll-pane scroll-fade-y min-h-0 flex-1 overflow-x-hidden overflow-y-auto touch-pan-y",
+                lenisEnabled && "scroll-pane-lenis"
+              )}
+            >
+              <div
+                ref={mainContentRef}
+                className={cn(
+                  "mx-auto w-full min-w-0 max-w-6xl space-y-6 px-4 py-4 sm:px-6 sm:py-6",
+                  !isExamSessionRoute && "view-enter-children"
+                )}
+              >
                 {children}
               </div>
             </main>
