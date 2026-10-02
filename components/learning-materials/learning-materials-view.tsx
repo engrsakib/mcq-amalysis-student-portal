@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import {
   BookOpen,
   ClipboardCheck,
@@ -179,7 +179,34 @@ function LearningMaterialsTabPanels({ tab }: { tab: LearningMaterialsTabId }) {
   );
 }
 
-export function LearningMaterialsView() {
+function LearningMaterialsFallback() {
+  return (
+    <div className="w-full min-w-0 space-y-6" aria-busy="true" aria-label="Loading learning materials">
+      <div>
+        <div className="h-8 w-56 max-w-full animate-pulse rounded-md bg-primary-soft/50" />
+        <div className="mt-2 h-4 w-full max-w-xl animate-pulse rounded-md bg-primary-soft/40" />
+      </div>
+      <div className="grid grid-cols-2 gap-2 sm:flex sm:gap-2">
+        {Array.from({ length: 4 }, (_, i) => (
+          <div
+            key={i}
+            className="h-10 animate-pulse rounded-lg bg-primary-soft/40 sm:min-w-[7rem]"
+          />
+        ))}
+      </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 6 }, (_, i) => (
+          <div
+            key={i}
+            className="min-h-[220px] animate-pulse rounded-xl border border-line/60 bg-card"
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function LearningMaterialsViewContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [tab, setTab] = useState<LearningMaterialsTabId>(() =>
@@ -228,5 +255,13 @@ export function LearningMaterialsView() {
         <LearningMaterialsTabPanels tab={tab} />
       </TabbedFolderView>
     </div>
+  );
+}
+
+export function LearningMaterialsView() {
+  return (
+    <Suspense fallback={<LearningMaterialsFallback />}>
+      <LearningMaterialsViewContent />
+    </Suspense>
   );
 }
