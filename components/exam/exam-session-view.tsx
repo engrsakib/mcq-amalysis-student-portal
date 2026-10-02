@@ -36,6 +36,9 @@ export function ExamSessionView({
     // Submit API wired in a follow-up
   }, []);
 
+  const totalQuestions = orderedQuestions.length;
+  const answeredCount = Object.keys(answers).length;
+
   return (
     <>
       <div className="mx-auto w-full min-w-0 max-w-3xl pb-28">
@@ -81,6 +84,8 @@ export function ExamSessionView({
         examDateTime={exam.exam_date_time}
         durationMinutes={exam.duration_minutes}
         timerEnabled={timerEnabled}
+        totalQuestions={totalQuestions}
+        answeredCount={answeredCount}
         onSubmit={handleSubmit}
       />
     </>
