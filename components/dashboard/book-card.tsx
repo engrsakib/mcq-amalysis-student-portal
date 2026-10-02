@@ -1,6 +1,5 @@
 "use client";
 
-import { ExternalLink } from "lucide-react";
 import { BookThumbnail } from "@/components/dashboard/book-thumbnail";
 import { buttonVariants } from "@/components/ui/button";
 import type { UserBookEntry } from "@/lib/api/types";
@@ -50,7 +49,14 @@ export function BookCard({ book, className }: BookCardProps) {
           )}
         >
           Buy now
-          <ExternalLink className="size-4" aria-hidden />
+          <span
+            className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground"
+            aria-hidden
+          >
+            <svg viewBox="0 0 24 24" className="size-2.5 fill-current">
+              <path d="M8 5.5v13l10-6.5z" />
+            </svg>
+          </span>
         </a>
       ) : (
         <p className="text-sm text-muted-foreground">Link unavailable</p>

@@ -193,6 +193,27 @@ export type UserBooksPayload = {
   data: UserBookEntry[];
 };
 
+export type UserExamRoutineEntry = {
+  _id: string;
+  id?: string;
+  exam_routine_number: number;
+  position?: number;
+  title: string;
+  description: string;
+  status: string;
+  thumbnail_url: string;
+  exam_routine_url: string;
+  category: string;
+  post_date?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type UserExamRoutinePayload = {
+  meta: PaginatedMeta;
+  data: UserExamRoutineEntry[];
+};
+
 export type ExamQuestionAnswer = {
   options: string[];
   correctAnswer?: string;

@@ -21,7 +21,7 @@ type ExamCarouselCardProps<T extends { _id: string }> = {
   enableAutoSlide?: boolean;
   autoPaused?: boolean;
   onActiveIndexChange?: (index: number) => void;
-  countSuffix?: "exam" | "video" | "plan";
+  countSuffix?: "exam" | "video" | "plan" | "routine";
   loadingSkeletonClassName?: string;
   cardClassName?: string;
 };
@@ -155,7 +155,9 @@ export function ExamCarouselCard<T extends { _id: string }>({
               ? `video${countLabel === 1 ? "" : "s"}`
               : countSuffix === "plan"
                 ? `plan${countLabel === 1 ? "" : "s"}`
-                : `exam${countLabel === 1 ? "" : "s"}`}
+                : countSuffix === "routine"
+                  ? `routine${countLabel === 1 ? "" : "s"}`
+                  : `exam${countLabel === 1 ? "" : "s"}`}
           </span>
         ) : null}
       </CardHeader>

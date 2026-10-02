@@ -531,6 +531,28 @@ Published exams for the signed-in user. Live exams (`is_started` and not complet
 
 ---
 
+### GET `/exam-routine/user`
+
+Exam routine documents for the signed-in user (paginated).
+
+**Auth:** Required (`Authorization`)
+
+**Query:**
+
+| Param        | Type    | Default | Notes                                |
+| ------------ | ------- | ------- | ------------------------------------ |
+| `page`       | integer | 1       |                                      |
+| `limit`      | integer | 10      | Dashboard Exam routine section uses 5 |
+| `searchTerm` | string  | —       | Optional; client may send `""`       |
+
+**Success (200):** `data.meta` plus `data.data[]` with `exam_routine_number`, `title`, `description`, `status`, `thumbnail_url`, `exam_routine_url`, `category`, `post_date`, `position`, timestamps.
+
+**Errors:** 401 unauthenticated.
+
+**Client:** Dashboard **Exam routine** card beside **Books** (`lg:grid-cols-2`) — `page=1`, `limit=5`, `searchTerm=`; client keeps `status === "active"`; carousel auto-advance 2s; **Open routine** opens `exam_routine_url` in a new tab.
+
+---
+
 ### GET `/books/user`
 
 Published book catalog entries for the signed-in user (paginated).

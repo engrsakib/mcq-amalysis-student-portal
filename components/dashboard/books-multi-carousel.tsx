@@ -7,11 +7,19 @@ import { cn } from "@/lib/utils";
 
 const ITEM_GAP_PX = 16;
 
-function useVisibleSlideCount() {
+export type BooksCarouselLayout = "full" | "column";
+export type CatalogCarouselMediaAspect = "portrait" | "landscape";
+export type CatalogCountSuffix = "book" | "routine";
+
+function useVisibleSlideCount(layout: BooksCarouselLayout) {
   const [visible, setVisible] = useState(1);
 
   useEffect(() => {
     const update = () => {
+      if (layout === "column") {
+        setVisible(window.matchMedia("(min-width: 1024px)").matches ? 2 : 1);
+        return;
+      }
       if (window.matchMedia("(min-width: 1024px)").matches) {
         setVisible(3);
       } else if (window.matchMedia("(min-width: 640px)").matches) {
@@ -23,9 +31,91 @@ function useVisibleSlideCount() {
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
-  }, []);
+  }, [layout]);
 
   return visible;
+}
+
+const ITEM_WIDTH_FULL =
+  "w-[calc(100%)] min-w-[calc(100%)] sm:w-[calc(50%-0.5rem)] sm:min-w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.67rem)] lg:min-w-[calc(33.333%-0.67rem)]";
+
+const ITEM_WIDTH_COLUMN =
+  "w-[calc(100%)] min-w-[calc(100%)] lg:w-[calc(50%-0.5rem)] lg:min-w-[calc(50%-0.5rem)]";
+
+function skeletonWidthClass(
+  layout: BooksCarouselLayout,
+  mediaAspect: CatalogCarouselMediaAspect
+) {
+  const aspect =
+    mediaAspect === "landscape" ? "aspect-video" : "aspect-[2/3]";
+  const base = `${aspect} w-full min-w-full shrink-0 animate-pulse rounded-lg bg-primary-soft/40`;
+  if (layout === "column") {
+    return `${base} lg:w-[calc(50%-0.5rem)] lg:min-w-[calc(50%-0.5rem)]`;
+  }
+  return `${base} sm:w-[calc(50%-0.5rem)] sm:min-w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.67rem)] lg:min-w-[calc(33.333%-0.67rem)]`;
+}
+
+function countSuffixLabel(suffix: CatalogCountSuffix, count: number) {
+  const plural = count === 1 ? "" : "s";
+  if (suffix === "routine") return `routine${plural}`;
+  return `book${plural}`;
+}
+
+function sparseGridClass(layout: BooksCarouselLayout) {
+  return layout === "column"
+    ? "grid grid-cols-1 gap-4 lg:grid-cols-2"
+    : "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3";
+}
+
+/** Show empty slot only on breakpoints where it fills the row (same size as cards). */
+function placeholderSlotClass(
+  padIndex: number,
+  itemsLength: number,
+  layout: BooksCarouselLayout
+) {
+  const slotIndex = itemsLength + padIndex;
+  if (layout === "column") {
+    if (slotIndex >= 2) return "hidden";
+    return slotIndex === 1 ? "hidden lg:block" : "";
+  }
+  if (slotIndex >= 3) return "hidden";
+  if (slotIndex === 1) return "hidden sm:block";
+  if (slotIndex === 2) return "hidden lg:block";
+  return "";
+}
+
+function maxSlotsForLayout(layout: BooksCarouselLayout) {
+  return layout === "column" ? 2 : 3;
+}
+
+function CatalogEmptySlot({
+  mediaAspect,
+  message,
+  className,
+}: {
+  mediaAspect: CatalogCarouselMediaAspect;
+  message: string;
+  className?: string;
+}) {
+  return (
+    <article
+      className={cn(
+        "flex h-full min-w-0 flex-col gap-3 rounded-xl border border-dashed border-line/70 bg-muted/10 p-3",
+        className
+      )}
+      aria-hidden
+    >
+      <div
+        className={cn(
+          "w-full rounded-lg bg-primary-soft/20",
+          mediaAspect === "landscape" ? "aspect-video" : "aspect-[2/3]"
+        )}
+      />
+      <p className="flex flex-1 items-center justify-center text-center text-xs text-muted-foreground">
+        {message}
+      </p>
+    </article>
+  );
 }
 
 type BooksMultiCarouselProps<T extends { _id: string }> = {
@@ -37,6 +127,12 @@ type BooksMultiCarouselProps<T extends { _id: string }> = {
   emptyMessage: string;
   renderItem: (item: T) => React.ReactNode;
   autoSlideMs?: number;
+  layout?: BooksCarouselLayout;
+  mediaAspect?: CatalogCarouselMediaAspect;
+  countSuffix?: CatalogCountSuffix;
+  dotItemLabel?: string;
+  fillEmptySlots?: boolean;
+  emptySlotMessage?: string;
 };
 
 export function BooksMultiCarousel<T extends { _id: string }>({
@@ -48,13 +144,26 @@ export function BooksMultiCarousel<T extends { _id: string }>({
   emptyMessage,
   renderItem,
   autoSlideMs = 3000,
+  layout = "full",
+  mediaAspect = "portrait",
+  countSuffix = "book",
+  dotItemLabel = "item",
+  fillEmptySlots = false,
+  emptySlotMessage = "Coming soon",
 }: BooksMultiCarouselProps<T>) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const activeIndexRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
-  const visibleCount = useVisibleSlideCount();
+  const visibleCount = useVisibleSlideCount(layout);
+  const itemWidthClass = layout === "column" ? ITEM_WIDTH_COLUMN : ITEM_WIDTH_FULL;
+  const skeletonClass = skeletonWidthClass(layout, mediaAspect);
+  const useSparseGrid =
+    fillEmptySlots && items.length > 0 && items.length <= visibleCount;
+  const padCount = useSparseGrid
+    ? Math.max(0, maxSlotsForLayout(layout) - items.length)
+    : 0;
 
   useEffect(() => {
     activeIndexRef.current = activeIndex;
@@ -108,6 +217,7 @@ export function BooksMultiCarousel<T extends { _id: string }>({
 
   useEffect(() => {
     if (
+      useSparseGrid ||
       items.length <= visibleCount ||
       paused ||
       reduceMotion ||
@@ -128,15 +238,16 @@ export function BooksMultiCarousel<T extends { _id: string }>({
     reduceMotion,
     scrollToIndex,
     autoSlideMs,
+    useSparseGrid,
   ]);
 
   useEffect(() => {
     const el = scrollRef.current;
-    if (!el) return;
+    if (!el || useSparseGrid) return;
     const ro = new ResizeObserver(() => syncIndexFromScroll());
     ro.observe(el);
     return () => ro.disconnect();
-  }, [syncIndexFromScroll]);
+  }, [syncIndexFromScroll, useSparseGrid]);
 
   return (
     <Card className="min-w-0 overflow-hidden rounded-2xl border-border/60 bg-card shadow-sm ring-0 lg:min-h-0">
@@ -144,20 +255,21 @@ export function BooksMultiCarousel<T extends { _id: string }>({
         <CardTitle className="text-base font-semibold text-ink">{title}</CardTitle>
         {!loading && items.length > 0 && countLabel != null ? (
           <span className="shrink-0 rounded-lg border border-line px-2 py-1 text-xs text-muted-foreground">
-            {countLabel} book{countLabel === 1 ? "" : "s"}
+            {countLabel} {countSuffixLabel(countSuffix, countLabel)}
           </span>
         ) : null}
       </CardHeader>
       <CardContent className="min-w-0">
         {loading ? (
           <div className="flex gap-4 overflow-hidden">
-            {Array.from({ length: 3 }, (_, i) => (
+            {Array.from({ length: layout === "column" ? 2 : 3 }, (_, i) => (
               <div
                 key={i}
                 className={cn(
-                  "aspect-[2/3] w-full min-w-full shrink-0 animate-pulse rounded-lg bg-primary-soft/40 sm:w-[calc(50%-0.5rem)] sm:min-w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.67rem)] lg:min-w-[calc(33.333%-0.67rem)]",
-                  i === 1 && "hidden sm:block",
-                  i === 2 && "hidden lg:block"
+                  skeletonClass,
+                  layout === "full" && i === 1 && "hidden sm:block",
+                  layout === "full" && i === 2 && "hidden lg:block",
+                  layout === "column" && i === 1 && "hidden lg:block"
                 )}
               />
             ))}
@@ -178,43 +290,67 @@ export function BooksMultiCarousel<T extends { _id: string }>({
 
         {!loading && !error && items.length > 0 ? (
           <div className="min-w-0">
-            <div
-              ref={scrollRef}
-              className="flex gap-4 touch-pan-x snap-x snap-mandatory overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-              onPointerDown={() => setPaused(true)}
-              onPointerUp={() => setPaused(false)}
-              onPointerCancel={() => setPaused(false)}
-              onPointerLeave={() => setPaused(false)}
-              onScroll={syncIndexFromScroll}
-            >
-              {items.map((item) => (
-                <div
-                  key={item._id}
-                  className="w-[calc(100%)] min-w-[calc(100%)] shrink-0 snap-start sm:w-[calc(50%-0.5rem)] sm:min-w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.67rem)] lg:min-w-[calc(33.333%-0.67rem)]"
-                >
-                  {renderItem(item)}
-                </div>
-              ))}
-            </div>
-            {items.length > 1 ? (
-              <div className="mt-3 flex justify-center gap-1.5">
-                {items.map((item, i) => (
-                  <button
-                    key={item._id}
-                    type="button"
-                    aria-label={`Go to book ${i + 1}`}
-                    aria-current={i === activeIndex ? "true" : undefined}
-                    className={cn(
-                      "rounded-full transition-colors",
-                      i === activeIndex
-                        ? "size-2.5 bg-primary"
-                        : "size-2 bg-primary-soft"
+            {useSparseGrid ? (
+              <div className={sparseGridClass(layout)}>
+                {items.map((item) => (
+                  <div key={item._id} className="min-w-0">
+                    {renderItem(item)}
+                  </div>
+                ))}
+                {Array.from({ length: padCount }, (_, padIndex) => (
+                  <CatalogEmptySlot
+                    key={`empty-${padIndex}`}
+                    mediaAspect={mediaAspect}
+                    message={emptySlotMessage}
+                    className={placeholderSlotClass(
+                      padIndex,
+                      items.length,
+                      layout
                     )}
-                    onClick={() => scrollToIndex(i)}
                   />
                 ))}
               </div>
-            ) : null}
+            ) : (
+              <>
+                <div
+                  ref={scrollRef}
+                  className="flex gap-4 touch-pan-x snap-x snap-mandatory overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                  onPointerDown={() => setPaused(true)}
+                  onPointerUp={() => setPaused(false)}
+                  onPointerCancel={() => setPaused(false)}
+                  onPointerLeave={() => setPaused(false)}
+                  onScroll={syncIndexFromScroll}
+                >
+                  {items.map((item) => (
+                    <div
+                      key={item._id}
+                      className={cn("shrink-0 snap-start", itemWidthClass)}
+                    >
+                      {renderItem(item)}
+                    </div>
+                  ))}
+                </div>
+                {items.length > 1 ? (
+                  <div className="mt-3 flex justify-center gap-1.5">
+                    {items.map((item, i) => (
+                      <button
+                        key={item._id}
+                        type="button"
+                        aria-label={`Go to ${dotItemLabel} ${i + 1}`}
+                        aria-current={i === activeIndex ? "true" : undefined}
+                        className={cn(
+                          "rounded-full transition-colors",
+                          i === activeIndex
+                            ? "size-2.5 bg-primary"
+                            : "size-2 bg-primary-soft"
+                        )}
+                        onClick={() => scrollToIndex(i)}
+                      />
+                    ))}
+                  </div>
+                ) : null}
+              </>
+            )}
           </div>
         ) : null}
       </CardContent>

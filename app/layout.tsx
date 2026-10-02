@@ -13,8 +13,16 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
-  title: "MCQ Analysis — Student",
+  title: {
+    default: "MCQ Analysis — Student",
+    template: "%s — MCQ Analysis",
+  },
   description: "Student portal for MCQ Analysis",
+  icons: {
+    icon: [{ url: "/logo.png", type: "image/png" }],
+    shortcut: "/logo.png",
+    apple: [{ url: "/logo.png", type: "image/png" }],
+  },
 };
 
 export const viewport: Viewport = {
