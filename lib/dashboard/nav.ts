@@ -47,9 +47,9 @@ export const dashboardNavGroups: NavGroup[] = [
       {
         id: "results",
         label: "Results",
-        href: "#",
+        href: "/results",
         icon: BarChart3,
-        disabled: true,
+        activePathPrefix: "/results",
       },
       {
         id: "certificates",

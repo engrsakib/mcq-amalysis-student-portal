@@ -76,9 +76,15 @@ export function AppShell({ children }: AppShellProps) {
             </div>
           </div>
         </div>
-        <main className="scroll-pane min-h-0 flex-1 overflow-x-hidden overflow-y-auto touch-pan-y px-4 py-4 sm:px-6 sm:py-6">
-          <div className="mx-auto w-full min-w-0 max-w-6xl space-y-6">
-            {!isExamSessionRoute ? <AppPageHeader /> : null}
+        <main className="scroll-pane min-h-0 flex-1 overflow-x-hidden overflow-y-auto touch-pan-y">
+          {!isExamSessionRoute ? (
+            <div className="sticky top-0 z-20 border-b border-gray-100 bg-page">
+              <div className="mx-auto w-full min-w-0 max-w-6xl px-4 py-4 sm:px-6 sm:py-5">
+                <AppPageHeader />
+              </div>
+            </div>
+          ) : null}
+          <div className="mx-auto w-full min-w-0 max-w-6xl space-y-6 px-4 py-4 sm:px-6 sm:py-6">
             {children}
           </div>
         </main>
