@@ -76,7 +76,7 @@ export function AppShell({ children }: AppShellProps) {
             </div>
           </div>
         </div>
-        <main className="scrollbar-hidden-mobile min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain touch-pan-y px-4 py-4 sm:px-6 sm:py-6">
+        <main className="scroll-pane min-h-0 flex-1 overflow-x-hidden overflow-y-auto touch-pan-y px-4 py-4 sm:px-6 sm:py-6">
           <div className="mx-auto w-full min-w-0 max-w-6xl space-y-6">
             {!isExamSessionRoute ? <AppPageHeader /> : null}
             {children}

@@ -314,7 +314,7 @@ export function BooksMultiCarousel<T extends { _id: string }>({
               <>
                 <div
                   ref={scrollRef}
-                  className="flex gap-4 touch-pan-x snap-x snap-mandatory overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                  className="scroll-pane-x flex gap-4 touch-pan-x snap-x snap-mandatory overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                   onPointerDown={() => setPaused(true)}
                   onPointerUp={() => setPaused(false)}
                   onPointerCancel={() => setPaused(false)}

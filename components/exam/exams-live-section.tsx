@@ -38,7 +38,7 @@ export function ExamsLiveSection() {
         <div
           className={cn(
             "flex gap-4 pb-1",
-            "snap-x snap-mandatory overflow-x-auto overscroll-x-contain",
+            "scroll-pane-x snap-x snap-mandatory overflow-x-auto overscroll-x-contain scroll-smooth",
             "sm:grid sm:snap-none sm:grid-cols-2 sm:overflow-visible xl:grid-cols-3"
           )}
         >

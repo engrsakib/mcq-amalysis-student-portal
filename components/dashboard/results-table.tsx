@@ -44,7 +44,7 @@ export function ResultsTable({ rows }: ResultsTableProps) {
         </CardTitle>
         <span className="text-xs text-muted-foreground">Static preview</span>
       </CardHeader>
-      <CardContent className="overflow-x-auto px-0 pb-2">
+      <CardContent className="scroll-pane-x overflow-x-auto px-0 pb-2">
         <table className="w-full min-w-[720px] text-left text-sm">
           <thead>
             <tr className="border-b border-line text-xs text-muted-foreground">

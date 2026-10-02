@@ -66,7 +66,7 @@ export function MobileNavSheet({ open, onClose, groups }: MobileNavSheetProps) {
       />
       <div
         className={cn(
-          "absolute inset-x-0 bottom-0 max-h-[88vh] overflow-y-auto rounded-t-2xl bg-card pb-6 shadow-xl",
+          "scroll-pane absolute inset-x-0 bottom-0 max-h-[88vh] overflow-y-auto rounded-t-2xl bg-card pb-6 shadow-xl",
           fadeTransition,
           visible ? "opacity-100" : "pointer-events-none opacity-0"
         )}

@@ -67,7 +67,7 @@ export function DashboardSidebar({
         className={cn(
           suppressNavScroll
             ? "min-h-0 flex-1 overflow-hidden"
-            : "min-h-0 flex-1 overflow-y-auto",
+            : "scroll-pane min-h-0 flex-1 overflow-y-auto",
           collapsed ? "px-1.5" : "px-2"
         )}
       >

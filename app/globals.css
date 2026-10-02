@@ -117,29 +117,38 @@
 }
 
 @layer utilities {
-  /* Fixed scroll region: reserved gutter + slim thumb (modal panels, sheets) */
+  /* Vertical scroll: smooth motion + branded rail (main, sidebar, auth, modals) */
+  .scroll-pane,
   .scroll-area-brand {
-    min-height: 0;
-    overflow-y: scroll;
+    scroll-behavior: smooth;
     overscroll-behavior: contain;
     scrollbar-gutter: stable;
     scrollbar-width: thin;
     scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
   }
 
+  .scroll-pane-x {
+    scroll-behavior: smooth;
+    overscroll-behavior-x: contain;
+  }
+
+  .scroll-pane::-webkit-scrollbar,
   .scroll-area-brand::-webkit-scrollbar {
     width: var(--scrollbar-size);
   }
 
+  .scroll-pane::-webkit-scrollbar-corner,
   .scroll-area-brand::-webkit-scrollbar-corner {
     background: transparent;
   }
 
+  .scroll-pane::-webkit-scrollbar-track,
   .scroll-area-brand::-webkit-scrollbar-track {
     border-radius: 999px;
     background: var(--scrollbar-track);
   }
 
+  .scroll-pane::-webkit-scrollbar-thumb,
   .scroll-area-brand::-webkit-scrollbar-thumb {
     min-height: 48px;
     border-radius: 999px;
@@ -147,12 +156,20 @@
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
   }
 
+  .scroll-pane::-webkit-scrollbar-thumb:hover,
   .scroll-area-brand::-webkit-scrollbar-thumb:hover {
     background: var(--scrollbar-thumb-hover);
   }
 
+  .scroll-pane::-webkit-scrollbar-thumb:active,
   .scroll-area-brand::-webkit-scrollbar-thumb:active {
     background: var(--primary-pressed);
+  }
+
+  /* Fixed scroll region: reserved gutter + slim thumb (modal panels, sheets) */
+  .scroll-area-brand {
+    min-height: 0;
+    overflow-y: scroll;
   }
 
   /* Exam questions: wrap lines without breaking Bengali graphemes */
@@ -198,16 +215,25 @@
 
   /* Mobile: hide scrollbar chrome; touch scroll unchanged */
   @media (max-width: 1023px) {
-    .scrollbar-hidden-mobile {
+    .scroll-pane {
       -ms-overflow-style: none;
       scrollbar-gutter: auto;
       scrollbar-width: none;
     }
 
-    .scrollbar-hidden-mobile::-webkit-scrollbar {
+    .scroll-pane::-webkit-scrollbar {
       display: none;
       width: 0;
       height: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html,
+    .scroll-pane,
+    .scroll-area-brand,
+    .scroll-pane-x {
+      scroll-behavior: auto;
     }
   }
 }
@@ -221,6 +247,7 @@
     @apply font-sans;
     height: 100%;
     overflow: hidden;
+    scroll-behavior: smooth;
     scrollbar-gutter: stable;
   }
 
