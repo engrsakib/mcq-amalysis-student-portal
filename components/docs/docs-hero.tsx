@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { authLoginPath, AUTH_REGISTER_PATH } from "@/lib/auth/auth-paths";
 import { DOCS_HOME } from "@/lib/docs/nav-links";
 import { cn } from "@/lib/utils";
 
@@ -96,7 +97,7 @@ export function DocsHero({
         {isLanding ? (
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link
-              href="/login"
+              href={AUTH_REGISTER_PATH}
               className={cn(
                 buttonVariants({ size: "lg" }),
                 "h-12 w-full bg-white text-primary hover:bg-primary-soft sm:w-auto sm:px-6"
@@ -105,7 +106,7 @@ export function DocsHero({
               Get started
             </Link>
             <Link
-              href="/login?redirect=%2Fexam"
+              href={authLoginPath("/exam")}
               className={cn(
                 buttonVariants({ variant: "outline", size: "lg" }),
                 "h-12 w-full border-white bg-primary text-white hover:bg-primary-hover sm:w-auto sm:px-6"

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { AUTH_LOGIN_PATH, AUTH_REGISTER_PATH } from "@/lib/auth/auth-paths";
 import { DOCS_HOME, DOCS_NAV_LINKS } from "@/lib/docs/nav-links";
 import { cn } from "@/lib/utils";
 
@@ -55,13 +56,13 @@ export function DocsNavbar() {
 
         <div className="hidden items-center gap-2 sm:flex">
           <Link
-            href="/login"
+            href={AUTH_LOGIN_PATH}
             className={cn(buttonVariants({ variant: "outline" }), "h-11 px-4")}
           >
             Log in
           </Link>
           <Link
-            href="/login"
+            href={AUTH_REGISTER_PATH}
             className={cn(
               buttonVariants({ variant: "default" }),
               "h-11 bg-primary px-4 hover:bg-primary-hover"
@@ -107,7 +108,7 @@ export function DocsNavbar() {
           </nav>
           <div className="mt-3 flex flex-col gap-2 sm:hidden">
             <Link
-              href="/login"
+              href={AUTH_LOGIN_PATH}
               onClick={() => setOpen(false)}
               className={cn(
                 buttonVariants({ variant: "outline" }),
@@ -117,7 +118,7 @@ export function DocsNavbar() {
               Log in
             </Link>
             <Link
-              href="/login"
+              href={AUTH_REGISTER_PATH}
               onClick={() => setOpen(false)}
               className={cn(
                 buttonVariants({ variant: "default" }),

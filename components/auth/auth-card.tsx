@@ -1,12 +1,17 @@
 "use client";
 
-import { Suspense, useCallback, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { LoginForm } from "@/components/auth/login-form";
 import { RegisterForm } from "@/components/auth/register-form";
 import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
 import { cn } from "@/lib/utils";
 
 type AuthMode = "login" | "register" | "forgot";
+
+function modeFromSearchParams(modeParam: string | null): AuthMode {
+  return modeParam === "register" ? "register" : "login";
+}
 
 function LoginFormFallback() {
   return (
@@ -20,9 +25,16 @@ const FORGOT_TITLES: Record<1 | 2 | 3, string> = {
   3: "Set new password",
 };
 
-export function AuthCard() {
-  const [mode, setMode] = useState<AuthMode>("login");
+function AuthCardInner() {
+  const searchParams = useSearchParams();
+  const [mode, setMode] = useState<AuthMode>(() =>
+    modeFromSearchParams(searchParams.get("mode"))
+  );
   const [forgotStep, setForgotStep] = useState<1 | 2 | 3>(1);
+
+  useEffect(() => {
+    setMode(modeFromSearchParams(searchParams.get("mode")));
+  }, [searchParams]);
 
   const handleForgotStepChange = useCallback((step: 1 | 2 | 3) => {
     setForgotStep(step);
@@ -71,5 +83,13 @@ export function AuthCard() {
         )}
       </div>
     </div>
+  );
+}
+
+export function AuthCard() {
+  return (
+    <Suspense fallback={<LoginFormFallback />}>
+      <AuthCardInner />
+    </Suspense>
   );
 }
