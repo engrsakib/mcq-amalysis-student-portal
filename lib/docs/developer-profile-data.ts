@@ -5,6 +5,7 @@ export const DEVELOPER_PROFILE = {
   image: "/developer.jpg",
   website: "https://www.engrsakib.com/",
   linkedin: "https://www.linkedin.com/in/engrsakib/",
+  facebook: "https://www.facebook.com/engrsakib",
   github: "https://github.com/engrsakib",
   leetcode: "https://leetcode.com/u/engrsakib/",
   codeforces: "https://codeforces.com/profile/engrsakib",

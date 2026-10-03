@@ -38,12 +38,12 @@ function SocialLink({
       aria-label={label}
       className={cn(
         buttonVariants({ variant: "outline" }),
-        "h-11 min-w-11 gap-2 px-3 text-ink hover:border-primary/40 hover:bg-primary-soft",
+        "h-11 min-w-11 gap-2 px-3 text-ink hover:border-primary/40 hover:bg-primary-soft sm:min-w-0 md:h-10 md:flex-1 md:justify-center md:px-2",
         className
       )}
     >
       {icon}
-      <span className="hidden sm:inline">{label}</span>
+      <span className="hidden truncate sm:inline">{label}</span>
     </a>
   );
 }
@@ -71,7 +71,7 @@ export function DeveloperProfile() {
             <MapPin className="size-4 shrink-0 text-primary" aria-hidden />
             {p.location}
           </p>
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+          <div className="mt-4 flex w-full flex-wrap items-stretch justify-center gap-2 sm:justify-start md:flex-nowrap md:gap-1.5">
             <SocialLink
               href={p.website}
               label="Website"
@@ -81,6 +81,11 @@ export function DeveloperProfile() {
               href={p.linkedin}
               label="LinkedIn"
               icon={<SocialIcon src="/linkedin.png" />}
+            />
+            <SocialLink
+              href={p.facebook}
+              label="Facebook"
+              icon={<SocialIcon src="/fbpage.png" />}
             />
             <SocialLink
               href={p.github}
