@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { AuthCard } from "@/components/auth/auth-card";
+import { AuthDocumentationLink } from "@/components/auth/auth-documentation-link";
 
 export function AuthSidebar() {
   return (
@@ -17,6 +18,7 @@ export function AuthSidebar() {
 
       <div className="w-full max-w-md shrink-0">
         <AuthCard />
+        <AuthDocumentationLink />
       </div>
 
       <footer className="mt-6 max-w-md shrink-0 pb-4 text-center text-xs leading-relaxed text-primary">
