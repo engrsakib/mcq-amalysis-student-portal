@@ -27,7 +27,14 @@ export function DocsNavbar() {
           className="pressable flex min-h-11 items-center gap-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
           onClick={() => setOpen(false)}
         >
-          <Image src="/logo.png" alt="" width={32} height={32} className="size-8" />
+          <Image
+            src="/icon.svg"
+            alt="MCQ Analysis"
+            width={48}
+            height={48}
+            className="size-11 shrink-0 sm:size-12"
+            priority
+          />
           <span className="text-sm font-semibold text-ink sm:text-base">
             MCQ Analysis
           </span>

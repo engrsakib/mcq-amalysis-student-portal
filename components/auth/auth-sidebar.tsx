@@ -11,7 +11,7 @@ export function AuthSidebar() {
           alt="MCQ Analysis"
           width={320}
           height={120}
-          className="mx-auto h-auto w-full max-w-[200px] object-contain"
+          className="mx-auto h-auto w-full max-w-[180px] object-contain"
           priority
         />
       </div>
