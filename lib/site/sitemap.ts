@@ -1,3 +1,4 @@
+import { getDocsSitemapEntries } from "@/lib/docs/sitemap-entries";
 import { baseUrl } from "@/lib/site";
 
 export type SitemapEntry = {
@@ -7,8 +8,8 @@ export type SitemapEntry = {
   lastmod?: string;
 };
 
-/** Static indexable routes (no auth-only or dynamic exam session URLs). */
-export const SITEMAP_ENTRIES: SitemapEntry[] = [
+/** Portal pages (login-gated in app; listed for discovery where indexed). */
+const PORTAL_SITEMAP_ENTRIES: SitemapEntry[] = [
   { path: "/", changefreq: "daily", priority: 1 },
   { path: "/exam", changefreq: "daily", priority: 0.8 },
   { path: "/results", changefreq: "weekly", priority: 0.7 },
@@ -17,13 +18,15 @@ export const SITEMAP_ENTRIES: SitemapEntry[] = [
   { path: "/important-links", changefreq: "monthly", priority: 0.6 },
   { path: "/certificates", changefreq: "monthly", priority: 0.6 },
   { path: "/settings", changefreq: "monthly", priority: 0.5 },
-  { path: "/docs", changefreq: "weekly", priority: 0.8 },
-  { path: "/docs/founder", changefreq: "monthly", priority: 0.6 },
-  { path: "/docs/developer", changefreq: "monthly", priority: 0.6 },
-  { path: "/docs/faq", changefreq: "monthly", priority: 0.65 },
-  { path: "/docs/links", changefreq: "monthly", priority: 0.65 },
-  { path: "/docs/terms-condition", changefreq: "yearly", priority: 0.5 },
-  { path: "/docs/privacy-policy", changefreq: "yearly", priority: 0.5 },
+];
+
+/**
+ * Static indexable routes (no auth-only or dynamic exam session URLs).
+ * Docs paths come from `DOCS_NAV_LINKS` — add a nav link to include new /docs routes.
+ */
+export const SITEMAP_ENTRIES: SitemapEntry[] = [
+  ...PORTAL_SITEMAP_ENTRIES,
+  ...getDocsSitemapEntries(),
 ];
 
 function escapeXml(value: string): string {
