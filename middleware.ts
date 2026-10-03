@@ -19,6 +19,7 @@ const PUBLIC_EXACT_PATHS = new Set([GOOGLE_SITEMAP_PATH, "/robots.txt"]);
 
 function isPublicPath(pathname: string): boolean {
   if (PUBLIC_EXACT_PATHS.has(pathname)) return true;
+  if (pathname === "/docs" || pathname.startsWith("/docs/")) return true;
   return PUBLIC_PATHS.some(
     (path) => pathname === path || pathname.startsWith(`${path}/`)
   );

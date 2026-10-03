@@ -15,9 +15,9 @@ export const metadata: Metadata = {
   ...rootSiteMetadata,
   metadataBase: new URL(baseUrl),
   icons: {
-    icon: [{ url: "/icons.svg", type: "image/svg+xml" }],
-    shortcut: "/icons.svg",
-    apple: [{ url: "/icons.svg", type: "image/svg+xml" }],
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    shortcut: "/icon.svg",
+    apple: [{ url: "/icon.svg", type: "image/svg+xml" }],
   },
 };
 

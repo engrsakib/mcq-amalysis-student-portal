@@ -17,6 +17,12 @@ export const SITEMAP_ENTRIES: SitemapEntry[] = [
   { path: "/important-links", changefreq: "monthly", priority: 0.6 },
   { path: "/certificates", changefreq: "monthly", priority: 0.6 },
   { path: "/settings", changefreq: "monthly", priority: 0.5 },
+  { path: "/docs", changefreq: "weekly", priority: 0.8 },
+  { path: "/docs/founder", changefreq: "monthly", priority: 0.6 },
+  { path: "/docs/developer", changefreq: "monthly", priority: 0.6 },
+  { path: "/docs/faq", changefreq: "monthly", priority: 0.65 },
+  { path: "/docs/terms-condition", changefreq: "yearly", priority: 0.5 },
+  { path: "/docs/privacy-policy", changefreq: "yearly", priority: 0.5 },
 ];
 
 function escapeXml(value: string): string {
