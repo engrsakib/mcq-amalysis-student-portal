@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 type ImportantLinksViewProps = {
   groups: FacebookLinkItem[];
   pages: FacebookLinkItem[];
+  /** When false, omit page title (e.g. docs hero already provides context). */
+  showHeading?: boolean;
 };
 
 function FacebookLinkCard({ item }: { item: FacebookLinkItem }) {
@@ -73,18 +75,24 @@ function FacebookLinkSection({
   );
 }
 
-export function ImportantLinksView({ groups, pages }: ImportantLinksViewProps) {
+export function ImportantLinksView({
+  groups,
+  pages,
+  showHeading = true,
+}: ImportantLinksViewProps) {
   return (
     <div className="mx-auto w-full min-w-0 max-w-5xl space-y-10 pb-8">
-      <div>
-        <h1 className="text-2xl font-semibold text-ink sm:text-3xl">
-          Important Links
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm text-muted-foreground sm:text-base">
-          Join our Facebook groups and follow official pages for exam updates,
-          model tests, and analysis from MCQ Analysis.
-        </p>
-      </div>
+      {showHeading ? (
+        <div>
+          <h1 className="text-2xl font-semibold text-ink sm:text-3xl">
+            Important Links
+          </h1>
+          <p className="mt-2 max-w-2xl text-sm text-ink sm:text-base">
+            Join our Facebook groups and follow official pages for exam updates,
+            model tests, and analysis from MCQ Analysis.
+          </p>
+        </div>
+      ) : null}
 
       <PlayStorePromoBanner />
 

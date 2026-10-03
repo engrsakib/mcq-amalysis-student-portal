@@ -21,6 +21,7 @@ export const SITEMAP_ENTRIES: SitemapEntry[] = [
   { path: "/docs/founder", changefreq: "monthly", priority: 0.6 },
   { path: "/docs/developer", changefreq: "monthly", priority: 0.6 },
   { path: "/docs/faq", changefreq: "monthly", priority: 0.65 },
+  { path: "/docs/links", changefreq: "monthly", priority: 0.65 },
   { path: "/docs/terms-condition", changefreq: "yearly", priority: 0.5 },
   { path: "/docs/privacy-policy", changefreq: "yearly", priority: 0.5 },
 ];

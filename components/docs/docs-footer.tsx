@@ -24,12 +24,12 @@ export function DocsFooter() {
         </div>
         <div>
           <p className="text-sm font-semibold text-ink">Documentation</p>
-          <ul className="mt-3 space-y-2">
+          <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1">
             {DOCS_NAV_LINKS.map((link) => (
-              <li key={link.href}>
+              <li key={link.href} className="min-w-0">
                 <Link
                   href={link.href}
-                  className="pressable inline-flex min-h-11 items-center text-sm text-ink hover:text-primary"
+                  className="pressable flex min-h-11 w-full items-center text-sm text-ink hover:text-primary"
                 >
                   {link.label}
                 </Link>

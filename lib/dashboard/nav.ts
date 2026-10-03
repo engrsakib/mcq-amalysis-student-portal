@@ -8,6 +8,7 @@ import {
   HelpCircle,
   LayoutDashboard,
   KeyRound,
+  FileText,
   Link2,
   User,
 } from "lucide-react";
@@ -74,6 +75,13 @@ export const dashboardNavGroups: NavGroup[] = [
         href: "/important-links",
         icon: Link2,
         activePathPrefix: "/important-links",
+      },
+      {
+        id: "docs",
+        label: "Documentation",
+        href: "/docs",
+        icon: FileText,
+        activePathPrefix: "/docs",
       },
     ],
   },

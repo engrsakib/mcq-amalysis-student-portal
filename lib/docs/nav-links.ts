@@ -3,10 +3,13 @@ import {
   Code2,
   FileText,
   HelpCircle,
+  Link2,
   ScrollText,
   Shield,
   UserCircle,
 } from "lucide-react";
+
+export const DOCS_LINKS_PATH = "/docs/links";
 
 export type DocsNavLink = {
   href: string;
@@ -20,6 +23,7 @@ export const DOCS_NAV_LINKS: DocsNavLink[] = [
   { href: "/docs/founder", label: "Founder" },
   { href: "/docs/developer", label: "Developer" },
   { href: "/docs/faq", label: "FAQ" },
+  { href: DOCS_LINKS_PATH, label: "Links" },
   { href: "/docs/terms-condition", label: "Terms" },
   { href: "/docs/privacy-policy", label: "Privacy" },
 ];
@@ -51,6 +55,13 @@ export const DOCS_CARD_LINKS: DocsCardLink[] = [
     label: "FAQ",
     description: "Answers about exams, accounts, apps, and preparation tips.",
     icon: HelpCircle,
+  },
+  {
+    id: "links",
+    href: DOCS_LINKS_PATH,
+    label: "Important links",
+    description: "Facebook groups, official pages, and community resources.",
+    icon: Link2,
   },
   {
     id: "terms",
