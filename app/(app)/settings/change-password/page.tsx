@@ -1,4 +1,4 @@
-import { ProfileForm } from "@/components/settings/profile-form";
+import { ChangePasswordForm } from "@/components/settings/change-password-form";
 import { SettingsSubnav } from "@/components/settings/settings-subnav";
 import {
   Card,
@@ -9,33 +9,32 @@ import {
 } from "@/components/ui/card";
 import { pageMetadata } from "@/lib/site/metadata";
 
-export const metadata = pageMetadata("Profile", {
-  path: "/settings",
-  description:
-    "Manage your MCQ Analysis student profile, photo, and account settings.",
+export const metadata = pageMetadata("Change password", {
+  path: "/settings/change-password",
+  description: "Update your MCQ Analysis account password securely.",
 });
 
-export default function SettingsPage() {
+export default function ChangePasswordPage() {
   return (
     <div className="mx-auto max-w-lg space-y-6">
       <div className="space-y-4">
         <div>
-          <h1 className="text-2xl font-semibold text-ink">Profile settings</h1>
+          <h1 className="text-2xl font-semibold text-ink">Account security</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Update your name, contact details, and profile image.
+            Choose a strong password to protect your account.
           </p>
         </div>
         <SettingsSubnav />
       </div>
       <Card className="rounded-2xl border-border/60 shadow-sm ring-0">
         <CardHeader>
-          <CardTitle className="text-lg text-primary">Your profile</CardTitle>
+          <CardTitle className="text-lg text-primary">Change password</CardTitle>
           <CardDescription>
-            Changes apply across the dashboard and sidebar.
+            Enter your current password, then set and confirm a new one.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ProfileForm />
+          <ChangePasswordForm />
         </CardContent>
       </Card>
     </div>

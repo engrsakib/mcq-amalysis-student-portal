@@ -94,6 +94,11 @@ export type UpdateProfileRequest = {
   email?: string;
 };
 
+export type ChangePasswordRequest = {
+  old_password: string;
+  new_password: string;
+};
+
 export type PaginatedMeta = {
   page: number;
   limit: number;

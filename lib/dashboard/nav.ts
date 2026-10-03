@@ -7,6 +7,7 @@ import {
   ClipboardList,
   HelpCircle,
   LayoutDashboard,
+  KeyRound,
   Link2,
   User,
 } from "lucide-react";
@@ -85,6 +86,14 @@ export const dashboardNavGroups: NavGroup[] = [
         label: "Profile",
         href: "/settings",
         icon: User,
+        activeExact: true,
+      },
+      {
+        id: "change-password",
+        label: "Change password",
+        href: "/settings/change-password",
+        icon: KeyRound,
+        activePathPrefix: "/settings/change-password",
       },
       {
         id: "help",
