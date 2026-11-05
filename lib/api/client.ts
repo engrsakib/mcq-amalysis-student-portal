@@ -41,6 +41,18 @@ export async function parseApiResponse<T>(res: Response): Promise<T> {
   return json.data;
 }
 
+export async function apiGet<T>(path: string, init?: RequestInit): Promise<T> {
+  const base = getApiBaseUrl();
+  const res = await fetch(joinUrl(base, path), {
+    method: "GET",
+    headers: {
+      ...init?.headers,
+    },
+    ...init,
+  });
+  return parseApiResponse<T>(res);
+}
+
 export async function apiPost<T>(
   path: string,
   body: unknown,

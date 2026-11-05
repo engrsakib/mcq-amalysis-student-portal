@@ -1,3 +1,5 @@
+import { fetchPublicPlatformStats } from "@/lib/api/platform-stats";
+
 export type PlatformStat = {
   id: string;
   label: string;
@@ -5,35 +7,68 @@ export type PlatformStat = {
   hint: string;
 };
 
-/** Placeholder metrics — replace via API in getPlatformStats when available. */
-const PLACEHOLDER_STATS: PlatformStat[] = [
+const STAT_DEFINITIONS = [
   {
     id: "students",
     label: "Registered students",
-    value: "12,500+",
     hint: "Active learners on web & app",
-  },
-  {
-    id: "downloads",
-    label: "Android downloads",
-    value: "8,200+",
-    hint: "Google Play installs",
+    key: "registeredStudents" as const,
   },
   {
     id: "attempts",
     label: "Exam attempts",
-    value: "340,000+",
     hint: "Practice & live exam sessions",
+    key: "examAttempts" as const,
   },
   {
     id: "routines",
     label: "Routines & live classes",
-    value: "120+",
     hint: "Scheduled prep programs",
+    key: "routinesAndLiveClasses" as const,
   },
-];
+] satisfies Array<{
+  id: string;
+  label: string;
+  hint: string;
+  key: keyof Pick<
+    Awaited<ReturnType<typeof fetchPublicPlatformStats>>,
+    "registeredStudents" | "examAttempts" | "routinesAndLiveClasses"
+  >;
+}>;
 
-/** Server-safe stats loader; wire to backend analytics when ready. */
+function formatStatValue(value: number): string {
+  return value.toLocaleString("en-US");
+}
+
+function fallbackStats(): PlatformStat[] {
+  return STAT_DEFINITIONS.map((def) => ({
+    id: def.id,
+    label: def.label,
+    value: "—",
+    hint: def.hint,
+  }));
+}
+
+function mapPayloadToStats(data: {
+  registeredStudents: number;
+  examAttempts: number;
+  routinesAndLiveClasses: number;
+}): PlatformStat[] {
+  return STAT_DEFINITIONS.map((def) => ({
+    id: def.id,
+    label: def.label,
+    value: formatStatValue(data[def.key]),
+    hint: def.hint,
+  }));
+}
+
+/** Server-safe stats loader for public documentation pages. */
 export async function getPlatformStats(): Promise<PlatformStat[]> {
-  return PLACEHOLDER_STATS;
+  try {
+    const data = await fetchPublicPlatformStats();
+    return mapPayloadToStats(data);
+  } catch (error) {
+    console.warn("[getPlatformStats] Using fallback stats:", error);
+    return fallbackStats();
+  }
 }

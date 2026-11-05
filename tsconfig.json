@@ -19,7 +19,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@mcq/exam-math-compile": ["../shared/exam-math-compile/src/index.ts"],
+      "@mcq/exam-math-compile/*": ["../shared/exam-math-compile/src/*"]
     }
   },
   "include": [

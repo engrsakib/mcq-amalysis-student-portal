@@ -57,6 +57,32 @@ Errors use the same shape with `success: false` and an appropriate HTTP status.
 
 ## Endpoints
 
+### GET `/public/platform-stats`
+
+Aggregate counts for public documentation and marketing (no PII).
+
+**Auth:** Public
+
+**Success (200):**
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Platform stats retrieved successfully",
+  "data": {
+    "registeredStudents": 1250,
+    "examAttempts": 34000,
+    "routinesAndLiveClasses": 120,
+    "generatedAt": "2026-03-24T12:00:00.000Z"
+  }
+}
+```
+
+**Client usage (student-web):** [`lib/api/platform-stats.ts`](../lib/api/platform-stats.ts) — server fetch with `revalidate: 300` for `/docs`.
+
+---
+
 ### POST `/user/login`
 
 Sign in with phone and password.

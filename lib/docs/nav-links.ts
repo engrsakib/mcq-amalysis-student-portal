@@ -39,7 +39,8 @@ export const DOCS_CARD_LINKS: DocsCardLink[] = [
     id: "founder",
     href: "/docs/founder",
     label: "Founder & vision",
-    description: "Mission, values, and why MCQ Analysis exists for students.",
+    description:
+      "Gazi Mizanur Rahman — BCS cadre, bestselling author, and career guide for students.",
     icon: UserCircle,
   },
   {

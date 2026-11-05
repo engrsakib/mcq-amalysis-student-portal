@@ -1,12 +1,26 @@
 import { DocsHero } from "@/components/docs/docs-hero";
-import { DocsProsePage } from "@/components/docs/docs-prose-page";
-import { FOUNDER_SECTIONS } from "@/lib/docs/founder-content";
+import { FounderAbout } from "@/components/docs/founder-about";
+import { FounderBooksPreview } from "@/components/docs/founder-books-preview";
+import { FounderEducation } from "@/components/docs/founder-education";
+import { FounderInitiatives } from "@/components/docs/founder-initiatives";
+import { FounderMedia } from "@/components/docs/founder-media";
+import { FounderProfile } from "@/components/docs/founder-profile";
+import { FounderRecognition } from "@/components/docs/founder-recognition";
+import { FounderTimeline } from "@/components/docs/founder-timeline";
+import { FOUNDER_PROFILE } from "@/lib/docs/founder-profile-data";
 import { docsPageMetadata } from "@/lib/docs/metadata";
 
-export const metadata = docsPageMetadata("Founder & vision", {
+export const metadata = docsPageMetadata("Founder — Gazi Mizanur Rahman", {
   path: "/docs/founder",
   description:
-    "Learn about the founder’s vision and mission behind MCQ Analysis for competitive exam students in Bangladesh.",
+    "Gazi Mizanur Rahman — BCS cadre, bestselling author, career specialist, and motivational speaker behind MCQ Analysis for exam students in Bangladesh.",
+  keywords: [
+    "Gazi Mizanur Rahman",
+    "BCS Preliminary Analysis",
+    "career specialist Bangladesh",
+    "MCQ Analysis founder",
+    "bestselling author BCS",
+  ],
 });
 
 export default function DocsFounderPage() {
@@ -15,11 +29,18 @@ export default function DocsFounderPage() {
       <DocsHero
         variant="page"
         breadcrumbLabel="Founder"
-        title="Founder & vision"
-        subtitle="Why we built a student-first platform for measurable exam preparation."
+        title="Founder profile"
+        subtitle={FOUNDER_PROFILE.title}
       />
-      <div className="px-4 py-10 sm:py-12">
-        <DocsProsePage sections={FOUNDER_SECTIONS} />
+      <div className="mx-auto flex max-w-3xl flex-col gap-10 px-4 py-10 sm:gap-12 sm:py-12">
+        <FounderProfile />
+        <FounderAbout />
+        <FounderRecognition />
+        <FounderTimeline />
+        <FounderEducation />
+        <FounderMedia />
+        <FounderInitiatives />
+        <FounderBooksPreview />
       </div>
     </>
   );

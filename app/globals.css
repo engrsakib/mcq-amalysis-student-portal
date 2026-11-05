@@ -294,8 +294,8 @@
   }
 
   .katex-wrap .katex {
-    font-family: inherit;
     overflow: visible;
+    vertical-align: baseline;
   }
 
   /* Avoid duplicate digits from MathML (e.g. 7 8 8 7 next to the fraction) */
@@ -311,9 +311,13 @@
 
   .katex-wrap .katex .katex-html {
     overflow: visible;
+    white-space: normal;
+    max-width: 100%;
   }
 
   .katex-wrap .katex .text {
+    vertical-align: baseline;
+    line-height: normal;
     white-space: normal;
     overflow-wrap: break-word;
   }

@@ -41,7 +41,7 @@ export const ExamQuestionCard = memo(function ExamQuestionCard({
 
       {formula ? (
         <div className="mt-2 min-w-0">
-          <MathContent content={formula} displayMode />
+          <MathContent content={formula} />
         </div>
       ) : null}
 

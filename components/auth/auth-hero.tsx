@@ -14,7 +14,7 @@ export function AuthHero() {
       <div className="absolute inset-0 bg-gradient-to-br from-primary/85 via-primary/70 to-primary/50" />
       <div className="relative z-10 flex h-full min-h-[240px] flex-col justify-start p-6 text-white lg:min-h-svh lg:p-10 lg:pt-12">
         <h1 className="max-w-lg text-2xl font-semibold leading-tight lg:text-4xl">
-          Welcome to Student Portal
+          MCQ Analysis
         </h1>
         <p className="mt-4 max-w-xl text-sm italic leading-relaxed text-white/90 lg:text-base">
           &ldquo;Focus on learning, not the little distractions. Every exam is a

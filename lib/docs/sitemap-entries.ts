@@ -5,6 +5,7 @@ const DOCS_SITEMAP_META: Record<string, Pick<SitemapEntry, "changefreq" | "prior
   {
     [DOCS_HOME]: { changefreq: "weekly", priority: 0.8 },
     "/docs/founder": { changefreq: "monthly", priority: 0.6 },
+    "/docs/founder/books": { changefreq: "monthly", priority: 0.55 },
     "/docs/developer": { changefreq: "monthly", priority: 0.6 },
     "/docs/faq": { changefreq: "monthly", priority: 0.65 },
     "/docs/links": { changefreq: "monthly", priority: 0.65 },
@@ -12,12 +13,18 @@ const DOCS_SITEMAP_META: Record<string, Pick<SitemapEntry, "changefreq" | "prior
     "/docs/privacy-policy": { changefreq: "yearly", priority: 0.5 },
   };
 
-/** Public /docs routes for XML sitemap (mirrors docs navbar). */
+const DOCS_SITEMAP_EXTRA_PATHS = ["/docs/founder/books"] as const;
+
+/** Public /docs routes for XML sitemap (navbar + nested doc pages). */
 export function getDocsSitemapEntries(): SitemapEntry[] {
-  return DOCS_NAV_LINKS.map((link) => {
-    const meta = DOCS_SITEMAP_META[link.href];
+  const paths = [
+    ...DOCS_NAV_LINKS.map((link) => link.href),
+    ...DOCS_SITEMAP_EXTRA_PATHS,
+  ];
+  return paths.map((path) => {
+    const meta = DOCS_SITEMAP_META[path];
     return {
-      path: link.href,
+      path,
       changefreq: meta?.changefreq ?? "monthly",
       priority: meta?.priority ?? 0.6,
     };

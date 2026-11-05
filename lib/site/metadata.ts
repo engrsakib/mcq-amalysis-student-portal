@@ -1,29 +1,19 @@
 import type { Metadata } from "next";
 import type { ExamEntry } from "@/lib/api/types";
+import {
+  DEFAULT_KEYWORDS,
+  DEFAULT_OG_DESCRIPTION,
+  PORTAL_BRAND_TITLE,
+} from "@/lib/site/platform-seo";
 
 export const SITE_NAME = "MCQ Analysis";
 
-/** Default document / Open Graph title for the student portal home and root layout. */
-export const PORTAL_BRAND_TITLE = "MCQ Analysis - Student Portal";
-
-export const DEFAULT_OG_DESCRIPTION =
-  "A general educational tool for Android featuring verified past questions, customized quizzes, a live leaderboard, and a deep mistake-analysis tool to track weak areas.";
+export { DEFAULT_KEYWORDS, DEFAULT_OG_DESCRIPTION, PORTAL_BRAND_TITLE };
 
 export const SOCIAL_IMAGE_PATH = "/social.jpeg";
 
 export const SOCIAL_IMAGE_ALT =
   "MCQ Analysis — practice exams and analytics";
-
-export const DEFAULT_KEYWORDS = [
-  "MCQ",
-  "quiz",
-  "past questions",
-  "leaderboard",
-  "mistake analysis",
-  "education",
-  "exam preparation",
-  "MCQ Analysis",
-];
 
 const SOCIAL_IMAGE = {
   url: SOCIAL_IMAGE_PATH,

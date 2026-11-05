@@ -11,7 +11,9 @@ import {
   repairBareLatexCommands,
   repairDivisionAndFractionTypos,
   stripInvisibleChars,
+  hasBengaliLetters,
 } from "@/lib/exam/math-latex-repairs";
+import { compileExamMathFormula } from "@mcq/exam-math-compile";
 import {
   isImplicitRawEquation,
   parseExamContentSegments,
@@ -87,7 +89,7 @@ function hasTextAndMathLatex(value: string): boolean {
 /** Legacy undelimited normalization — not used when `$` / `$$` delimiters present. */
 function normalizeExamLatex(value: string): string {
   let s = value.trim();
-  s = s.replace(/[\u200B-\u200D\uFEFF]/g, "");
+  s = s.replace(/[\u200B\u200D\uFEFF]/g, "");
   s = foldMultilineTextBlocks(s);
   s = s.replace(/^[\u09CD\u200C\u200D\uFEFF\s]+/, "");
   s = s.replace(/^[\u09CD]+(?=\\text)/, "");
@@ -369,7 +371,10 @@ function shouldRenderFullLatexDocument(normalized: string): boolean {
 }
 
 const wrapClassName =
-  "katex-wrap flex w-full min-w-0 max-w-full flex-wrap items-baseline gap-x-1 overflow-visible text-base leading-relaxed text-ink [overflow-wrap:break-word] [word-break:normal]";
+  "katex-wrap w-full min-w-0 max-w-full overflow-visible text-base leading-normal text-ink [overflow-wrap:break-word] [word-break:normal]";
+
+const inlineMathWrapperClassName =
+  "inline max-w-full align-baseline overflow-visible whitespace-normal [&_.katex]:overflow-visible [&_.katex]:text-[1em]";
 
 function DelimitedSegmentContent({
   segments,
@@ -393,7 +398,7 @@ function DelimitedSegmentContent({
         const block = seg.display === "block";
         const html = renderKatexString(
           seg.value,
-          block || Boolean(displayMode)
+          block || pickDisplayMode(seg.value, Boolean(displayMode))
         );
         const fallback = repairMathLatex(seg.value);
 
@@ -407,8 +412,7 @@ function DelimitedSegmentContent({
             className={cn(
               block
                 ? "my-1 block w-full max-w-full overflow-x-auto overflow-y-visible [&_.katex-display]:my-0"
-                : "inline-block max-w-full align-middle whitespace-nowrap overflow-visible",
-              "[&_.katex]:overflow-visible [&_.katex]:text-[1em]"
+                : inlineMathWrapperClassName,
             )}
             dangerouslySetInnerHTML={{ __html: html }}
           />
@@ -438,26 +442,26 @@ function MixedFlowContent({
         }
 
         if (item.kind === "text") {
-          return <Fragment key={`t-${index}`}>{item.value}</Fragment>;
+          return (
+            <span key={`t-${index}`}>{item.value}</span>
+          );
         }
 
-        const useDisplay =
-          Boolean(displayMode) &&
-          item.value.includes("=") &&
-          item.value.length > 12;
+        const useDisplay = pickDisplayMode(item.value, Boolean(displayMode));
         const html = renderKatexString(item.value, useDisplay);
         if (!html) {
-          return <Fragment key={`m-${index}`}>{item.value}</Fragment>;
+          return (
+            <span key={`m-${index}`}>{item.value}</span>
+          );
         }
 
         return (
           <span
             key={`m-${index}`}
             className={cn(
-              "overflow-visible [&_.katex]:overflow-visible [&_.katex-display]:my-0 [&_.katex]:text-[1em]",
               useDisplay
-                ? "my-1 block w-full"
-                : "inline-block max-w-full align-middle whitespace-nowrap"
+                ? "my-1 block w-full overflow-visible [&_.katex-display]:my-0 [&_.katex]:text-[1em]"
+                : inlineMathWrapperClassName
             )}
             dangerouslySetInnerHTML={{ __html: html }}
           />
@@ -502,6 +506,13 @@ type RenderMode =
   | { kind: "single-html"; html: string }
   | { kind: "plain"; lines: string[]; fallback: string };
 
+export function resolveMathContentRenderMode(
+  raw: string,
+  displayMode = false
+): RenderMode {
+  return resolveRenderMode(raw, displayMode);
+}
+
 function resolveRenderMode(
   raw: string,
   displayMode: boolean
@@ -509,12 +520,15 @@ function resolveRenderMode(
   const trimmed = raw.trim();
   if (!trimmed) return { kind: "empty" };
 
-  const stripped = stripInvisibleChars(trimmed);
-  const parsed = parseExamContentSegments(stripped);
-  if (parsed.hadDelimiters && parsed.segments.length > 0) {
-    return { kind: "delimited", segments: parsed.segments };
+  const compiled = compileExamMathFormula(raw, displayMode);
+  if (compiled.kind === "single-html") {
+    return { kind: "single-html", html: compiled.result.html };
+  }
+  if (compiled.kind === "mixed-flow") {
+    return { kind: "mixed-flow", flow: compiled.flow };
   }
 
+  const stripped = stripInvisibleChars(trimmed);
   const normalized = normalizeExamLatex(stripped);
 
   if (shouldRenderFullLatexDocument(normalized)) {
@@ -567,6 +581,16 @@ function resolveRenderMode(
         pickDisplayMode(latex, displayMode)
       );
       if (html) return { kind: "single-html", html };
+    }
+  }
+
+  const parsed = parseExamContentSegments(stripped);
+  if (parsed.hadDelimiters && parsed.segments.length > 0) {
+    const hasBanglaDelimited = parsed.segments.some(
+      (s) => s.kind === "prose" && hasBengaliLetters(s.value)
+    );
+    if (!hasBanglaDelimited) {
+      return { kind: "delimited", segments: parsed.segments };
     }
   }
 

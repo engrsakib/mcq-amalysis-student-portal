@@ -4,6 +4,7 @@ import {
   BarChart3,
   Book,
   BookOpen,
+  Mic2,
   ClipboardList,
   HelpCircle,
   LayoutDashboard,
@@ -47,6 +48,13 @@ export const dashboardNavGroups: NavGroup[] = [
         href: "/learning-materials",
         icon: BookOpen,
         activePathPrefix: "/learning-materials",
+      },
+      {
+        id: "study-rooms",
+        label: "Study Rooms",
+        href: "/study-rooms",
+        icon: Mic2,
+        activePathPrefix: "/study-rooms",
       },
       {
         id: "results",
