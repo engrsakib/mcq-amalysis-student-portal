@@ -6,11 +6,11 @@
     "dev": "node scripts/next.mjs dev",
     "build": "next build",
     "start": "node scripts/next.mjs start",
-    "test": "node --import tsx --test lib/exam/prepare-latex-content.test.ts lib/exam/math-content.test.ts lib/study-rooms/format-occupancy.test.ts ../shared/exam-math-compile/src/compile-exam-math.test.ts"
+    "test": "node --import tsx --test lib/exam/prepare-latex-content.test.ts lib/exam/math-content.test.ts lib/study-rooms/format-occupancy.test.ts packages/exam-math-compile/src/compile-exam-math.test.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
-    "@mcq/exam-math-compile": "file:../shared/exam-math-compile",
+    "@mcq/exam-math-compile": "file:./packages/exam-math-compile",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.4.0",
     "html-to-image": "^1.11.13",

@@ -170,8 +170,8 @@ importers:
         specifier: ^1.8.0
         version: 1.8.0(@types/react@19.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@mcq/exam-math-compile':
-        specifier: file:../shared/exam-math-compile
-        version: file:../shared/exam-math-compile(katex@0.18.10)
+        specifier: file:./packages/exam-math-compile
+        version: file:packages/exam-math-compile(katex@0.18.10)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -780,8 +780,8 @@ packages:
   '@livekit/protocol@1.52.1':
     resolution: {integrity: sha512-X8DxKlNbzk6Lh+v630+mjdFHSotdAFwIyzxSRSUql2DbTxCnlpa7JsvFGc6Na3mXiex2OFh0iiQtWwOBP0rIYA==}
 
-  '@mcq/exam-math-compile@file:../shared/exam-math-compile':
-    resolution: {directory: ../shared/exam-math-compile, type: directory}
+  '@mcq/exam-math-compile@file:packages/exam-math-compile':
+    resolution: {directory: packages/exam-math-compile, type: directory}
     peerDependencies:
       katex: '>=0.16.0'
 
@@ -2892,7 +2892,7 @@ snapshots:
     dependencies:
       '@bufbuild/protobuf': 1.10.1
 
-  '@mcq/exam-math-compile@file:../shared/exam-math-compile(katex@0.18.10)':
+  '@mcq/exam-math-compile@file:packages/exam-math-compile(katex@0.18.10)':
     dependencies:
       katex: 0.18.10
 

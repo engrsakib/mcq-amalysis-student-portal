@@ -5,26 +5,25 @@ import { fileURLToPath } from "node:url";
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
 /** Relative paths — Turbopack on Windows rejects absolute resolveAlias targets. */
+const examMathCompileRoot = "./packages/exam-math-compile/src";
+
 const examMathCompileAliases: Record<string, string> = {
-  "@mcq/exam-math-compile": "../shared/exam-math-compile/src/index.ts",
-  "@mcq/exam-math-compile/prepare-latex-content":
-    "../shared/exam-math-compile/src/prepare-latex-content.ts",
-  "@mcq/exam-math-compile/math-latex-repairs":
-    "../shared/exam-math-compile/src/math-latex-repairs.ts",
+  "@mcq/exam-math-compile": `${examMathCompileRoot}/index.ts`,
+  "@mcq/exam-math-compile/prepare-latex-content": `${examMathCompileRoot}/prepare-latex-content.ts`,
+  "@mcq/exam-math-compile/math-latex-repairs": `${examMathCompileRoot}/math-latex-repairs.ts`,
 };
 
 const examMathCompileAliasesAbsolute: Record<string, string> = {
-  "@mcq/exam-math-compile": path.join(
-    rootDir,
-    "../shared/exam-math-compile/src/index.ts",
-  ),
+  "@mcq/exam-math-compile": path.join(rootDir, examMathCompileRoot, "index.ts"),
   "@mcq/exam-math-compile/prepare-latex-content": path.join(
     rootDir,
-    "../shared/exam-math-compile/src/prepare-latex-content.ts",
+    examMathCompileRoot,
+    "prepare-latex-content.ts",
   ),
   "@mcq/exam-math-compile/math-latex-repairs": path.join(
     rootDir,
-    "../shared/exam-math-compile/src/math-latex-repairs.ts",
+    examMathCompileRoot,
+    "math-latex-repairs.ts",
   ),
 };
 

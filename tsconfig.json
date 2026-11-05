@@ -20,8 +20,8 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@mcq/exam-math-compile": ["../shared/exam-math-compile/src/index.ts"],
-      "@mcq/exam-math-compile/*": ["../shared/exam-math-compile/src/*"]
+      "@mcq/exam-math-compile": ["./packages/exam-math-compile/src/index.ts"],
+      "@mcq/exam-math-compile/*": ["./packages/exam-math-compile/src/*"]
     }
   },
   "include": [
